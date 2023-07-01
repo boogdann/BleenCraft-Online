@@ -1,0 +1,11 @@
+Field.Height       =     20
+Field.Length       =     50
+Field.Width        =     50
+Field.Capacity     =     Field.Height * Field.Length * Field.Width
+
+Triangle.First     =     0
+Triangle.Second    =     1
+Triangle.Third     =     2
+Triangle.NumVertex =     3
+
+ERROR_OUT_OF_BOUND =     -1

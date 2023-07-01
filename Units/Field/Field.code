@@ -1,0 +1,26 @@
+proc Field.GetBlockIndex uses eax, ebx, X, Y, Z
+     cmp    [X], Field.Length
+     jle    .Error
+     cmp    [Y], Field.Width
+     jle    .Error
+     cmp    [Z], Field.Height
+     
+     cmp    [X], 0
+     jb     .Error 
+     cmp    [Y], 0
+     jb     .Error
+     cmp    [Z], 0
+     jb     .Error     
+
+     imul   eax, [Y], Field.Width
+     add    eax, [X]
+     mul    dword[Z]
+     
+     xchg   eax, edi
+     movzx  eax, byte[edi]
+     jmp    .Finish
+.Error:
+     mov    eax, ERROR_OUT_OF_BOUND 
+.Finish:
+     ret
+endp
