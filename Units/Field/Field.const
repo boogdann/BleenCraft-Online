@@ -9,3 +9,7 @@ Triangle.Third     =     2
 Triangle.NumVertex =     3
 
 ERROR_OUT_OF_BOUND =     -1
+
+Air                =      0
+Stone              =      1
+Dirt               =      2
