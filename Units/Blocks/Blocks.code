@@ -1,0 +1,42 @@
+proc Blocks.GetDestroyTime uses edi, IndexBlock: word, IndexTool: word
+    mov    eax, Block.StartDestroyTime 
+
+    cmp    [IndexBlock], Block.MinTime
+    jz     .MinTime
+
+    cmp    [IndexBlock], Block.Indestructible
+    jz     .Indestructible
+
+    cmp    [IndexTool], Tools.Pickaxe
+    jnz    .Skip1
+    cmp    [Blocks.DestoyIndex + IndexBlock], Block.FasterPickaxe
+    jz     .Faster 
+
+.Skip1:         
+    cmp    [IndexTool], Tools.Axe
+    jnz    .Skip2
+    cmp    [Blocks.DestoyIndex + IndexBlock], Block.FasterAxe
+    jz     .Faster
+
+.Skip2:
+    cmp    [IndexTool], Tools.Showel
+    jnz    .Skip3
+    cmp    [Blocks.DestoyIndex + IndexBlock], Block.FasterShowel
+    jz     .Faster
+
+.Skip3:
+    jmp     .Finish
+
+.Faster: 
+    shr     eax, 1
+    jmp     .Finish
+
+.MinTime:    
+    mov     eax, 0
+    jmp     .Finish
+
+.Indestructible:
+    mov    eax, 4 294 967 000 
+.Finish:
+    ret
+endp

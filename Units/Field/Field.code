@@ -12,7 +12,7 @@ proc Field.Initialize
 .IterateLine:
     push    ecx
     mov     ecx, Field.Width
-    mov     al,  Stone
+    mov     al,  Block.Stone
     rep stosw
     pop     ecx 
     loop    .IterateLine
@@ -25,7 +25,7 @@ proc Field.Initialize
 .IterateLineDirt:
     push    ecx
     mov     ecx, Field.Width
-    mov     al,  Dirt
+    mov     al,  Block.Dirt
     rep stosw
     pop     ecx 
     loop    .IterateLineDirt 
@@ -39,18 +39,18 @@ proc Field.Initialize
 .IterateLineAir:
     push    ecx
     mov     ecx, Field.Width
-    mov     al,  Air
+    mov     al,  Block.Air
     rep stosw
     pop     ecx 
     loop    .IterateLineAir
     pop     ecx
     loop    .IterateLayersAir
     
-    stdcall Field.SetBlockIndex, 12, 12, 12, Stone
-    stdcall Field.SetBlockIndex, 13, 12, 12, Stone 
-    stdcall Field.SetBlockIndex, 14, 12, 12, Stone
-    stdcall Field.SetBlockIndex, 13, 12, 13, Stone
-    stdcall Field.SetBlockIndex, 13, 12, 14, Stone
+    stdcall Field.SetBlockIndex, 12, 12, 12, Block.Stone
+    stdcall Field.SetBlockIndex, 13, 12, 12, Block.Stone 
+    stdcall Field.SetBlockIndex, 14, 12, 12, Block.Stone
+    stdcall Field.SetBlockIndex, 13, 12, 13, Block.Stone
+    stdcall Field.SetBlockIndex, 13, 12, 14, Block.Stone
 .Finish:
     ret
 endp
