@@ -2,9 +2,8 @@
 ;       ОСТОРОЖНО ЧТОБЫ НЕ БЫЛО ПЕРЕСЕЧЕНИЙ КОНСТАНТ С КОНСТАНТАМИ БЛОКОВ
 
 ;       Кирки
-Tools.Pickaxe     =       255
-Tools.Axe         =       254
-Tools.Shovel      =       253
-Tools.Sword       =       252
+Tools.PICKAXE     =       256
+Tools.AXE         =       257
+Tools.SHOVEL      =       258
+Tools.SWORD       =       259
 
-;       

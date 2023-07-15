@@ -1,43 +1,43 @@
-Block.StartDestroyTime  =       1000
+Blocks.START_DESTROY_TIME =       1000
 
 ;                   
-Block.Air                =      0
-Block.Water              =      1
+Blocks.AIR                =      0
+Blocks.WATER              =      1
 
 ;                   Wood
-Block.Log                =      2
-Block.Planks             =      3
-Block.Leaves             =      4       
-Block.Chest              =      5
-Block.CraftingTable      =      6
+Blocks.LOG                =      2
+Blocks.PLANKS             =      3
+Blocks.LEAVES             =      4       
+Blocks.CHEST              =      5
+Blocks.CRAFTING_TABLE     =      6
 
 ;                   Dirt
-Block.Dirt               =      7
-Block.Turf               =      8
-Block.Tallgrass          =      9
+Blocks.DIRT               =      7
+Blocks.TURF               =      8
+Blocks.TALLGRASS          =      9
 
 ;                   Sand
-Block.Sand               =      10
-Block.Sandstone          =      11
-Block.Glass              =      12
+Blocks.SAND               =      10
+Blocks.SANDSTONE          =      11
+Blocks.GLASS              =      12
 
-Block.Gravel             =      13
+Blocks.GRAVEL             =      13
 
 ;                   Stone
-Block.Cobblestone        =      14
-Block.Stone              =      15
-Block.Furnace            =      16
+Blocks.COBBLESTONE        =      14
+Blocks.STONE              =      15
+Blocks.FURNACE            =      16
 
 ;                   Wool
-Block.Wool               =      17
-Block.Bed                =      18
+Blocks.WOOL               =      17
+Blocks.BED                =      18
 
 ;                   Other
-Block.Bedrock            =      19
-Block.IronOre            =      20
-Block.GoldOre            =      21
-Block.CoalOre            =      22
-Block.DiamodnOre         =      23
+Blocks.BEDROCK             =      19
+Blocks.IRON_ORE            =      20
+Blocks.GOLD_ORE            =      21
+Blocks.COAL_ORE            =      22
+Blocks.DIAMOND_ORE         =      23
 
 
 ;                   Difficulty breaking blocks
@@ -49,47 +49,47 @@ Block.DiamodnOre         =      23
 ;       4 - ломаются за константное время(не зависит от инструмента)
 ;
 
-Block.Indestructible     =      -1
-Block.MinTime            =      0
-Block.FasterShovel       =      1
-Block.FasterPickaxe      =      2
-Block.FasterAxe          =      3
-Block.ConstTime          =      4
+Blocks.INDERSTRUCTIBLE     =     -1
+Blocks.MIN_TIME            =      0
+Blocks.FASTER_SHOVEL       =      1
+Blocks.FASTER_PICKAXE      =      2
+Blocks.FASTER_AXE          =      3
+Blocks.CONST_TIME          =      4
 
-Block.Air                =      Block.Indestructible
-Block.Water              =      Block.Indestructible
-
+;Blocks.Air                =      Block.Indestructible
+;Blocks.Water              =      Block.Indestructible
+;
 ;                   Wood
-Block.Log                =      Block.FasterAxe
-Block.Planks             =      Block.FasterAxe
-Block.Leaves             =      Block.MinTime      
-Block.Chest              =      Block.FasterAxe
-Block.CraftingTable      =      Block.FasterAxe
-
+;Blocks.Log                =      Blocks.FasterAxe
+;Blocks.Planks             =      Blocks.FasterAxe
+;Blocks.Leaves             =      Blocks.MinTime      
+;Blocks.Chest              =      Blocks.FasterAxe
+;Blocks.CraftingTable      =      Blocks.FasterAxe
+;
 ;                   Dirt
-Block.Dirt               =      Block.FasterShovel
-Block.Turf               =      Block.FasterShovel
-Block.Tallgrass          =      Block.MinTime
-
+;Blocks.Dirt               =      Blocks.FasterShovel
+;Blocks.Turf               =      Blocks.FasterShovel
+;Blocks.Tallgrass          =      Blocks.MinTime
+;
 ;                   Sand
-Block.Sand               =      Block.FasterShovel
-Block.Sandstone          =      Block.FasterShovel
-Block.Glass              =      Block.ConstTime
-
-Block.Gravel             =      Block.FasterShovel
-
+;Blocks.Sand               =      Blocks.FasterShovel
+;Blocks.Sandstone          =      Blocks.FasterShovel
+;Blocks.Glass              =      Blocks.ConstTime
+;
+;Blocks.Gravel             =      Blocks.FasterShovel
+;
 ;                   Stone
-Block.Cobblestone        =      Block.FasterPickaxe
-Block.Stone              =      Block.FasterPickaxe
-Block.Furnace            =      Block.FasterPickaxe
-
+;Block.Cobblestone        =      Blocks.FasterPickaxe
+;Block.Stone              =      Blocks.FasterPickaxe
+;Block.Furnace            =      Blocks.FasterPickaxe
+;
 ;                   Wool
-Block.Wool               =      Block.ConstTime
-Block.Bed                =      Block.ConstTime
-
+;Blocks.Wool               =      Blocks.ConstTime
+;Blocks.Bed                =      Blocks.ConstTime
+;
 ;                   Other
-Block.Bedrock            =      Block.Indestructible
-Block.IronOre            =      Block.FasterPickaxe
-Block.GoldOre            =      Block.FasterPickaxe
-Block.CoalOre            =      Block.FasterPickaxe
-Block.DiamodnOre         =      Block.FasterPickaxe
+;Blocks.Bedrock            =      Blocks.Indestructible
+;Blocks.IronOre            =      Blocks.FasterPickaxe
+;Blocks.GoldOre            =      Blocks.FasterPickaxe
+;Blocks.CoalOre            =      Blocks.FasterPickaxe
+;Blocks.DiamodnOre         =      Blocks.FasterPickaxe
