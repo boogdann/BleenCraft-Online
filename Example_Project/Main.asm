@@ -70,6 +70,7 @@ proc RenderScene
     ;Для рендера объекта:
     ;(Например рендер куба с текстурой земли)
     ;stdcall gf_renderObj3D, obj_CubeHandle, tx_grassHandle, ...
+    
 
     ;В самом конце рендера сцены нужно:
     stdcall gf_RenderEnd
