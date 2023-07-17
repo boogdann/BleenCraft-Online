@@ -1,0 +1,18 @@
+; FASM Editor
+
+include "Main.asm"
+
+if 2 * 2 = 5
+[options]
+  countAsm=5
+  countInc=2
+[asm]
+  asm1="Main.asm"
+  asm2="gf_api_init.ASM"
+  asm3="GraficAPI.ASM"
+  asm4="gf_macro.ASM"
+  asm5="gf_shader_init.ASM"
+[inc]
+  inc1="GraficAPI.inc"
+  inc2="gf_api_init.inc"
+end if
