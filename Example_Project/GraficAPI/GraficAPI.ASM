@@ -20,7 +20,8 @@ proc gf_grafic_init uses esi edi
     stdcall gf_window_init         
     stdcall gf_opengl_init
     stdcall gf_LoadFunctions
-    ;stdcall gf_InitShaders
+    stdcall gf_InitShaders
+    stdcall gf_InitShadersData
     
   ret
 endp

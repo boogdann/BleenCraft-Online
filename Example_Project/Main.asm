@@ -11,9 +11,16 @@ Start:
   ;Сначала нужно проиницилизировать модуль
   ;P.S. она также иницициализирует всю оконную мишуру
   stdcall gf_grafic_init
-  stdcall gf_InitShaders
   
-  ;Стандартный цикл
+  ;Теперь в качестве примера загрузим куб в видеопамять
+  ;stdcall gf_UploadObj3D, obj_cube_name
+  mov [obj_CubeHandle], eax
+  ;Далее загрузим тексуру земли в видеопамять
+  ;stdcall gf_UploadTexture, tx_grassName 
+  mov [tx_grassHandle], eax
+  ;P.S. Далее эти Handle-ы будут исользоваться
+  
+  ;Стандартный цикл оконной процедуры
   .MainCycle:
         invoke  GetMessage, msg, 0, 0, 0
         invoke  DispatchMessage, msg
@@ -24,7 +31,7 @@ Start:
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
-        ;К макросам тоже присмотрись)
+        ;К макросам тоже присмотрись) (Если что кину)
         switch  [uMsg]
         case    .Render,        WM_PAINT
         case    .Destroy,       WM_DESTROY
@@ -56,19 +63,33 @@ proc WindowProc uses ebx,\
 endp
 
 
-;Собственно говоря тут будут расположены основные возможности модуля
+;Пример процедуры для рендера сцены
 proc RenderScene
- 
-    invoke SwapBuffers, [hdc]
-    invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT 
+    ;Сначала нужно проиницилизировать основные данные кадра
+    stdcall gf_RenderBegin
+    ;Для рендера объекта:
+    ;(Например рендер куба с текстурой земли)
+    ;stdcall gf_renderObj3D, obj_CubeHandle, tx_grassHandle, ...
+
+    ;В самом конце рендера сцены нужно:
+    stdcall gf_RenderEnd
   ret
 endp
 
 
 section '.data' data readable writeable
+         ;Пример данных:
+         ;Объекты
+         obj_cube_name   db   "Cube.obj", 0
+         obj_CubeHandle  dd   ?
+         ;Текстуры
+         tx_grassName    db   "Grass.png", 0
+         tx_grassHandle  dd   ?
+
          ;Добавить импорты данных нужные GraficAPI
          include "GraficAPI\GraficAPI.inc"            ;1)
-         include "GraficAPI\gf_main\gf_api_init.inc"  ;2)
+         include "GraficAPI\gf_main\gf_api_init.inc"  ;2)  
+         include "GraficAPI\gf_main\gf_render_data.inc"  ;3) 
 
 section '.idata' import data readable writeable
 

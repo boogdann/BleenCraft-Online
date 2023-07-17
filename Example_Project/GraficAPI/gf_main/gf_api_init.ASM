@@ -62,3 +62,29 @@
 .Return:
         ret
  endp
+ 
+ 
+ proc gf_InitShadersData uses esi edi
+        mov     esi, UniformLocations
+        mov     edi, UniformNames
+
+.Scan:
+        movzx   eax, byte[edi]
+        cmp     eax, 0
+        je      .Return
+
+        invoke  glGetUniformLocation, [gf_shaderProgram], edi
+        mov     [esi], eax
+        mov     edx, eax
+        add     esi, 4
+
+        mov     al, 0
+        mov     ecx, 0xFFFFFFFF
+        repne   scasb
+        jmp     .Scan
+
+.Return:
+        ret
+    ret
+ endp
+ 

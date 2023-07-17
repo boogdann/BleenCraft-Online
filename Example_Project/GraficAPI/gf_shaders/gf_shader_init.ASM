@@ -2,14 +2,16 @@ proc gf_InitShaders
 
    stdcall Glext.LoadShader, vertexShader_File, GL_VERTEX_SHADER
    mov     [gf_vertexShader], eax
+
+   stdcall Glext.LoadShader, fragmentShader_File, GL_FRAGMENT_SHADER
+   mov     [gf_fragmentShader], eax
    
+   ;########################
    cmp eax, 0
    jnz @F
      invoke  ExitProcess, 0
    @@:
-
-   stdcall Glext.LoadShader, fragmentShader_File, GL_FRAGMENT_SHADER
-   mov     [gf_fragmentShader], eax
+   ;#######################
    
    stdcall CreateShaderProgram 
 
@@ -18,7 +20,15 @@ endp
 
 
 proc CreateShaderProgram
-
+    invoke  glCreateProgram
+    mov     [gf_shaderProgram], eax
+    
+    invoke  glAttachShader, [gf_shaderProgram], [gf_vertexShader]
+    invoke  glAttachShader, [gf_shaderProgram], [gf_fragmentShader]
+    
+    invoke  glLinkProgram, [gf_shaderProgram]
+    invoke  glUseProgram, [gf_shaderProgram] 
+    
   ret
 endp
 
