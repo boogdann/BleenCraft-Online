@@ -11,7 +11,7 @@ Start:
   ;—начала нужно проиницилизировать модуль
   ;P.S. она также иницициализирует всю оконную мишуру
   stdcall gf_grafic_init
-  stdcall gf_InitShaders;;;;;;;;;;
+  stdcall gf_InitShaders
   
   ;—тандартный цикл
   .MainCycle:

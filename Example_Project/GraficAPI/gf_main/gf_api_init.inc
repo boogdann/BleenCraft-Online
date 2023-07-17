@@ -32,7 +32,9 @@ extensionNames:
         db      "glUniform1f", 0
         db      "glUniform2f", 0
         db      0
+        
 
-define GL_FRAGMENT_SHADER                0x8B30
-define GL_COMPILE_STATUS                 0x8B81
-define GL_LINK_STATUS                    0x8B82
+gf_fragmentShader  dd    ?
+gf_vertexShader    dd    ?
+fragmentShader_File      db     "GraficAPI\gf_shaders\fragment_shader.glsl", 0
+vertexShader_File        db     "GraficAPI\gf_shaders\vertex_shader.glsl", 0

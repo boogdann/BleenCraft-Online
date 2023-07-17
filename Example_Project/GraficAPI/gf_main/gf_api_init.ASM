@@ -17,26 +17,6 @@
     invoke  GetDC, [hMainWindow]
     mov     [hdc], eax
     
-    invoke  ChoosePixelFormat, [hdc], pfd
-    invoke  SetPixelFormat, [hdc], eax, pfd
-
-    invoke  wglCreateContext, [hdc]
-    invoke  wglMakeCurrent, [hdc], eax
-    
-    invoke  GetProcessHeap
-    mov     [hHeap], eax
-    
-    invoke  RegisterClass, wndClass
-    invoke  CreateWindowEx, 0, className, className, WINDOW_STYLE,\
-                            0, 0, 0, 0, 0, 0, 0, 0
-    mov     [hMainWindow], eax
-
-    invoke  GetClientRect, eax, clientRect
-    invoke  ShowCursor, 0
-    
-    invoke  GetDC, [hMainWindow]
-    mov     [hdc], eax
-    
    ret
  endp
  
