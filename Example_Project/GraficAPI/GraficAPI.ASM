@@ -1,6 +1,7 @@
 ;Imports
 ;\gf_main
 include "gf_main\gf_api_init.ASM"
+include "gf_main\gf_math.ASM"
 include "gf_main\gf_init_render_data.ASM"
 include "gf_main\gf_render.ASM"
 ;\gf_data_init
@@ -22,6 +23,7 @@ proc gf_grafic_init uses esi edi
     stdcall gf_LoadFunctions
     stdcall gf_InitShaders
     stdcall gf_InitShadersData
+    stdcall gf_InitRenderParams
     
   ret
 endp

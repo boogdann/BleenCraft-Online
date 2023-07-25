@@ -1,4 +1,12 @@
 extensionAddresses:
+        glUniformMatrix4fv           dd      ?
+        glGenVertexArrays            dd      ?
+        glBindVertexArray            dd      ?
+        glEnableVertexAttribArray    dd      ?
+        glVertexAttribPointer        dd      ?
+        glBufferData            dd      ?
+        glBindBuffer            dd      ?
+        glGenBuffers            dd      ?
         glUseProgram            dd      ?
         glDetachShader          dd      ?
         glDeleteShader          dd      ?
@@ -13,9 +21,18 @@ extensionAddresses:
         glGetProgramiv          dd      ?
         glGetUniformLocation    dd      ?
         glUniform1f             dd      ?
-        glUniform2f             dd      ?
+        glUniform2f             dd      ?   
+        glUniform1i             dd      ?
 
 extensionNames:
+        db      "glUniformMatrix4fv", 0
+        db      "glGenVertexArrays", 0
+        db      "glBindVertexArray", 0
+        db      "glEnableVertexAttribArray", 0
+        db      "glVertexAttribPointer", 0
+        db      "glBufferData", 0
+        db      "glBindBuffer", 0
+        db      "glGenBuffers", 0
         db      "glUseProgram", 0
         db      "glDetachShader", 0
         db      "glDeleteShader", 0
@@ -31,6 +48,7 @@ extensionNames:
         db      "glGetUniformLocation", 0
         db      "glUniform1f", 0
         db      "glUniform2f", 0
+        db      "glUniform1i", 0
         db      0
         
 
