@@ -34,7 +34,7 @@
 
     invoke  glViewport, 0, 0, [clientRect.right], [clientRect.bottom]
     
-    invoke  glClearColor, 0.1, 0.5, 0.2, 1.0
+    invoke  glClearColor, 0.7, 0.4, 0.2, 1.0
     invoke  glEnable, GL_DEPTH_TEST
  
    ret
@@ -88,3 +88,16 @@
     ret
  endp
  
+ 
+ proc gf_InitRenderParams 
+    fld dword[clientRect.right]
+    fdiv dword[clientRect.bottom]
+    fstp dword[aspect]
+ 
+    ;Создание матрицы проекции    
+    stdcall Matrix.Projection, [fov], [aspect] , [zNear], [zFar]
+
+    invoke glUniformMatrix4fv, [gf_projection_M], 1, 0, gf_projection_matrix
+    
+    ret
+ endp

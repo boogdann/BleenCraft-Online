@@ -13,8 +13,10 @@ Start:
   stdcall gf_grafic_init
   
   ;Теперь в качестве примера загрузим куб в видеопамять
-  ;stdcall gf_UploadObj3D, obj_cube_name
-  mov [obj_CubeHandle], eax
+  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle
+  ;P.S. Заметь, что для загрузки объекта мы прсто кидаем адресс на Handle (dd ?, ?)
+  
+  ;Ожидай в следующих версиях!!!
   ;Далее загрузим тексуру земли в видеопамять
   ;stdcall gf_UploadTexture, tx_grassName 
   mov [tx_grassHandle], eax
@@ -27,7 +29,7 @@ Start:
         jmp     .MainCycle
         
         
-;К примеру простейшая оконная процедура 
+;К примеру простейшая оконная процедура
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
@@ -63,13 +65,31 @@ proc WindowProc uses ebx,\
 endp
 
 
+;(От себя рекоменлую организовать эту функцию лишь как простой вывод и
+;вынести все действия над объктами наружу, не пихая всё сюда), но дело твоё
 ;Пример процедуры для рендера сцены
 proc RenderScene
     ;Сначала нужно проиницилизировать основные данные кадра
-    stdcall gf_RenderBegin
-    ;Для рендера объекта:
+    stdcall gf_RenderBegin, сameraPos, сameraTurn  
+    
+    ;Ожидай в следующих версиях!!!
+    ;Также нужно проиницелизтровать источники света (Рассказать Богдану про оптимизацию!!!)
+    ;stdcall gf_CrateLightning, lightningCount, LightPosArray
+    
+    ;Ожидай в следующих версиях!!!
+    ;Рендер ландшафта: (LandDataArray - 3-х мерный массив ландшафта) (X, Y, Z - размеры)
+    ;stdcall gf_RenderMineLand, LandDataArray, X, Y, Z
+    
+    ;Для рендера иных объектов:
     ;(Например рендер куба с текстурой земли)
-    ;stdcall gf_renderObj3D, obj_CubeHandle, tx_grassHandle, ...
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
+                            cubePos, cubeTurn, [cubeScale]  
+                            
+    ;В качестве примера действия будем вращать куб
+    fld   [cubeTurn + Vector3.y]
+    fadd  [tmp_turn] 
+    fstp  [cubeTurn + Vector3.y]
+    ;P.S. Конечно в демке стоило бы это от тактов делать, но в игре думаю это не понадобиться
     
     ;В самом конце рендера сцены нужно:
     stdcall gf_RenderEnd
@@ -80,16 +100,52 @@ endp
 section '.data' data readable writeable
          ;Пример данных:
          ;Объекты
-         obj_cube_name   db   "Cube.obj", 0
-         obj_CubeHandle  dd   ?
+         obj_cube_name   db   "Cube.obj", 0 ;(Assets/ObjectsPack)
+         obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт, так нужно!!!
+         
          ;Текстуры
-         tx_grassName    db   "Grass.png", 0
+         tx_grassName    db   "Grass.png", 0 ;(Assets/TexturesPack)
          tx_grassHandle  dd   ?
+         
+         ;Позиция объекта:
+         cubePos         dd   0.0, 0.0, 0.0
+         ;Поворот объекта:  (в градусах)
+         cubeTurn        dd   0.0, 0.0, 0.0
+         ;Размер объекта:
+         cubeScale       dd   1.0
+
+         ;Позиция головы
+         сameraPos       dd    0.0, 0.0, -4.0
+         ;Поворот головы:  (в градусах)
+         сameraTurn      dd    0.0, 0.0, 0.0 ;(x, y - пользуйся, z - не функциональна)
+         ;P.S. z - мемная координата (как просмотр из-за стены под углом в rainbow six siege),
+         ;но по итогу изза ненадобности функционал z был вырезан, так что неважно чему он равен
+         
+         ;Для пример с поворотом объекта
+         tmp_turn        dd    0.005
+         
 
          ;Добавить импорты данных нужные GraficAPI
          include "GraficAPI\GraficAPI.inc"            ;1)
          include "GraficAPI\gf_main\gf_api_init.inc"  ;2)  
          include "GraficAPI\gf_main\gf_render_data.inc"  ;3) 
+         
+         ;############CUBE OBJ##############
+         VetexArr dd 1.0, 0.0, 0.0,\ 
+                     0.0, 0.0, 1.0,\
+                     0.0, 0.0, 0.0,\
+                     0.0, 1.0, 0.0,\
+                     0.0, 0.0, 0.0,\
+                     1.0, 0.0, 0.0,\ 
+                     0.0, 1.0, 0.0,\
+                     0.0, 0.0, 0.0,\
+                     0.0, 0.0, 1.0,\
+                     0.0, 1.0, 0.0,\
+                     1.0, 0.0, 0.0,\
+                     0.0, 0.0, 1.0
+                     
+         CubeVertexesCount dd 12
+         ;####################################
 
 section '.idata' import data readable writeable
 
