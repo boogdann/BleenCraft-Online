@@ -1,0 +1,13 @@
+; FASM Editor
+
+include "Main.asm"
+
+if 2 * 2 = 5
+[options]
+  countAsm=2
+  countInc=0
+[asm]
+  asm1="Main.asm"
+  asm2="gf_obj_init.ASM"
+[inc]
+end if
