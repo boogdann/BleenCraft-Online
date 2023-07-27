@@ -24,7 +24,6 @@ proc gf_grafic_init uses esi edi
     stdcall gf_InitShaders
     stdcall gf_InitShadersData
     stdcall gf_InitRenderParams
-    
   ret
 endp
 
