@@ -13,13 +13,14 @@ Start:
   stdcall gf_grafic_init
   
   ;Теперь в качестве примера загрузим куб в видеопамять
-  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle
+  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle, 1
   ;P.S. Заметь, что для загрузки объекта мы прсто кидаем адресс на Handle (dd ?, ?)
+  ;P.S. Третий параметр 
   
   ;Ожидай в следующих версиях!!!
   ;Далее загрузим тексуру земли в видеопамять
   ;stdcall gf_UploadTexture, tx_grassName 
-  mov [tx_grassHandle], eax
+  ;mov [tx_grassHandle], eax
   ;P.S. Далее эти Handle-ы будут исользоваться
   
   ;Стандартный цикл оконной процедуры
@@ -89,7 +90,6 @@ proc RenderScene
     fld   [cubeTurn + Vector3.y]
     fadd  [tmp_turn] 
     fstp  [cubeTurn + Vector3.y]
-    ;P.S. Конечно в демке стоило бы это от тактов делать, но в игре думаю это не понадобиться
     
     ;В самом конце рендера сцены нужно:
     stdcall gf_RenderEnd
@@ -98,13 +98,22 @@ endp
 
 
 section '.data' data readable writeable
+         ;Обязательно нужно выставить переменные окружения:
+         ;Путь к объектам относительно исполняемого:
+         GF_OBJ_PATH        db     "Assets\ObjectsPack\", 0
+         ;Путь к текстурам относительно исполняемого:
+         GF_TEXTURE_PATH    db     "Assets\TexturesPack\", 0
+         
          ;Пример данных:
          ;Объекты
-         obj_cube_name   db   "Cube.obj", 0 ;(Assets/ObjectsPack)
+         obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
+         ;P.S. L - в начале это файл с генерацией .mobj c uint8
+         ;     B - в начале это файл с генерацией .mobj c uint16
+         ;     B - cтавить не обязательно (Это по дефолту)
          obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт, так нужно!!!
          
          ;Текстуры
-         tx_grassName    db   "Grass.png", 0 ;(Assets/TexturesPack)
+         tx_grassName    db   "Grass.png", 0 ;(GF_TEXTURE_PATH)
          tx_grassHandle  dd   ?
          
          ;Позиция объекта:
@@ -129,23 +138,6 @@ section '.data' data readable writeable
          include "GraficAPI\GraficAPI.inc"            ;1)
          include "GraficAPI\gf_main\gf_api_init.inc"  ;2)  
          include "GraficAPI\gf_main\gf_render_data.inc"  ;3) 
-         
-         ;############CUBE OBJ##############
-         VetexArr dd 1.0, 0.0, 0.0,\ 
-                     0.0, 0.0, 1.0,\
-                     0.0, 0.0, 0.0,\
-                     0.0, 1.0, 0.0,\
-                     0.0, 0.0, 0.0,\
-                     1.0, 0.0, 0.0,\ 
-                     0.0, 1.0, 0.0,\
-                     0.0, 0.0, 0.0,\
-                     0.0, 0.0, 1.0,\
-                     0.0, 1.0, 0.0,\
-                     1.0, 0.0, 0.0,\
-                     0.0, 0.0, 1.0
-                     
-         CubeVertexesCount dd 12
-         ;####################################
 
 section '.idata' import data readable writeable
 
