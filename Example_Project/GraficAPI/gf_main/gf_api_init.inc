@@ -55,5 +55,5 @@ extensionNames:
 gf_fragmentShader  dd    ?
 gf_vertexShader    dd    ?
 gf_shaderProgram   dd    ?
-fragmentShader_File      db     "GraficAPI\gf_shaders\fragment_shader.glsl", 0
+fragmentShader_File      db     "GraficAPI\gf_shaders\fragment_shader.glsl", 0    
 vertexShader_File        db     "GraficAPI\gf_shaders\vertex_shader.glsl", 0

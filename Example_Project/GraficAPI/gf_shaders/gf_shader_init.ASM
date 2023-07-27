@@ -76,11 +76,11 @@ proc LoadCodeFromFile uses edi,\
         locals
                 hFile   dd      ?
                 length  dd      ?
-                read    dd      ?
+                ;read    dd      ?
                 pBuffer dd      ?
         endl
 
-        invoke  CreateFile, [fileName], GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, ebx
+        invoke  CreateFile, [fileName], GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
         mov     [hFile], eax
 
         invoke  GetFileSize, [hFile], 0
@@ -89,8 +89,8 @@ proc LoadCodeFromFile uses edi,\
         invoke  HeapAlloc, [hHeap], 8, [length]
         mov     [pBuffer], eax
 
-        lea     edi, [read]
-        invoke  ReadFile, [hFile], [pBuffer], [length], edi, 0
+        ;lea     edi, [read]
+        invoke  ReadFile, [hFile], [pBuffer], [length], 0, 0
 
         invoke  CloseHandle, [hFile]
 
