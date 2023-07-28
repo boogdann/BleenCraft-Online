@@ -13,15 +13,12 @@ Start:
   stdcall gf_grafic_init
   
   ;Теперь в качестве примера загрузим куб в видеопамять
-  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle, 1
+  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle
   ;P.S. Заметь, что для загрузки объекта мы прсто кидаем адресс на Handle (dd ?, ?)
-  ;P.S. Третий параметр 
-  
-  ;Ожидай в следующих версиях!!!
-  ;Далее загрузим тексуру земли в видеопамять
-  ;stdcall gf_UploadTexture, tx_grassName 
-  ;mov [tx_grassHandle], eax
-  ;P.S. Далее эти Handle-ы будут исользоваться
+
+  ;Далее загрузим тексуру земли в видеопамять и получим Handle
+  stdcall gf_UploadTexture, tx_grassName 
+  mov [tx_grassHandle], eax
   
   ;Стандартный цикл оконной процедуры
   .MainCycle:
@@ -113,7 +110,7 @@ section '.data' data readable writeable
          obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт, так нужно!!!
          
          ;Текстуры
-         tx_grassName    db   "Grass.png", 0 ;(GF_TEXTURE_PATH)
+         tx_grassName    db   "Grass.mbmp", 0 ;(GF_TEXTURE_PATH)
          tx_grassHandle  dd   ?
          
          ;Позиция объекта:

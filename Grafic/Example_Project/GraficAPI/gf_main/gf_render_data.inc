@@ -2,12 +2,14 @@ UniformLocations:
         gf_view_M             dd      ?
         gf_model_M            dd      ?
         gf_projection_M       dd      ?
+        gf_Tex1               dd      ?
         
 
 UniformNames:  
         db      "view", 0
         db      "model", 0
         db      "projection", 0
+        db      "Tex1", 0
         db      0
         
  
@@ -17,6 +19,8 @@ PosHandle         dd     ?
 NormalHandel      dd     ?
 TextureHandle     dd     ? 
 
+gf_tx_handle      dd     ?
+gf_texture_adress dd     ?
 
 gf_VertexCount             dd        ?
 gf_VertexArrayAdress       dd        ?

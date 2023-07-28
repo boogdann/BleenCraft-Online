@@ -21,8 +21,8 @@ proc  gf_renderObj3D uses esi, Obj3D_Handle, tx_Handle,\
   invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_model_matrix
 
   ;Загрузка текстуры
-  ;invoke glBindTexture, GL_TEXTURE_2D, [tx_Handle]
-  ;invoke glUniform1i, [Tex1], 0
+  invoke glBindTexture, GL_TEXTURE_2D, [tx_Handle]
+  invoke glUniform1i, [gf_Tex1], 0
   
   ;Загрузка объекта
   mov esi, [Obj3D_Handle]
