@@ -1,0 +1,37 @@
+proc AddObject uses edi, aPosition, aTurn, aVertices, aVertexIndexes, \
+               aScale, aNormals
+
+    invoke GlobalAlloc, 0, SizeOfObj3D
+    cmp    dword[Obj3D.Head], 0
+    jnz    .Skip
+    mov    dword[Obj3D.Head], eax
+    mov    dWord[Obj3D.Tail], eax
+.Skip:  
+    mov    edi, [aPosition]
+    mov    [eax + Obj3D.Position], edi
+
+    mov    edi, [aTurn]
+    mov    [eax + Obj3D.Turn], edi  
+
+    mov    edi, [aVertices]
+    mov    [eax + Obj3D.Vertices], edi  
+
+    mov    edi, [aVertexIndexes]
+    mov    [eax + Obj3D.VertexIndexes], edi 
+
+    mov    edi, [aScale]
+    mov    [eax + Obj3D.Scale], edi 
+
+    mov    edi, [aNormals]
+    mov    [eax + Obj3D.Normals], edi
+
+    mov    edi, [Obj3D.Tail]
+    mov    [eax + Obj3D.Prev], edi
+
+    mov    dWord[eax + Obj3D.Prev], NIL
+
+    mov    dword[Obj3D.Head], eax
+
+.Finish:
+    ret
+endp

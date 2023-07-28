@@ -1,1 +1,1 @@
-Field.Blocks       dw      Field.Capacity dup(?)    
+Field.Blocks       db      Field.CAPACITY dup(?)    

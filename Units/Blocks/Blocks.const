@@ -1,0 +1,95 @@
+Blocks.START_DESTROY_TIME =       1000
+
+;                   
+Blocks.AIR                =      0
+Blocks.WATER              =      1
+
+;                   Wood
+Blocks.LOG                =      2
+Blocks.PLANKS             =      3
+Blocks.LEAVES             =      4       
+Blocks.CHEST              =      5
+Blocks.CRAFTING_TABLE     =      6
+
+;                   Dirt
+Blocks.DIRT               =      7
+Blocks.TURF               =      8
+Blocks.TALLGRASS          =      9
+
+;                   Sand
+Blocks.SAND               =      10
+Blocks.SANDSTONE          =      11
+Blocks.GLASS              =      12
+
+Blocks.GRAVEL             =      13
+
+;                   Stone
+Blocks.COBBLESTONE        =      14
+Blocks.STONE              =      15
+Blocks.FURNACE            =      16
+
+;                   Wool
+Blocks.WOOL               =      17
+Blocks.BED                =      18
+
+;                   Other
+Blocks.BEDROCK             =      19
+Blocks.IRON_ORE            =      20
+Blocks.GOLD_ORE            =      21
+Blocks.COAL_ORE            =      22
+Blocks.DIAMOND_ORE         =      23
+
+
+;                   Difficulty breaking blocks
+
+;       0 - ломаются всегда моментально
+;       1 - ломаются лолатой быстрее
+;       2 - ломаются киркой быстрее
+;       3 - ломаются топором быстрее
+;       4 - ломаются за константное время(не зависит от инструмента)
+;
+
+Blocks.INDERSTRUCTIBLE     =     -1
+Blocks.MIN_TIME            =      0
+Blocks.FASTER_SHOVEL       =      1
+Blocks.FASTER_PICKAXE      =      2
+Blocks.FASTER_AXE          =      3
+Blocks.CONST_TIME          =      4
+
+;Blocks.Air                =      Block.Indestructible
+;Blocks.Water              =      Block.Indestructible
+;
+;                   Wood
+;Blocks.Log                =      Blocks.FasterAxe
+;Blocks.Planks             =      Blocks.FasterAxe
+;Blocks.Leaves             =      Blocks.MinTime      
+;Blocks.Chest              =      Blocks.FasterAxe
+;Blocks.CraftingTable      =      Blocks.FasterAxe
+;
+;                   Dirt
+;Blocks.Dirt               =      Blocks.FasterShovel
+;Blocks.Turf               =      Blocks.FasterShovel
+;Blocks.Tallgrass          =      Blocks.MinTime
+;
+;                   Sand
+;Blocks.Sand               =      Blocks.FasterShovel
+;Blocks.Sandstone          =      Blocks.FasterShovel
+;Blocks.Glass              =      Blocks.ConstTime
+;
+;Blocks.Gravel             =      Blocks.FasterShovel
+;
+;                   Stone
+;Block.Cobblestone        =      Blocks.FasterPickaxe
+;Block.Stone              =      Blocks.FasterPickaxe
+;Block.Furnace            =      Blocks.FasterPickaxe
+;
+;                   Wool
+;Blocks.Wool               =      Blocks.ConstTime
+;Blocks.Bed                =      Blocks.ConstTime
+;
+;                   Other
+;Blocks.Bedrock            =      Blocks.Indestructible
+;Blocks.IronOre            =      Blocks.FasterPickaxe
+;Blocks.GoldOre            =      Blocks.FasterPickaxe
+;Blocks.CoalOre            =      Blocks.FasterPickaxe
+;Blocks.DiamodnOre         =      Blocks.FasterPickaxe
