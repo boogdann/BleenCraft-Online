@@ -1,11 +1,11 @@
-proc gf_UploadObj3D uses esi, obj_name, obj_Handle, isLowData
+proc gf_UploadObj3D uses esi, obj_name, obj_Handle
 
   locals
     BytesCount   dd   ? 
   endl
 
   ;Получение данных
-  stdcall gf_GetObj3D_data, [obj_name], [isLowData] 
+  stdcall gf_GetObj3D_data, [obj_name]
   
   invoke glGenBuffers, 3, VBOhandles
   
@@ -15,14 +15,29 @@ proc gf_UploadObj3D uses esi, obj_name, obj_Handle, isLowData
   
   invoke glBindBuffer, GL_ARRAY_BUFFER, [VBOhandles]
   invoke glBufferData, GL_ARRAY_BUFFER, [BytesCount], [gf_VertexArrayAdress], GL_STATIC_DRAW
+  invoke glBindBuffer, GL_ARRAY_BUFFER, [VBOhandles + 4]
+  invoke glBufferData, GL_ARRAY_BUFFER, [BytesCount], [gf_NormalArrayAdress], GL_STATIC_DRAW
+  mov eax, 8
+  imul dword [gf_VertexCount]
+  mov [BytesCount], eax
+  invoke glBindBuffer, GL_ARRAY_BUFFER, [VBOhandles + 8]
+  invoke glBufferData, GL_ARRAY_BUFFER, [BytesCount], [gf_TextCordArrayAdress], GL_STATIC_DRAW 
   
   invoke glGenVertexArrays, 1, VAOhandle
   invoke glBindVertexArray, [VAOhandle]
   
   invoke glEnableVertexAttribArray, 0
+  invoke glEnableVertexAttribArray, 1
+  invoke glEnableVertexAttribArray, 2
   
   invoke glBindBuffer, GL_ARRAY_BUFFER, [VBOhandles]
   invoke glVertexAttribPointer, 0, 3, GL_FLOAT, 0, 0, 0
+  
+  invoke glBindBuffer, GL_ARRAY_BUFFER, [VBOhandles + 4]
+  invoke glVertexAttribPointer, 1, 3, GL_FLOAT, 0, 0, 0
+  
+  invoke glBindBuffer, GL_ARRAY_BUFFER, [VBOhandles + 8]
+  invoke glVertexAttribPointer, 2, 2, GL_FLOAT, 0, 0, 0
   
   ;Return:
   ;Return Handle
@@ -38,7 +53,7 @@ endp
 
 
 ;Мне конечно стыдно за эту процедуру (Но мне очень лень её менять)
-proc gf_GetObj3D_data uses edi, obj_name, isLowData 
+proc gf_GetObj3D_data uses edi, obj_name 
 
     locals
         hFile     dd      ?  
