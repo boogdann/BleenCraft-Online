@@ -96,11 +96,10 @@ proc gf_GetObj3D_data uses edi, obj_name
     inc edi
   cmp byte[esi], 0
   jnz @B
-  mov byte[edi], 0
-  
+  mov byte[edi], 0  
   
   ;Открытие файла...
-  invoke  CreateFile, gf_temp_path, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
+  invoke  CreateFile,  gf_temp_path, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
   mov     [hFile], eax
   
   ;Read vertexCount

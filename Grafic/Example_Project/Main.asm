@@ -117,7 +117,7 @@ section '.data' data readable writeable
          ;Пример данных:
          ;####################Project data###########################
          ;Объекты
-         obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
+         obj_cube_name   db   "car.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
          ;P.S. L - в начале это файл с генерацией .mobj c uint8
          ;     B - в начале это файл с генерацией .mobj c uint16
          ;     B - cтавить не обязательно (Это по дефолту)
