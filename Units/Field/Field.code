@@ -1,0 +1,135 @@
+;               
+;              proc Field.Initialize
+proc Field.Initialize
+
+;    ВРЕМЕННАЯ РЕАЛИЗАЦИЯ
+;    create stone (hight 0 - 9)
+     mov    ecx, 9
+     mov    edi, Field.Blocks
+.IterateLayers:
+     push   ecx
+     mov    ecx, Field.LENGTH
+.IterateLine:
+    push    ecx
+    mov     ecx, Field.WIDTH
+    mov     al,  Blocks.STONE
+    rep stosw
+    pop     ecx 
+    loop    .IterateLine
+    pop     ecx
+    loop    .IterateLayers     
+
+;   create dirt (hight 10)
+
+    mov     ecx, Field.LENGTH
+.IterateLineDirt:
+    push    ecx
+    mov     ecx, Field.WIDTH
+    mov     al,  Blocks.DIRT
+    rep stosw
+    pop     ecx 
+    loop    .IterateLineDirt 
+    
+;    create air (11-19)
+     mov    ecx, 9
+     mov    edi, Field.Blocks
+.IterateLayersAir:
+     push   ecx
+     mov    ecx, Field.LENGTH
+.IterateLineAir:
+    push    ecx
+    mov     ecx, Field.WIDTH
+    mov     al,  Blocks.AIR
+    rep stosw
+    pop     ecx 
+    loop    .IterateLineAir
+    pop     ecx
+    loop    .IterateLayersAir
+    
+    stdcall Field.SetBlockIndex, 12, 12, 12, Blocks.STONE
+    stdcall Field.SetBlockIndex, 13, 12, 12, Blocks.STONE 
+    stdcall Field.SetBlockIndex, 14, 12, 12, Blocks.STONE
+    stdcall Field.SetBlockIndex, 13, 12, 13, Blocks.STONE
+    stdcall Field.SetBlockIndex, 13, 12, 14, Blocks.STONE
+.Finish:
+    ret
+endp
+
+;              func Field.GetBlockIndex
+;    Input:  dWord X, dWord Y, dWord Z
+;    Output: eax <- BlockIndex or ErrorCode
+;
+proc Field.GetBlockIndex uses edi, X: word, Y: word, Z: word
+;     stdcall Field.TestBounds, word[X], word[Y], word[Z]  
+     cmp    eax, ERROR_OUT_OF_BOUND
+     jz     .Finish   
+
+     movzx  edi, word[Y]  
+     imul   eax, edi, Field.WIDTH
+     movzx  edi, word[X]
+     add    eax, edi
+     mul    word[Z]
+     add    eax, Field.Blocks
+     
+     xchg   eax, edi
+     movzx  eax, byte[edi]
+     jmp    .Finish
+
+.Finish:
+     ret
+endp
+
+;              func Field.SetBlockIndex
+;    Input:  Word X, Word Y, Word Z, byte BlockIndex
+;    Output: eax <- BlockIndex or ErrorCode
+;
+proc Field.SetBlockIndex uses edi, X: dword, Y: dword, Z: dword, BlockIndex: byte
+;     stdcall Field.TestBounds, word[X], word[Y], word[Z]     
+     cmp    eax, ERROR_OUT_OF_BOUND
+     jz     .Finish 
+
+     movzx  edi, word[Y]  
+     imul   eax, edi, Field.WIDTH
+     movzx  edi, word[X]
+     add    eax, edi
+     mul    word[Z]
+     add    eax, Field.Blocks
+     
+     xchg   eax, edi
+     movzx  eax, byte[BlockIndex]
+     mov    [edi], al
+     jmp    .Finish
+
+.Finish:
+     ret
+endp
+
+;              func Field.TestBounds
+;    Input:  Word X, Word Y, Word Z
+;    Output: eax <- Zero or ErrorCode
+;
+proc Field.TestBounds uses ebx, X: dword, Y: dword, Z: dword
+     xor    eax, eax
+
+     cmp    word[X], Field.LENGTH
+     jge    .Error
+
+     cmp    word[Y], Field.WIDTH
+     jge    .Error
+
+     cmp    word[Z], Field.HEIGHT
+     jge    .Error
+
+     cmp    word[X], 0
+     jl     .Error 
+     cmp    word[Y], 0
+     jl     .Error
+     cmp    word[Z], 0
+     jl     .Error
+     jmp    .Finish
+
+.Error:    
+     mov    eax, ERROR_OUT_OF_BOUND    
+.Finish:   
+     ret
+endp

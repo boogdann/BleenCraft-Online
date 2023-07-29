@@ -1,0 +1,201 @@
+;Поясняю: большинство функций я не прописывал ввиду того, что мы не обсуждали 
+;интерфейс, анимации, коллизии и т.д., да и сам я пока лезть в эти дебри не хочу 
+
+.wmkeydown: 
+  
+  cmp [wparam], VK_ESCAPE
+  jne .control        
+    neg [_isCursor]
+    
+    
+.control:
+  
+  cmp [wparam], VK_CONTROL
+  jne .shift
+  ;shr [speed], 1 - подкрасться незаметно(на крысичах)
+
+.shift:   
+  cmp [wparam], VK_SHIFT 
+  jne .tab
+  ;shl [speed], 1 - уебашить с разбегу
+ 
+.tab: 
+  cmp [wparam], VK_TAB
+  jne .F5
+  ;stdcall ShowPlayersList - список игроков на сервере
+
+.F5:
+  cmp [wparam], VK_F5
+  jne .F11
+  ;stdcall SwitchPersective - переключить перспективу
+  
+.F11:
+  cmp [wparam], VK_F11
+  jne .F2
+  ;stdcall SelectFullScreen - выбрать полноэкранный режим
+  
+.F2:
+  cmp [wparam], VK_F2
+  jne .finish
+  ;stdcall ScreenShot - скриншот блин блять...
+    
+;===============================================================================
+;=====================ПРЕДМЕТЫ ИЗ ПАНЕЛИ БЫСТРОГО ДОСТУПА=======================
+;=====================ТУТ НАЧИНАЕТСЯ МЕССИВО ЕБАНОЕ БЛЯТЬ=======================
+;===============================================================================
+
+.wmchar:
+
+  cmp [wparam], $31
+  jne .second
+  ;stdcall QuickItem, 1 - первый предмет
+ 
+.second:   
+  cmp [wparam], $32
+  jne .third
+  ;stdcall QuickItem, 2 - второй предмет
+
+.third:
+  cmp [wparam], $33
+  jne .fourth
+  ;stdcall QuickItem, 3 - третий предмет
+
+.fourth:
+  cmp [wparam], $34
+  jne .fifth
+  ;stdcall QuickItem, 4 - четвертый предмет
+  
+.fifth:
+  cmp [wparam], $35
+  jne .sixth
+  ;stdcall QuickItem, 5 - пятый предмет
+
+.sixth:
+  cmp [wparam], $36
+  jne .seventh
+  ;stdcall QuickItem, 6 - шестой предмет
+
+.seventh:
+  cmp [wparam], $37
+  jne .eighth
+  ;stdcall QuickItem, 7 - седьмой предмет
+
+.eighth:
+  cmp [wparam], $38
+  jne .nineth
+  ;stdcall QuickItem, 8 - восьмой предмет
+
+.nineth:
+  cmp [wparam], $39
+  jne .EKEY
+  ;stdcall QuickItem, 9 - шестой предмет
+    
+;===============================================================================
+;=============================Закончили упражнение==============================
+;===============================================================================
+
+.EKEY:
+  cmp [wparam], $45
+  jne @F
+  
+  ;stdcall OpenInventory - открыть пожилой инвентарь
+  
+    @@:
+    cmp [wparam], $65
+    jne .GKEY
+
+    ;stdcall OpenInventory - открыть пожилой инвентарь
+    
+.GKEY:
+  cmp [wparam], $47 
+  jne @F
+  
+  ;stdcall DropItem - выбросить предмет
+
+    @@:
+    cmp [wparam], $67
+    jne .AKEY
+    
+    ;stdcall DropItem - выбросить предмет
+    
+.AKEY:
+  cmp [wparam], $41
+  jne @F 
+  ;stdcall SwitchItem - сменить предмет на предмет в правой руке
+
+    @@: 
+    cmp [wparam], $61
+    jne .LKEY
+    
+    ;stdcall SwitchItem - сменить предмет на предмет в правой руке
+
+.LKEY:
+  cmp [wparam], $4C
+  jne @F
+  ;stdcall ShowAchivementsList - список достижений
+  
+    @@:
+    cmp [wparam], $6c
+    jne .movement
+    
+    ;stdcall ShowAchivementsList - список достижений
+    
+;===============================================================================
+;=============================    Передвижение   ===============================
+;===============================================================================
+
+.movement:
+ 
+  cmp [wparam], $57 ; W
+  jne @F
+  
+  stdcall MoveControllerFree, 0, 0, 1 
+    
+  @@:
+  cmp [wparam], $77 ; w
+  jne .DKEY
+
+    stdcall MoveControllerFree, 0, 0, 1  
+
+.DKEY:
+
+  cmp [wparam], $44 ; D
+  jne @F
+  
+    stdcall MoveControllerFree, 0, 0, 2
+
+  @@:
+    cmp [wparam], $64 ; d
+    jne .SKEY
+    
+    stdcall MoveControllerFree, 0, 0, 2
+    
+.SKEY: 
+
+  cmp [wparam], $53 ; S
+  jne @F
+  
+  stdcall MoveControllerFree, 0, 0, 3
+  
+  @@: 
+    cmp [wparam], $73 ; s
+    jne .AKEY1
+    
+    stdcall MoveControllerFree, 0, 0, 3
+    
+.AKEY1:
+
+  cmp [wparam], $41 ; A
+  jne @F
+  
+  stdcall MoveControllerFree, 0, 0, 4
+  
+  @@: 
+    cmp [wparam], $61 ; a
+    jne .finish
+    
+    stdcall MoveControllerFree, 0, 0, 4
+                
+.finish:
+
+  ;здесь остальные процедуры

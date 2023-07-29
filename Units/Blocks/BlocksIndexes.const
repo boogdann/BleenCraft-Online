@@ -1,0 +1,39 @@
+;                   
+Block.Air                =      0
+Block.Water              =      1
+
+;                   Wood
+Block.Log                =      2
+Block.Planks             =      3
+Block.Leaves             =      4       
+Block.Chest              =      5
+Block.CraftingTable      =      6
+
+;                   Dirt
+Block.Dirt               =      7
+Block.Turf               =      8
+Block.Tallgrass          =      9
+
+;                   Sand
+Block.Sand               =      10
+Block.Sandstone          =      11
+Block.Glass              =      12
+
+Block.Gravel             =      13
+
+;                   Stone
+Block.Cobblestone        =      14
+Block.Stone              =      15
+Block.Furnace            =      16
+
+;                   Wool
+Block.Wool               =      17
+Block.Bed                =      18
+
+;                   Other
+Block.Bedrock            =      19
+Block.IronOre            =      20
+Block.GoldOre            =      21
+Block.CoalOre            =      22
+Block.DiamodnOre         =      23
+
