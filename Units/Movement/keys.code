@@ -95,65 +95,9 @@ proc OnCharDown, wparam
   
     @@:
     cmp [wparam], $6c
-    jne .movement
-    
-    ;stdcall ShowAchivementsList - список достижений
-    
-;===============================================================================
-;=============================    Передвижение   ===============================
-;===============================================================================
-
-.movement:
- 
-  cmp [wparam], $57 ; W
-  jne @F
-  
-  stdcall MoveControllerFree, 0, 0, 1 
-    
-  @@:
-  cmp [wparam], $77 ; w
-  jne .DKEY
-
-    stdcall MoveControllerFree, 0, 0, 1  
-
-.DKEY:
-
-  cmp [wparam], $44 ; D
-  jne @F
-  
-    stdcall MoveControllerFree, 0, 0, 2
-
-  @@:
-    cmp [wparam], $64 ; d
-    jne .SKEY
-    
-    stdcall MoveControllerFree, 0, 0, 2
-    
-.SKEY: 
-
-  cmp [wparam], $53 ; S
-  jne @F
-  
-  stdcall MoveControllerFree, 0, 0, 3
-  
-  @@: 
-    cmp [wparam], $73 ; s
-    jne .AKEY1
-    
-    stdcall MoveControllerFree, 0, 0, 3
-    
-.AKEY1:
-
-  cmp [wparam], VK_A ; A
-  jne @F
-  
-  stdcall MoveControllerFree, 0, 0, 4
-  
-  @@: 
-    cmp [wparam], $61 ; a
     jne .finish
     
-    stdcall MoveControllerFree, 0, 0, 4
+    ;stdcall ShowAchivementsList - список достижений
                 
 .finish:
   
@@ -165,6 +109,20 @@ proc OnKeyDown, wparam
 
   cmp [wparam], VK_ESCAPE
   jne .control        
+    
+    cmp [_isCursor], 1
+    jne .switch 
+      
+    invoke  ShowCursor, 0
+    
+    neg [_isCursor]
+    
+    jmp .control 
+    
+.switch:
+
+    invoke ShowCursor, 1
+    
     neg [_isCursor]
      
 .control:
@@ -204,3 +162,40 @@ proc OnKeyDown, wparam
   
 endp
 
+proc checkMoveKeys
+
+  invoke  GetAsyncKeyState, $57
+  cmp eax, 0
+  jz .A
+  
+  stdcall MoveControllerFree, �ameraTurn, �ameraPos, 1
+  
+.A:
+  
+  invoke  GetAsyncKeyState, $41
+  cmp eax, 0
+  jz .S
+  
+  stdcall MoveControllerFree, �ameraTurn, �ameraPos, 2
+  
+.S:
+  
+  invoke  GetAsyncKeyState, $53
+  cmp eax, 0
+  jz .D
+
+  stdcall MoveControllerFree, �ameraTurn, �ameraPos, 3
+  
+.D:
+  
+  invoke  GetAsyncKeyState, $44
+  cmp eax, 0
+  jz @F
+  
+  stdcall MoveControllerFree, �ameraTurn, �ameraPos, 4
+
+@@:
+  
+  ret
+  
+endp
