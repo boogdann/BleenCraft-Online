@@ -1,4 +1,5 @@
 format PE GUI 4.0
+stack 0x10000
 entry Start
 
 ;#############Module incleude#################
@@ -161,8 +162,12 @@ section '.data' data readable writeable
          tmp_turn        dd    0.005
          ;############################################################ 
          
+         
          ;####################Global variables 2######################
-         WindowRect      RECT       0, 0, 0, 0
+         ;Дискриптор кучи:
+         hHeap           dd              ?
+         ;Параметры окна:
+         WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
          _isCursor       dd    1
