@@ -5,8 +5,9 @@ entry Start
 include "win32a.inc" 
 ;В первую очередь подключить модуль GraficAPI!
 include "Grafic\GraficAPI\GraficAPI.asm"
+include "Units\Movement\keys.code"
+include "Units\Movement\move.asm"
 ;#############################################
-
 
 section '.text' code readable executable     
 
@@ -32,22 +33,26 @@ Start:
   ;Стандартный цикл оконной процедуры
   .MainCycle:
         invoke  GetMessage, msg, 0, 0, 0
+        invoke TranslateMessage, msg
         invoke  DispatchMessage, msg
         jmp     .MainCycle
   ;####################################################
-        
-      
+            
         
 ;К примеру простейшая оконная процедура
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
+        stdcall checkMoveKeys
+        stdcall OnMouseMove, сameraTurn, 0.01
+        
         ;К макросам тоже присмотрись) (Если что кину)
         switch  [uMsg]
         case    .Render,        WM_PAINT
         case    .Destroy,       WM_DESTROY
         case    .KeyDown,       WM_KEYDOWN
-
+        case    .KeyChar,       WM_CHAR
+        
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
         jmp     .Return
 
@@ -56,13 +61,24 @@ proc WindowProc uses ebx,\
         ;(Она расположена ниже)
         stdcall RenderScene
         jmp     .ReturnZero
+  
+  .KeyChar:
+        
+        stdcall OnCharDown, [wParam]
+        
+        jmp     .ReturnZero
+        
   .KeyDown:
         ;Выход по Esc
-        cmp     [wParam], VK_ESCAPE
-        je      .Destroy
+        
+        stdcall OnKeyDown, [wParam]
+        
         jmp     .ReturnZero
-  .Destroy:
-        invoke  ExitProcess, 0
+ 
+ .Destroy:
+ 
+        invoke ExitProcess, 1
+  
   .ReturnZero:
         xor     eax, eax
   .Return:
@@ -148,6 +164,10 @@ section '.data' data readable writeable
          ;####################Global variables 2######################
          WindowRect      RECT       0, 0, 0, 0
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
+         
+         _isCursor       dd    1
+         
+         mouse POINT
          ;############################################################
          
          
@@ -156,15 +176,14 @@ section '.data' data readable writeable
          include "Grafic\GraficAPI\GraficAPI.inc"   
          ;#############################################      
 
-
-
 section '.idata' import data readable writeable
 
   ;################library imports##############
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
           opengl32, 'opengl32.DLL',\ ;1) ;Добавь нужные для GraficAPI библиотеки!
-          gdi32,    'GDI32.DLL'      ;2) 
+          gdi32,    'GDI32.DLL', \      ;2) 
+          GetCursorPos, 'GetCursorPos'
 
   include 'api\kernel32.inc'
   include 'api\user32.inc'
