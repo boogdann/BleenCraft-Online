@@ -16,7 +16,7 @@ pfd             PIXELFORMATDESCRIPTOR   sizeof.PIXELFORMATDESCRIPTOR, 1, PFD_FLA
                               
                                                             
 className       db              "GraficAPI"
-clientRect      RECT            0, 0, 0, 0
+
 hHeap           dd              ?
 hdcBack         dd              ?
 startTime       dd              ?
