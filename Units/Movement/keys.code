@@ -1,50 +1,9 @@
-;Поясняю: большинство функций я не прописывал ввиду того, что мы не обсуждали 
-;интерфейс, анимации, коллизии и т.д., да и сам я пока лезть в эти дебри не хочу 
+proc OnCharDown, wparam
 
-.wmkeydown: 
-  
-  cmp [wparam], VK_ESCAPE
-  jne .control        
-    neg [_isCursor]
-    
-    
-.control:
-  
-  cmp [wparam], VK_CONTROL
-  jne .shift
-  ;shr [speed], 1 - подкрасться незаметно(на крысичах)
-
-.shift:   
-  cmp [wparam], VK_SHIFT 
-  jne .tab
-  ;shl [speed], 1 - уебашить с разбегу
- 
-.tab: 
-  cmp [wparam], VK_TAB
-  jne .F5
-  ;stdcall ShowPlayersList - список игроков на сервере
-
-.F5:
-  cmp [wparam], VK_F5
-  jne .F11
-  ;stdcall SwitchPersective - переключить перспективу
-  
-.F11:
-  cmp [wparam], VK_F11
-  jne .F2
-  ;stdcall SelectFullScreen - выбрать полноэкранный режим
-  
-.F2:
-  cmp [wparam], VK_F2
-  jne .finish
-  ;stdcall ScreenShot - скриншот блин блять...
-    
 ;===============================================================================
 ;=====================ПРЕДМЕТЫ ИЗ ПАНЕЛИ БЫСТРОГО ДОСТУПА=======================
 ;=====================ТУТ НАЧИНАЕТСЯ МЕССИВО ЕБАНОЕ БЛЯТЬ=======================
 ;===============================================================================
-
-.wmchar:
 
   cmp [wparam], $31
   jne .second
@@ -69,7 +28,7 @@
   cmp [wparam], $35
   jne .sixth
   ;stdcall QuickItem, 5 - пятый предмет
-
+  
 .sixth:
   cmp [wparam], $36
   jne .seventh
@@ -185,7 +144,7 @@
     
 .AKEY1:
 
-  cmp [wparam], $41 ; A
+  cmp [wparam], VK_A ; A
   jne @F
   
   stdcall MoveControllerFree, 0, 0, 4
@@ -197,5 +156,51 @@
     stdcall MoveControllerFree, 0, 0, 4
                 
 .finish:
+  
+  ret
+  
+endp
 
-  ;здесь остальные процедуры
+proc OnKeyDown, wparam
+
+  cmp [wparam], VK_ESCAPE
+  jne .control        
+    neg [_isCursor]
+     
+.control:
+  
+  cmp [wparam], VK_CONTROL
+  jne .shift
+  ;shr [speed], 1 - подкрасться незаметно(на крысичах)
+
+.shift:   
+  cmp [wparam], VK_SHIFT 
+  jne .tab
+  ;shl [speed], 1 - уебашить с разбегу
+ 
+.tab: 
+  cmp [wparam], VK_TAB
+  jne .F5
+  ;stdcall ShowPlayersList - список игроков на сервере
+  
+.F5:
+  cmp [wparam], VK_F5
+  jne .F11
+  ;stdcall SwitchPersective - переключить перспективу
+  
+.F11:
+  cmp [wparam], VK_F11
+  jne .F2
+  ;stdcall SelectFullScreen - выбрать полноэкранный режим
+  
+.F2:
+  cmp [wparam], VK_F2
+  jne .finish
+  ;stdcall ScreenShot - скриншот блин блять...
+  
+.finish:
+
+  ret
+  
+endp
+
