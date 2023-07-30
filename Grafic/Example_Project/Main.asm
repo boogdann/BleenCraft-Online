@@ -1,34 +1,42 @@
 format PE GUI 4.0
 entry Start
 
+;#############Module incleude#################
 include "win32a.inc" 
 ;В первую очередь подключить модуль GraficAPI!
-include "GraficAPI\GraficAPI.asm"
+include "..\GraficAPI\GraficAPI.asm"
+;#############################################
+
 
 section '.text' code readable executable     
 
 Start:
+  ;###############Module initialize###################
   ;Сначала нужно проиницилизировать модуль
   ;P.S. она также иницициализирует всю оконную мишуру
   stdcall gf_grafic_init
+  ;###################################################
   
+  ;##############Project data initialize###############
   ;Теперь в качестве примера загрузим куб в видеопамять
-  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle, 1
+  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle
   ;P.S. Заметь, что для загрузки объекта мы прсто кидаем адресс на Handle (dd ?, ?)
-  ;P.S. Третий параметр 
+
+  ;Далее загрузим тексуру земли в видеопамять и получим Handle
+  stdcall gf_UploadTexture, tx_grassName 
+  mov [tx_grassHandle], eax
+  ;####################################################
   
-  ;Ожидай в следующих версиях!!!
-  ;Далее загрузим тексуру земли в видеопамять
-  ;stdcall gf_UploadTexture, tx_grassName 
-  ;mov [tx_grassHandle], eax
-  ;P.S. Далее эти Handle-ы будут исользоваться
   
+  ;#################Project circle####################
   ;Стандартный цикл оконной процедуры
   .MainCycle:
         invoke  GetMessage, msg, 0, 0, 0
         invoke  DispatchMessage, msg
         jmp     .MainCycle
+  ;####################################################
         
+      
         
 ;К примеру простейшая оконная процедура
 proc WindowProc uses ebx,\
@@ -43,25 +51,21 @@ proc WindowProc uses ebx,\
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
         jmp     .Return
 
-.Render:
+  .Render:
         ;Самое интересное это то что в функции RenderScene
-        ;(Она расположена ниже) 
+        ;(Она расположена ниже)
         stdcall RenderScene
         jmp     .ReturnZero
-
-.KeyDown:
+  .KeyDown:
         ;Выход по Esc
         cmp     [wParam], VK_ESCAPE
         je      .Destroy
         jmp     .ReturnZero
-
-.Destroy:
+  .Destroy:
         invoke  ExitProcess, 0
-
-.ReturnZero:
+  .ReturnZero:
         xor     eax, eax
-
-.Return:
+  .Return:
         ret
 endp
 
@@ -99,21 +103,28 @@ endp
 
 section '.data' data readable writeable
          ;Обязательно нужно выставить переменные окружения:
+         ;###############Global variables##################
          ;Путь к объектам относительно исполняемого:
          GF_OBJ_PATH        db     "Assets\ObjectsPack\", 0
          ;Путь к текстурам относительно исполняемого:
          GF_TEXTURE_PATH    db     "Assets\TexturesPack\", 0
-         
+         ;Путь к юниту графики 
+         GF_PATH            db     "..\GraficAPI\", 0
+         GF_PATH_LEN        db     $ - GF_PATH
+         ;################################################# 
+                  
+                  
          ;Пример данных:
+         ;####################Project data###########################
          ;Объекты
-         obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
+         obj_cube_name   db   "car.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
          ;P.S. L - в начале это файл с генерацией .mobj c uint8
          ;     B - в начале это файл с генерацией .mobj c uint16
          ;     B - cтавить не обязательно (Это по дефолту)
          obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт, так нужно!!!
          
          ;Текстуры
-         tx_grassName    db   "Grass.png", 0 ;(GF_TEXTURE_PATH)
+         tx_grassName    db   "Grass.mbmp", 0 ;(GF_TEXTURE_PATH)
          tx_grassHandle  dd   ?
          
          ;Позиция объекта:
@@ -132,20 +143,24 @@ section '.data' data readable writeable
          
          ;Для пример с поворотом объекта
          tmp_turn        dd    0.005
+         ;############################################################ 
          
-
+         
+         ;################Data imports#################
          ;Добавить импорты данных нужные GraficAPI
-         include "GraficAPI\GraficAPI.inc"            ;1)
-         include "GraficAPI\gf_main\gf_api_init.inc"  ;2)  
-         include "GraficAPI\gf_main\gf_render_data.inc"  ;3) 
+         include "..\GraficAPI\GraficAPI.inc"   
+         ;#############################################      
+
+
 
 section '.idata' import data readable writeable
 
+  ;################library imports##############
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
           opengl32, 'opengl32.DLL',\ ;1) ;Добавь нужные для GraficAPI библиотеки!
-          gdi32,    'GDI32.DLL'      ;2)
-         
+          gdi32,    'GDI32.DLL'      ;2) 
 
   include 'api\kernel32.inc'
   include 'api\user32.inc'
+  ;################Data imports#################

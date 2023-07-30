@@ -1,0 +1,15 @@
+; FASM Editor
+
+include "Main.asm"
+
+if 2 * 2 = 5
+[options]
+  countAsm=1
+  countInc=3
+[asm]
+  asm1="Main.asm"
+[inc]
+  inc1="gf_api_init.inc"
+  inc2="gf_render_data.inc"
+  inc3="GraficAPI.inc"
+end if

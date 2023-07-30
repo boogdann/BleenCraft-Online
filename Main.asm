@@ -1,104 +1,171 @@
 format PE GUI 4.0
 entry Start
 
-include 'win32a.inc'
-include '\Units\Field\Field.const'
-include '\Units\Blocks\Blocks.const'
-include '\Units\Tools\Tools.const'
-include '\Units\Obj3D\Obj3D.const'
-section '.text' code readable writeable executable
-
-Start:  
-   stdcall Field.Initialize
-   stdcall Blocks.GetDestroyTime, Blocks.LEAVES, Tools.AXE
-   stdcall Field.SetBlockIndex, 1, 10, 5, 13
-   mov    eax, 123
-   stdcall Field.GetBlockIndex, 1, 10, 5
-;  stdcall AddObject, arrPosition, arrTurn, arrVertex, arrVertexIndexes, arrScale, arrNormals
-  stdcall Blocks.GetTextureHandle, 10
-  invoke GetModuleHandle, 0
-  mov [wc.hInstance], eax
-  invoke LoadIcon, 0, IDI_APPLICATION
-  mov [wc.hIcon], eax
-  invoke  LoadCursor, 0, IDC_ARROW                    
-  mov [wc.hCursor], eax
-  invoke RegisterClass, wc                            
-  test eax, eax
-  jz error
-
-  invoke CreateWindowEx, 0, _class, _title, WS_VISIBLE + WS_DLGFRAME + WS_SYSMENU,\
-                         128, 128, 256, 192, NULL, NULL, [wc.hInstance], NULL
-  test eax, eax
-  jz error
+;#############Module incleude#################
+include "win32a.inc" 
+;В первую очередь подключить модуль GraficAPI!
+include "Grafic\GraficAPI\GraficAPI.asm"
+;#############################################
 
 
-msg_loop:
-  invoke GetMessage, msg, NULL, 0, 0
-  cmp eax, 1
-  jb end_loop
-  jne msg_loop
-  invoke TranslateMessage, msg
-  invoke DispatchMessage, msg
-  jmp msg_loop
+section '.text' code readable executable     
 
-error:
-  invoke MessageBox, NULL, _error, NULL, MB_ICONERROR + MB_OK
-
-end_loop:
-  invoke ExitProcess, [msg.wParam]
-
-proc WindowProc uses ebx esi edi, hwnd, wmsg, wparam, lparam
-  cmp [wmsg], WM_DESTROY
-  je .wmdestroy
+Start:
+  ;###############Module initialize###################
+  ;Сначала нужно проиницилизировать модуль
+  ;P.S. она также иницициализирует всю оконную мишуру
+  stdcall gf_grafic_init
+  ;###################################################
   
-.defwndproc:
-  invoke DefWindowProc, [hwnd], [wmsg], [wparam], [lparam]
-  jmp .finish
+  ;##############Project data initialize###############
+  ;Теперь в качестве примера загрузим куб в видеопамять
+  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle
+  ;P.S. Заметь, что для загрузки объекта мы прсто кидаем адресс на Handle (dd ?, ?)
+
+  ;Далее загрузим тексуру земли в видеопамять и получим Handle
+  stdcall gf_UploadTexture, tx_grassName 
+  mov [tx_grassHandle], eax
+  ;####################################################
   
-.wmdestroy:
-  invoke PostQuitMessage,0
-  xor eax, eax
   
-.finish:
+  ;#################Project circle####################
+  ;Стандартный цикл оконной процедуры
+  .MainCycle:
+        invoke  GetMessage, msg, 0, 0, 0
+        invoke  DispatchMessage, msg
+        jmp     .MainCycle
+  ;####################################################
+        
+      
+        
+;К примеру простейшая оконная процедура
+proc WindowProc uses ebx,\
+     hWnd, uMsg, wParam, lParam
+
+        ;К макросам тоже присмотрись) (Если что кину)
+        switch  [uMsg]
+        case    .Render,        WM_PAINT
+        case    .Destroy,       WM_DESTROY
+        case    .KeyDown,       WM_KEYDOWN
+
+        invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
+        jmp     .Return
+
+  .Render:
+        ;Самое интересное это то что в функции RenderScene
+        ;(Она расположена ниже)
+        stdcall RenderScene
+        jmp     .ReturnZero
+  .KeyDown:
+        ;Выход по Esc
+        cmp     [wParam], VK_ESCAPE
+        je      .Destroy
+        jmp     .ReturnZero
+  .Destroy:
+        invoke  ExitProcess, 0
+  .ReturnZero:
+        xor     eax, eax
+  .Return:
+        ret
+endp
+
+
+;(От себя рекоменлую организовать эту функцию лишь как простой вывод и
+;вынести все действия над объктами наружу, не пихая всё сюда), но дело твоё
+;Пример процедуры для рендера сцены
+proc RenderScene
+    ;Сначала нужно проиницилизировать основные данные кадра
+    stdcall gf_RenderBegin, сameraPos, сameraTurn  
+    
+    ;Ожидай в следующих версиях!!!
+    ;Также нужно проиницелизтровать источники света (Рассказать Богдану про оптимизацию!!!)
+    ;stdcall gf_CrateLightning, lightningCount, LightPosArray
+    
+    ;Ожидай в следующих версиях!!!
+    ;Рендер ландшафта: (LandDataArray - 3-х мерный массив ландшафта) (X, Y, Z - размеры)
+    ;stdcall gf_RenderMineLand, LandDataArray, X, Y, Z
+    
+    ;Для рендера иных объектов:
+    ;(Например рендер куба с текстурой земли)
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
+                            cubePos, cubeTurn, [cubeScale]  
+                            
+    ;В качестве примера действия будем вращать куб
+    fld   [cubeTurn + Vector3.y]
+    fadd  [tmp_turn] 
+    fstp  [cubeTurn + Vector3.y]
+    
+    ;В самом конце рендера сцены нужно:
+    stdcall gf_RenderEnd
   ret
 endp
-  
-  include '\Units\Field\Field.code'
-  include '\Units\Blocks\Blocks.code'
-  include '\Units\Obj3D\Obj3D.code'
+
+
 section '.data' data readable writeable
-  
-  arrPosition          dd       123, 123, 123
-  arrTurn              dd       100, 100, 100
-  arrScale             dd       999
-  arrVertex            dd       2, 666, 666
-  arrVertexIndexes     dd       2, 777, 777
-  arrNormals           dd       2, 888, 888
-  
+         ;Обязательно нужно выставить переменные окружения:
+         ;###############Global variables##################
+         ;Путь к объектам относительно исполняемого:
+         GF_OBJ_PATH        db     "Assets\ObjectsPack\", 0
+         ;Путь к текстурам относительно исполняемого:
+         GF_TEXTURE_PATH    db     "Assets\TexturesPack\", 0
+         ;Путь к юниту графики 
+         GF_PATH            db     "Grafic\GraficAPI\", 0
+         GF_PATH_LEN        db     $ - GF_PATH
+         ;################################################# 
+                  
+                  
+         ;Пример данных:
+         ;####################Project data###########################
+         ;Объекты
+         obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
+         ;P.S. L - в начале это файл с генерацией .mobj c uint8
+         ;     B - в начале это файл с генерацией .mobj c uint16
+         ;     B - cтавить не обязательно (Это по дефолту)
+         obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт, так нужно!!!
+         
+         ;Текстуры
+         tx_grassName    db   "Grass.mbmp", 0 ;(GF_TEXTURE_PATH)
+         tx_grassHandle  dd   ?
+         
+         ;Позиция объекта:
+         cubePos         dd   0.0, 0.0, 0.0
+         ;Поворот объекта:  (в градусах)
+         cubeTurn        dd   0.0, 0.0, 0.0
+         ;Размер объекта:
+         cubeScale       dd   1.0
 
-  hHeap                dd       ?   
-   
-  _class TCHAR 'FASMWIN32', 0
-  _title TCHAR 'Win32 program template', 0
-  _error TCHAR 'Startup failed.', 0
+         ;Позиция головы
+         сameraPos       dd    0.0, 0.0, -4.0
+         ;Поворот головы:  (в градусах)
+         сameraTurn      dd    0.0, 0.0, 0.0 ;(x, y - пользуйся, z - не функциональна)
+         ;P.S. z - мемная координата (как просмотр из-за стены под углом в rainbow six siege),
+         ;но по итогу изза ненадобности функционал z был вырезан, так что неважно чему он равен
+         
+         ;Для пример с поворотом объекта
+         tmp_turn        dd    0.005
+         ;############################################################ 
+         
+         ;####################Global variables 2######################
+         WindowRect      RECT       0, 0, 0, 0
+         ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
+         ;############################################################
+         
+         
+         ;################Data imports#################
+         ;Добавить импорты данных нужные GraficAPI
+         include "Grafic\GraficAPI\GraficAPI.inc"   
+         ;#############################################      
 
-  wc WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_BTNFACE + 1, NULL, _class
-  msg MSG
-;  include '\Units\Types\Types.type'
+
+
 section '.idata' import data readable writeable
 
-  include '\Units\Field\Field.di'
-  include '\Units\Blocks\Blocks.di'
-  include '\Units\Obj3D\Obj3D.di'
-  include '\Units\Tools\Tools.di'
-  
+  ;################library imports##############
   library kernel32, 'KERNEL32.DLL',\
-	  user32, 'USER32.DLL'
-    
+	        user32,   'USER32.DLL',\    
+          opengl32, 'opengl32.DLL',\ ;1) ;Добавь нужные для GraficAPI библиотеки!
+          gdi32,    'GDI32.DLL'      ;2) 
+
   include 'api\kernel32.inc'
   include 'api\user32.inc'
-    
-  include '\Units\Obj3D\Obj3D.du'
-  include '\Units\Field\Field.du'
-  include '\Units\Blocks\Blocks.du'
-  include '\Units\Tools\Tools.du'
+  ;################Data imports#################
