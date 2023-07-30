@@ -1,4 +1,4 @@
-proc MoveControllerFree, CameraTurn : WORD, CameraPos : WORD, Direction : WORD
+proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWORD
 ;===============================================================================
 ;====================Третий параметр задает направление движения================
 ;====================             1 - W - Forward               ================
