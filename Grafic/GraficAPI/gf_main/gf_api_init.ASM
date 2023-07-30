@@ -11,7 +11,7 @@
                             0, 0, 0, 0, 0, 0, 0, 0
     mov     [hMainWindow], eax
 
-    invoke  GetClientRect, eax, clientRect
+    invoke  GetClientRect, eax, WindowRect
     invoke  ShowCursor, 0
     
     invoke  GetDC, [hMainWindow]
@@ -32,7 +32,7 @@
     invoke  wglCreateContext, [hdc]
     invoke  wglMakeCurrent, [hdc], eax
 
-    invoke  glViewport, 0, 0, [clientRect.right], [clientRect.bottom]
+    invoke  glViewport, 0, 0, [WindowRect.right], [WindowRect.bottom]
     
     invoke  glClearColor, 0.7, 0.4, 0.2, 1.0
     invoke  glEnable, GL_DEPTH_TEST
@@ -90,8 +90,8 @@
  
  
  proc gf_InitRenderParams 
-    fld dword[clientRect.right]
-    fdiv dword[clientRect.bottom]
+    fld dword[WindowRect.right]
+    fdiv dword[WindowRect.bottom]
     fstp dword[aspect]
  
     ;Создание матрицы проекции    
