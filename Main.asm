@@ -6,7 +6,7 @@ include "win32a.inc"
 ;В первую очередь подключить модуль GraficAPI!
 include "Grafic\GraficAPI\GraficAPI.asm"
 include "Units\Movement\keys.code"
-include "Units\Movement\move.code"
+include "Units\Movement\move.asm"
 ;#############################################
 
 section '.text' code readable executable     
@@ -37,15 +37,15 @@ Start:
         invoke  DispatchMessage, msg
         jmp     .MainCycle
   ;####################################################
-        
-      
+            
         
 ;К примеру простейшая оконная процедура
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
         stdcall checkMoveKeys
-
+        stdcall OnMouseMove, сameraTurn, 0.01
+        
         ;К макросам тоже присмотрись) (Если что кину)
         switch  [uMsg]
         case    .Render,        WM_PAINT
@@ -166,6 +166,8 @@ section '.data' data readable writeable
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
          _isCursor       dd    1
+         
+         mouse POINT
          ;############################################################
          
          
@@ -180,7 +182,8 @@ section '.idata' import data readable writeable
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
           opengl32, 'opengl32.DLL',\ ;1) ;Добавь нужные для GraficAPI библиотеки!
-          gdi32,    'GDI32.DLL'      ;2) 
+          gdi32,    'GDI32.DLL', \      ;2) 
+          GetCursorPos, 'GetCursorPos'
 
   include 'api\kernel32.inc'
   include 'api\user32.inc'

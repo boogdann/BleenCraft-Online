@@ -12,7 +12,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
        b  dd  ? 
        Pi dd  3.14159265359 
        PiDegree dd 180.0 
-       WalkingSpeed dd 0.2 
+       WalkingSpeed dd 0.02 
     endl   
   
     mov esi, [CameraTurn] 
@@ -38,7 +38,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
     cmp [Direction], 4 ;Left 
     jz .MoveLeft 
     Jmp .Skip 
- 
+  
     .MoveForward: 
       ;CameraPos[1] = CameraPos[1] - cos(a)*sin(b) * WalkingSpeed 
       fld dword [edi] 
@@ -142,7 +142,88 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
  
     .Skip: 
 
+  ret
+  
+endp
 
+proc OnMouseMove, cameraTurn, sensitivity : DWORD 
+
+  locals
+    
+    scr.x dd ?
+    scr.y dd ?
+    
+    delX  dd ?
+    delY  dd ?
+    
+    st    dd 2  
+  
+  endl
+   
+  ;В scr.x будет храниться деленная на 2 ширина экрана
+  mov eax, [WindowRect.right]
+  mov [scr.x], eax
+
+  fld [scr.x]
+  fild [st]
+   
+  fdivp
+  
+  fstp [scr.x]
+
+  ;В scr.x будет храниться деленная на 2 высота экрана
+  mov eax, [WindowRect.bottom]
+  mov [scr.y], eax
+  
+  fld [scr.y]
+  fild [st]
+   
+  fdivp
+  
+  fstp [scr.y]
+  
+  invoke GetCursorPos, mouse
+  
+  mov eax, [mouse.x]
+  mov ebx, [mouse.y]
+  
+  mov edi, [cameraTurn]
+
+  sub eax, [scr.x]
+  mov [delX], eax
+  
+  fld dword[sensitivity]
+  fimul [delX]
+  
+  fstp [delX]
+  
+  fld dword[edi + 4]
+  fld [delX]
+  
+  faddp
+  fstp dword[edi + 4]
+
+;===============================================================================
+;====================          ПОВОРОТЫ ПО ОСИ OY         ======================
+;===============================================================================
+
+  sub ebx, [scr.y]
+  neg ebx
+  mov [delY], ebx
+  
+  fld dword[sensitivity]
+  fimul [delY]
+  
+  fstp [delY]
+  
+  fld dword[edi]
+  fld [delY]
+  
+  faddp
+  fstp dword[edi]  
+
+  invoke SetCursorPos, [scr.x], [scr.y] 
+    
   ret
   
 endp
