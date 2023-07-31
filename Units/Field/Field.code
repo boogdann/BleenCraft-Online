@@ -1,56 +1,36 @@
 ;               
 ;              proc Field.Initialize
-proc Field.Initialize
-
-;    ВРЕМЕННАЯ РЕАЛИЗАЦИЯ
-;    create stone (hight 0 - 9)
-     mov    ecx, 9
-     mov    edi, Field.Blocks
-.IterateLayers:
-     push   ecx
-     mov    ecx, Field.LENGTH
-.IterateLine:
-    push    ecx
-    mov     ecx, Field.WIDTH
-    mov     al,  Blocks.STONE
-    rep stosw
-    pop     ecx 
-    loop    .IterateLine
-    pop     ecx
-    loop    .IterateLayers     
-
-;   create dirt (hight 10)
-
-    mov     ecx, Field.LENGTH
-.IterateLineDirt:
-    push    ecx
-    mov     ecx, Field.WIDTH
-    mov     al,  Blocks.DIRT
-    rep stosw
-    pop     ecx 
-    loop    .IterateLineDirt 
+proc Field.Initialize uses edi
     
-;    create air (11-19)
-     mov    ecx, 9
-     mov    edi, Field.Blocks
-.IterateLayersAir:
-     push   ecx
-     mov    ecx, Field.LENGTH
-.IterateLineAir:
-    push    ecx
-    mov     ecx, Field.WIDTH
-    mov     al,  Blocks.AIR
-    rep stosw
-    pop     ecx 
-    loop    .IterateLineAir
-    pop     ecx
-    loop    .IterateLayersAir
+    mov al, 1
+    mov edi, Field.Blocks
+    mov ecx, 100
+    rep stosb
+    
+.Iterate_Z:
+
+.Iterate_Y:
+
+.Iterate_X:
+    
+    stdcall Field.SetBlockIndex, 12, 12, 5, Blocks.STONE
+    stdcall Field.SetBlockIndex, 13, 12, 5, Blocks.STONE 
+    stdcall Field.SetBlockIndex, 14, 12, 5, Blocks.STONE
+    stdcall Field.SetBlockIndex, 13, 12, 6, Blocks.STONE
+    stdcall Field.SetBlockIndex, 13, 12, 7, Blocks.STONE
     
     stdcall Field.SetBlockIndex, 12, 12, 12, Blocks.STONE
     stdcall Field.SetBlockIndex, 13, 12, 12, Blocks.STONE 
     stdcall Field.SetBlockIndex, 14, 12, 12, Blocks.STONE
     stdcall Field.SetBlockIndex, 13, 12, 13, Blocks.STONE
     stdcall Field.SetBlockIndex, 13, 12, 14, Blocks.STONE
+    
+    stdcall Field.SetBlockIndex, 10, 10, 2, Blocks.STONE
+    stdcall Field.SetBlockIndex, 11, 10, 2, Blocks.STONE 
+    stdcall Field.SetBlockIndex, 12, 10, 2, Blocks.STONE
+    stdcall Field.SetBlockIndex, 11, 10, 3, Blocks.STONE
+    stdcall Field.SetBlockIndex, 11, 10, 4, Blocks.STONE    
+
 .Finish:
     ret
 endp
@@ -63,9 +43,10 @@ proc Field.GetBlockIndex uses edi, X: word, Y: word, Z: word
 ;     stdcall Field.TestBounds, word[X], word[Y], word[Z]  
      cmp    eax, ERROR_OUT_OF_BOUND
      jz     .Finish   
-
+     xor    eax, eax
+     
      movzx  edi, word[Y]  
-     imul   eax, edi, Field.WIDTH
+     imul   eax, edi, Field.LENGTH
      movzx  edi, word[X]
      add    eax, edi
      mul    word[Z]
@@ -83,23 +64,29 @@ endp
 ;    Input:  Word X, Word Y, Word Z, byte BlockIndex
 ;    Output: eax <- BlockIndex or ErrorCode
 ;
-proc Field.SetBlockIndex uses edi, X: dword, Y: dword, Z: dword, BlockIndex: byte
+proc Field.SetBlockIndex uses edi eax esi ecx, X: dword, Y: dword, Z: dword, BlockIndex: byte
 ;     stdcall Field.TestBounds, word[X], word[Y], word[Z]     
      cmp    eax, ERROR_OUT_OF_BOUND
      jz     .Finish 
+     
+     xor    eax, eax
 
      movzx  edi, word[Y]  
-     imul   eax, edi, Field.WIDTH
+     imul   eax, edi, Field.LENGTH
      movzx  edi, word[X]
      add    eax, edi
-     mul    word[Z]
+     
+     movzx  esi, word[Z]
+     imul   ecx, esi, Field.LENGTH*Field.WIDTH 
+     add    eax, ecx
+
      add    eax, Field.Blocks
      
      xchg   eax, edi
      movzx  eax, byte[BlockIndex]
-     mov    [edi], al
-     jmp    .Finish
+     mov    byte[edi], al
 
+     jmp    .Finish
 .Finish:
      ret
 endp
