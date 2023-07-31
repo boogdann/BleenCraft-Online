@@ -55,6 +55,7 @@ aspect          GLfloat         ?
 
 radian          GLfloat         57.32
 
+gf_tmp_objPos   dd    ?,   ?,   ?
 gf_temp_path    db    50   dup   (?)
 
 
