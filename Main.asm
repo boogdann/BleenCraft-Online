@@ -6,6 +6,7 @@ entry Start
 include "win32a.inc" 
 ;В первую очередь подключить модуль GraficAPI!
 include "Grafic\GraficAPI\GraficAPI.asm"
+include "Units\Asm_Includes\Const.asm"
 include "Units\Movement\keys.code"
 include "Units\Movement\move.asm"
 ;#############################################
@@ -29,6 +30,7 @@ Start:
   mov [tx_grassHandle], eax
   ;####################################################
   
+  stdcall Field.Initialize
   
   ;#################Project circle####################
   ;Стандартный цикл оконной процедуры
@@ -98,25 +100,25 @@ proc RenderScene
     ;Также нужно проиницелизтровать источники света (Рассказать Богдану про оптимизацию!!!)
     ;stdcall gf_CrateLightning, lightningCount, LightPosArray
     
-    ;Ожидай в следующих версиях!!!
-    ;Рендер ландшафта: (LandDataArray - 3-х мерный массив ландшафта) (X, Y, Z - размеры)
-    ;stdcall gf_RenderMineLand, LandDataArray, X, Y, Z
+    ;Рендер ландшафта: (LandDataArray - 3-x мерный массив ландшафта) (X, Y, Z - размеры)
+    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], obj_CubeHandle
     
     ;Для рендера иных объектов:
     ;(Например рендер куба с текстурой земли)
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
-                            cubePos, cubeTurn, [cubeScale]  
+    ;stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
+    ;                        cubePos, cubeTurn, [cubeScale]  
                             
     ;В качестве примера действия будем вращать куб
-    fld   [cubeTurn + Vector3.y]
-    fadd  [tmp_turn] 
-    fstp  [cubeTurn + Vector3.y]
+    ;fld   [cubeTurn + Vector3.y]
+    ;fadd  [tmp_turn] 
+    ;fstp  [cubeTurn + Vector3.y]
     
     ;В самом конце рендера сцены нужно:
     stdcall gf_RenderEnd
   ret
 endp
 
+  include "Units\Asm_Includes\Code.asm"
 
 section '.data' data readable writeable
          ;Обязательно нужно выставить переменные окружения:
@@ -149,7 +151,7 @@ section '.data' data readable writeable
          ;Поворот объекта:  (в градусах)
          cubeTurn        dd   0.0, 0.0, 0.0
          ;Размер объекта:
-         cubeScale       dd   1.0
+         cubeScale       dd   0.5
 
          ;Позиция головы
          сameraPos       dd    0.0, 0.0, -4.0
@@ -175,7 +177,10 @@ section '.data' data readable writeable
          mouse POINT
          ;############################################################
          
-         
+         WorldLength dd Field.LENGTH ;x
+         WorldWidth  dd Field.WIDTH ;y
+         WorldHeight dd Field.HEIGHT ;z
+                 
          ;################Data imports#################
          ;Добавить импорты данных нужные GraficAPI
          include "Grafic\GraficAPI\GraficAPI.inc"   
@@ -193,3 +198,5 @@ section '.idata' import data readable writeable
   include 'api\kernel32.inc'
   include 'api\user32.inc'
   ;################Data imports#################
+  include "Units\Asm_Includes\Di.asm"
+  include "Units\Asm_Includes\Du.asm"
