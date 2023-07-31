@@ -82,13 +82,13 @@ proc RenderScene
     ;stdcall gf_CrateLightning, lightningCount, LightPosArray
     
     ;Ожидай в следующих версиях!!!
-    ;Рендер ландшафта: (LandDataArray - 3-х мерный массив ландшафта) (X, Y, Z - размеры)
-    ;stdcall gf_RenderMineLand, LandDataArray, X, Y, Z
+    ;Рендер ландшафта: (LandDataArray - 3-х мерный массив ландшафта) (X, Y, Z - размеры) ;obj_CubeHandle - хендл главного куба
+    stdcall gf_RenderMineLand, LandDataArray, [Length], [Width], [Hieght], obj_CubeHandle
     
     ;Для рендера иных объектов:
     ;(Например рендер куба с текстурой земли)
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
-                            cubePos, cubeTurn, [cubeScale]  
+    ;stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
+     ;                       cubePos, cubeTurn, [cubeScale]  
                             
     ;В качестве примера действия будем вращать куб
     fld   [cubeTurn + Vector3.y]
@@ -104,6 +104,8 @@ endp
 section '.data' data readable writeable
          ;Обязательно нужно выставить переменные окружения:
          ;###############Global variables##################
+         WindowRect         RECT   ?, ?, ?, ?
+         hHeap              dd     ?
          ;Путь к объектам относительно исполняемого:
          GF_OBJ_PATH        db     "Assets\ObjectsPack\", 0
          ;Путь к текстурам относительно исполняемого:
@@ -117,7 +119,7 @@ section '.data' data readable writeable
          ;Пример данных:
          ;####################Project data###########################
          ;Объекты
-         obj_cube_name   db   "car.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
+         obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
          ;P.S. L - в начале это файл с генерацией .mobj c uint8
          ;     B - в начале это файл с генерацией .mobj c uint16
          ;     B - cтавить не обязательно (Это по дефолту)
@@ -149,7 +151,16 @@ section '.data' data readable writeable
          ;################Data imports#################
          ;Добавить импорты данных нужные GraficAPI
          include "..\GraficAPI\GraficAPI.inc"   
-         ;#############################################      
+         ;#############################################    
+         
+         
+         ;################################
+         LandDataArray db 0, 0, 0, 0, 1,   0, 0, 1, 0, 0,    0, 0, 1, 0, 0,    0, 0, 1, 0, 0,    0, 1, 0, 0, 0, \
+                          0, 0, 0, 0, 0,   0, 0, 0, 0, 0,    0, 0, 0, 0, 0,    0, 0, 0, 0, 0,    0, 1, 0, 0, 0
+         Length dd 5 ;x
+         Width  dd 5 ;y
+         Hieght dd 2 ;z
+         ;################################  
 
 
 
