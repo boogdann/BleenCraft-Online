@@ -3,6 +3,7 @@ proc gf_RenderBegin, CameraPos, CameraTurn
   invoke  glMatrixMode, GL_MODELVIEW
   invoke  glLoadIdentity
   stdcall gf_get_camera_lookvec, [CameraPos], [CameraTurn] 
+  stdcall gf_get_camera_upvec, [CameraTurn]  
   stdcall Matrix.LookAt, [CameraPos], gf_camera_lookvec, gf_uplookvec
   invoke glGetFloatv, GL_MODELVIEW_MATRIX, gf_view_matrix              
   
