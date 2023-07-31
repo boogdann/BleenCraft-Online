@@ -234,8 +234,7 @@ endp
 
 proc gf_CreatePositionMatrix, pos
   mov edi, gf_position_matrix
-              
-  mov edi, gf_position_matrix            
+                        
   mov esi, [pos]
   fld  [esi + Vector3.x]
   fstp [edi + Matrix4x4.m41]

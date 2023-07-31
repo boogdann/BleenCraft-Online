@@ -4,9 +4,12 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=1
-  countInc=0
+  countAsm=3
+  countInc=1
 [asm]
   asm1="Main.asm"
+  asm2="gf_render.ASM"
+  asm3="gf_math.ASM"
 [inc]
+  inc1="gf_render_data.inc"
 end if
