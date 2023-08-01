@@ -1,2 +1,3 @@
-include "../Blocks/Blocks.code"
-include "../Field/Field.code"
+include "../Blocks/Blocks.asm"
+include "../Field/Field.asm"
+include "../Random/Random.asm"
