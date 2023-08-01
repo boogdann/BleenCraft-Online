@@ -80,6 +80,7 @@ proc gf_RenderMineLand, LandData, X, Y, Z, MainCubeHandle
                        ;Texture -> byte[esi]
                        ;Получить handle текстуры
                        ;stdcall GetTextureHandle, byte[esi]
+                       mov eax, [tx_BOGDANHandle]
                     
                        mov [_pos], ebx
                        fild [_pos] 

@@ -2,7 +2,7 @@ format PE GUI 4.0
 stack 0x10000
 entry Start
 
-;#############Module incleude#################
+;===============Module incleude================
 include "win32a.inc" 
 ;В первую очередь подключить модуль GraficAPI!
 include "Grafic\GraficAPI\GraficAPI.asm"
@@ -10,39 +10,44 @@ include "Units\Asm_Includes\Const.asm"
 include "Units\Movement\keys.code"
 include "Units\Movement\move.asm"
 include "Units\Movement\Vmove.asm"
-;#############################################
+;==============================================
 
 section '.text' code readable executable     
 
 Start:
-  ;###############Module initialize###################
+  ;================Module initialize==================
   ;Сначала нужно проиницилизировать модуль
   ;P.S. она также иницициализирует всю оконную мишуру
   stdcall gf_grafic_init
-  ;###################################################
+  ;===================================================
   
-  ;##############Project data initialize###############
+  ;=============Project data initialize=========================
   ;Теперь в качестве примера загрузим куб в видеопамять
   stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle
-  ;P.S. Заметь, что для загрузки объекта мы прсто кидаем адресс на Handle (dd ?, ?)
+  ;P.S. Для загрузки объекта мы кидаем адресс(!) на Handle (dd ?, ?)
 
   ;Далее загрузим тексуру земли в видеопамять и получим Handle
   stdcall gf_UploadTexture, tx_grassName 
   mov [tx_grassHandle], eax
-  ;####################################################
+  
+  stdcall gf_UploadTexture, tx_BOGDAN_Name 
+  mov [tx_BOGDANHandle], eax
   
   stdcall Field.Initialize
   
   invoke  ShowCursor, 0
+  ;===============================================================
   
-  ;#################Project circle####################
+  
+  
+  ;===================Project circle==================
   ;Стандартный цикл оконной процедуры
   .MainCycle:
         invoke  GetMessage, msg, 0, 0, 0
         invoke TranslateMessage, msg
         invoke  DispatchMessage, msg
         jmp     .MainCycle
-  ;####################################################
+  ;====================================================
             
         
 ;К примеру простейшая оконная процедура
@@ -69,22 +74,16 @@ proc WindowProc uses ebx,\
         jmp     .ReturnZero
   
   .KeyChar:
-        
         stdcall OnCharDown, [wParam]
-        
         jmp     .ReturnZero
         
   .KeyDown:
         ;Выход по Esc
-        
         stdcall OnKeyDown, [wParam]
-        
         jmp     .ReturnZero
  
- .Destroy:
- 
+  .Destroy:
         invoke ExitProcess, 1
-  
   .ReturnZero:
         xor     eax, eax
   .Return:
@@ -106,15 +105,9 @@ proc RenderScene
     ;Рендер ландшафта: (LandDataArray - 3-x мерный массив ландшафта) (X, Y, Z - размеры)
     stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], obj_CubeHandle
     
-    ;Для рендера иных объектов:
-    ;(Например рендер куба с текстурой земли)
-    ;stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
-    ;                        cubePos, cubeTurn, [cubeScale]  
-                            
-    ;В качестве примера действия будем вращать куб
-    ;fld   [cubeTurn + Vector3.y]
-    ;fadd  [tmp_turn] 
-    ;fstp  [cubeTurn + Vector3.y]
+    ;(Например рендер куба с текстурой земли)  (летает одинокий)
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
+                            cubePos, cubeTurn, [cubeScale]  
     
     ;В самом конце рендера сцены нужно:
     stdcall gf_RenderEnd
@@ -125,7 +118,7 @@ endp
 
 section '.data' data readable writeable
          ;Обязательно нужно выставить переменные окружения:
-         ;###############Global variables##################
+         ;===============Global variables===================
          ;Путь к объектам относительно исполняемого:
          GF_OBJ_PATH        db     "Assets\ObjectsPack\", 0
          ;Путь к текстурам относительно исполняемого:
@@ -133,11 +126,11 @@ section '.data' data readable writeable
          ;Путь к юниту графики 
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
-         ;################################################# 
+         ;===================================================
                   
                   
          ;Пример данных:
-         ;####################Project data###########################
+         ;=======================Project data==========================
          ;Объекты
          obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
          ;P.S. L - в начале это файл с генерацией .mobj c uint8
@@ -146,11 +139,14 @@ section '.data' data readable writeable
          obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт, так нужно!!!
          
          ;Текстуры
-         tx_grassName    db   "Grass.mbmp", 0 ;(GF_TEXTURE_PATH)
+         tx_grassName    db   "Grass_64.mbmw", 0 ;(GF_TEXTURE_PATH) 
+         tx_BOGDAN_Name  db   "BOGDANI_64.mbmw", 0 ;(GF_TEXTURE_PATH) 
+         ;texture Handles:
          tx_grassHandle  dd   ?
+         tx_BOGDANHandle dd   ?
          
          ;Позиция объекта:
-         cubePos         dd   0.0, 0.0, 0.0
+         cubePos         dd   1.0, 5.0, 0.0
          ;Поворот объекта:  (в градусах)
          cubeTurn        dd   0.0, 0.0, 0.0
          ;Размер объекта:
@@ -165,39 +161,37 @@ section '.data' data readable writeable
          
          ;Для пример с поворотом объекта
          tmp_turn        dd    0.005
-         ;############################################################ 
+         ;================================================================
          
          
-         ;####################Global variables 2######################
+         ;=======================Global variables 2=======================
          ;Дискриптор кучи:
-         hHeap           dd              ?
+         hHeap           dd         ?
          ;Параметры окна:
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         ;############################################################
-         
          WorldLength dd Field.LENGTH ;x
-         WorldWidth  dd Field.WIDTH ;y
+         WorldWidth  dd Field.WIDTH  ;y
          WorldHeight dd Field.HEIGHT ;z
-                 
-         ;################Data imports#################
+         ;================================================================
+         
+         ;=============Data imports================
          ;Добавить импорты данных нужные GraficAPI
          include "Grafic\GraficAPI\GraficAPI.inc"
          include "Units\Movement\MConst.asm"   
-         ;#############################################      
+         ;=========================================   
 
 section '.idata' import data readable writeable
 
-  ;################library imports##############
+  ;=============Library imports==============
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
-          opengl32, 'opengl32.DLL',\ ;1) ;Добавь нужные для GraficAPI библиотеки!
-          gdi32,    'GDI32.DLL', \      ;2) 
-          GetCursorPos, 'GetCursorPos'
-
+          opengl32, 'opengl32.DLL',\    ;1) ;Добавь нужные для GraficAPI библиотеки!
+          gdi32,    'GDI32.DLL'         ;2) 
+                                       
   include 'api\kernel32.inc'
   include 'api\user32.inc'
-  ;################Data imports#################
+  ;===========Data imports============
   include "Units\Asm_Includes\Di.asm"
   include "Units\Asm_Includes\Du.asm"
