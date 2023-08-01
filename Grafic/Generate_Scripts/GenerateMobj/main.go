@@ -135,7 +135,7 @@ func vertex2Analyze(str string) [2]float32 {
 		}
 		f64, _ := strconv.ParseFloat(vertex, 32)
 		VertexVec[v] = float32(f64)
-		i += 2
+		i++
 	}
 	return VertexVec
 }
