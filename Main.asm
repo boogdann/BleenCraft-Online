@@ -33,7 +33,7 @@ Start:
   
   stdcall Field.Initialize
   
-  invoke ShowCursor, 0
+  invoke  ShowCursor, 0
   
   ;#################Project circle####################
   ;Стандартный цикл оконной процедуры
@@ -50,7 +50,7 @@ proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
         stdcall checkMoveKeys
-        stdcall OnMouseMove, сameraTurn, sensitivity
+        stdcall OnMouseMove, сameraTurn, [sensitivity]
         
         ;К макросам тоже присмотрись) (Если что кину)
         switch  [uMsg]
@@ -174,8 +174,8 @@ section '.data' data readable writeable
          ;Параметры окна:
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
-
-         ;################################a############################
+         
+         ;############################################################
          
          WorldLength dd Field.LENGTH ;x
          WorldWidth  dd Field.WIDTH ;y
@@ -183,12 +183,9 @@ section '.data' data readable writeable
                  
          ;################Data imports#################
          ;Добавить импорты данных нужные GraficAPI
-         include "Grafic\GraficAPI\GraficAPI.inc" 
-         
-         ;Импорт данных для работы с управлением
-         include "Units\Movement\MConst.asm"  
+         include "Grafic\GraficAPI\GraficAPI.inc"
+         include "Units\Movement\MConst.asm"   
          ;#############################################      
-
 
 section '.idata' import data readable writeable
 

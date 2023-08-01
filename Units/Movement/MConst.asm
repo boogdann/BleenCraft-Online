@@ -1,5 +1,10 @@
-_isCursor       dd    -1 
+_isCursor       dd    1 ; Переменная для отслеживания, включен ли курсор
          
-mouse           POINT             
+mouse POINT              ; Переменная для отслеживания позиции мышки
 
-isMoving        dd    1 
+isMoving        dd    1  ; Если 1 - персонаж может двигаться: не сидит в инвентаре или в меню, -1 - персонаж двигается
+
+isRunning       dd    0
+
+CurrentSpeed    dd    ?
+

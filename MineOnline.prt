@@ -4,9 +4,12 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=1
+  countAsm=4
   countInc=0
 [asm]
   asm1="Main.asm"
+  asm2="MConst.asm"
+  asm3="move.asm"
+  asm4="Vmove.asm"
 [inc]
 end if
