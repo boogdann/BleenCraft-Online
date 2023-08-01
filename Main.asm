@@ -9,6 +9,7 @@ include "Grafic\GraficAPI\GraficAPI.asm"
 include "Units\Asm_Includes\Const.asm"
 include "Units\Movement\keys.code"
 include "Units\Movement\move.asm"
+include "Units\Movement\Vmove.asm"
 ;#############################################
 
 section '.text' code readable executable     
@@ -32,6 +33,8 @@ Start:
   
   stdcall Field.Initialize
   
+  invoke  ShowCursor, 0
+  
   ;#################Project circle####################
   ;Стандартный цикл оконной процедуры
   .MainCycle:
@@ -47,7 +50,7 @@ proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
         stdcall checkMoveKeys
-        stdcall OnMouseMove, сameraTurn, 0.01
+        stdcall OnMouseMove, сameraTurn, [sensitivity]
         
         ;К макросам тоже присмотрись) (Если что кину)
         switch  [uMsg]
@@ -172,9 +175,6 @@ section '.data' data readable writeable
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         _isCursor       dd    1
-         
-         mouse POINT
          ;############################################################
          
          WorldLength dd Field.LENGTH ;x
@@ -183,7 +183,8 @@ section '.data' data readable writeable
                  
          ;################Data imports#################
          ;Добавить импорты данных нужные GraficAPI
-         include "Grafic\GraficAPI\GraficAPI.inc"   
+         include "Grafic\GraficAPI\GraficAPI.inc"
+         include "Units\Movement\MConst.asm"   
          ;#############################################      
 
 section '.idata' import data readable writeable

@@ -12,12 +12,30 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
        b  dd  ? 
        Pi dd  3.14159265359 
        PiDegree dd 180.0 
-       WalkingSpeed dd 0.02 
+  
     endl   
   
     mov esi, [CameraTurn] 
     mov edi, [CameraPos] 
  
+    cmp [_isCursor], 1
+    jne  .Skip
+                                
+    cmp [isRunning], 1
+    jne @F
+    
+    mov eax, [RunningSpeed]
+    mov [CurrentSpeed], eax
+    
+    jmp .OnMove 
+     
+@@:
+
+    mov eax, [WalkingSpeed]
+    mov [CurrentSpeed], eax
+
+.OnMove:
+
     ;Calculate a in radian 
     fld dword [Pi] 
     fmul dword [esi] 
@@ -47,7 +65,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [b] 
       fsin 
       fmulp 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       fsubp 
       fstp dword [edi] 
@@ -55,7 +73,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [edi + 4] 
       fld dword [a] 
       fsin 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       faddp 
       fstp dword [edi + 4] 
@@ -66,7 +84,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [b] 
       fcos 
       fmulp 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       faddp 
       fstp dword [edi + 8] 
@@ -79,7 +97,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [b] 
       fsin 
       fmulp 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       faddp 
       fstp dword [edi] 
@@ -87,7 +105,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [edi + 4] 
       fld dword [a] 
       fsin 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       fsubp 
       fstp dword [edi + 4] 
@@ -98,7 +116,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [b] 
       fcos 
       fmulp 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       fsubp 
       fstp dword [edi + 8] 
@@ -108,7 +126,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [edi] 
       fld dword [b] 
       fcos 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       fsubp 
       fstp dword [edi] 
@@ -116,7 +134,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [edi + 8] 
       fld dword [b] 
       fsin 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       fsubp 
       fstp dword [edi + 8] 
@@ -126,7 +144,7 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [edi] 
       fld dword [b] 
       fcos 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       faddp 
       fstp dword [edi] 
@@ -134,13 +152,13 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
       fld dword [edi + 8] 
       fld dword [b] 
       fsin 
-      fld dword [WalkingSpeed] 
+      fld dword [CurrentSpeed] 
       fmulp 
       faddp 
       fstp dword [edi + 8] 
     Jmp .Skip 
  
-    .Skip: 
+    .Skip:
 
   ret
   

@@ -113,7 +113,7 @@ proc OnKeyDown, wparam
     cmp [_isCursor], 1
     jne .switch 
       
-    invoke  ShowCursor, 0
+    invoke  ShowCursor, 1
     
     neg [_isCursor]
     
@@ -121,7 +121,7 @@ proc OnKeyDown, wparam
     
 .switch:
 
-    invoke ShowCursor, 1
+    invoke ShowCursor, 0
     
     neg [_isCursor]
      
@@ -190,10 +190,24 @@ proc checkMoveKeys
   
   invoke  GetAsyncKeyState, $44
   cmp eax, 0
-  jz @F
+  jz .Shift
   
   stdcall MoveControllerFree, ñameraTurn, ñameraPos, 4
 
+.Shift:
+  
+  invoke  GetAsyncKeyState, VK_SHIFT
+  cmp eax, 0
+  jz .finish
+
+  mov [isRunning], 1
+
+  jmp @F
+
+.finish:
+  
+  mov [isRunning], 0
+    
 @@:
   
   ret
