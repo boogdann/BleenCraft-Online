@@ -214,8 +214,22 @@ proc gf_get_camera_lookvec, pos, turn
     faddp
     fstp [gf_camera_lookvec + 8]
     
-    
+  ret
+endp
 
+
+proc gf_get_camera_upvec, CameraTurn
+  locals
+    tmp dd 1.0
+    res dd ?
+    radCalc dd 0.01745329252
+  endl
+  mov esi, [CameraTurn]
+  fld dword[esi]
+  fmul [radCalc]
+  fcos
+  fstp [gf_uplookvec + 4]
+  
   ret
 endp
 
