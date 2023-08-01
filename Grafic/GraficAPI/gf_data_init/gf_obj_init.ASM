@@ -56,20 +56,20 @@ endp
 proc gf_GetObj3D_data uses edi, obj_name 
 
     locals
-        hFile     dd      ?  
-        len       dd      ?
-        byteCount dd      ?
-        vertexes  dd      ?
-        normals   dd      ?
-        textureCoords dd  ?
-        fragmentBytesCount dd ? 
-        fragmentCount dd  ?
-        fragments      dd ?
-        frVecCount     dw ?
-        texturePointer  dd ?
-        vertexValue     dd  12
-        BLmod           dd   1 ;1- 16bit / - 8bit
-        IndVertexB      dd   6 ;/6
+        hFile              dd      ?  
+        len                dd      ?
+        byteCount          dd      ?
+        vertexes           dd      ?
+        normals            dd      ?
+        textureCoords      dd      ?
+        fragmentBytesCount dd      ? 
+        fragmentCount      dd      ?
+        fragments          dd      ?
+        frVecCount         dw      ?
+        texturePointer     dd      ?
+        vertexValue        dd      12
+        BLmod              dd      1 ;1- 16bit /0 - 8bit
+        IndVertexB         dd      6 ;/3
     endl
     
   mov esi, [obj_name]
