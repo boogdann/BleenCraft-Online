@@ -171,11 +171,8 @@ section '.data' data readable writeable
          ;Параметры окна:
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
-         
-         _isCursor       dd    1
-         
-         mouse POINT
-         ;############################################################
+
+         ;################################a############################
          
          WorldLength dd Field.LENGTH ;x
          WorldWidth  dd Field.WIDTH ;y
@@ -183,8 +180,12 @@ section '.data' data readable writeable
                  
          ;################Data imports#################
          ;Добавить импорты данных нужные GraficAPI
-         include "Grafic\GraficAPI\GraficAPI.inc"   
+         include "Grafic\GraficAPI\GraficAPI.inc" 
+         
+         ;Импорт данных для работы с управлением
+         include "Units\Movement\MConst.asm"  
          ;#############################################      
+
 
 section '.idata' import data readable writeable
 
