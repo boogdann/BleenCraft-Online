@@ -15,6 +15,9 @@ proc MoveControllerFree, CameraTurn : DWORD, CameraPos : DWORD, Direction : DWOR
        WalkingSpeed dd 0.02 
     endl   
   
+    cmp [_isCursor], -1
+    jne .Skip
+  
     mov esi, [CameraTurn] 
     mov edi, [CameraPos] 
  
@@ -159,7 +162,7 @@ proc OnMouseMove, cameraTurn, sensitivity : DWORD
     st    dd 2  
   
   endl
-   
+  
   ;В scr.x будет храниться деленная на 2 ширина экрана
   mov eax, [WindowRect.right]
   mov [scr.x], eax
