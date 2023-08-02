@@ -257,6 +257,7 @@ proc gf_CreatePositionMatrix, pos
   fstp [edi + Matrix4x4.m42]
   
   fld  [esi + Vector3.z]
+  ;fchs 
   fstp [edi + Matrix4x4.m43]
   
 

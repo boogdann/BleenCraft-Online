@@ -29,9 +29,10 @@ Start:
   ;Далее загрузим тексуру земли в видеопамять и получим Handle
   stdcall gf_UploadTexture, tx_grassName 
   mov [tx_grassHandle], eax
-  
   stdcall gf_UploadTexture, tx_BOGDAN_Name 
   mov [tx_BOGDANHandle], eax
+  stdcall gf_UploadTexture, tx_Brick_Name 
+  mov [tx_BrickHandle], eax
   
   stdcall Field.Initialize
   
@@ -96,18 +97,37 @@ endp
 ;Пример процедуры для рендера сцены
 proc RenderScene
     ;Сначала нужно проиницилизировать основные данные кадра
-    stdcall gf_RenderBegin, сameraPos, сameraTurn  
-    
-    ;Ожидай в следующих версиях!!!
-    ;Также нужно проиницелизтровать источники света (Рассказать Богдану про оптимизацию!!!)
-    ;stdcall gf_CrateLightning, lightningCount, LightPosArray
+    stdcall gf_RenderBegin, сameraPos, сameraTurn
+  
+    ;Также нужно проиницелизтровать источники света
+    stdcall gf_CreateLightning, [LightsCount], LightsPositions
     
     ;Рендер ландшафта: (LandDataArray - 3-x мерный массив ландшафта) (X, Y, Z - размеры)
-    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], obj_CubeHandle
+    ;Ноль на конце (isOnlyWater) - Основной рендер
+    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], obj_CubeHandle, 0
     
     ;(Например рендер куба с текстурой земли)  (летает одинокий)
     stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
-                            cubePos, cubeTurn, [cubeScale]  
+                            SunPosition, cubeTurn, [cubeScale]  
+                            ;Блок в позиции солца для наглядности!!!
+                            
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle],\
+                            LightsPositions, cubeTurn, [cubeScale]  
+                            ;Блок в позиции cвечки для наглядности!!!
+    ;=======Можно вырезать========
+    fld [tmp_pos]
+    fadd [tmp_add]
+    fstp [tmp_pos]
+    fld [tmp_pos]
+    fcos
+    fmul [tmp_mul]
+    fadd [tmp_add_2]
+    fstp dword[LightsPositions]
+    ;==============================                        
+    
+                            
+    ;Единица на конце (isOnlyWater) - Рендер воды                       
+    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], obj_CubeHandle, 1
     
     ;В самом конце рендера сцены нужно:
     stdcall gf_RenderEnd
@@ -141,9 +161,11 @@ section '.data' data readable writeable
          ;Текстуры
          tx_grassName    db   "Grass_64.mbmw", 0 ;(GF_TEXTURE_PATH) 
          tx_BOGDAN_Name  db   "BOGDANI_64.mbmw", 0 ;(GF_TEXTURE_PATH) 
+         tx_Brick_Name   db   "Brick_64.mbmw", 0 ;(GF_TEXTURE_PATH) 
          ;texture Handles:
          tx_grassHandle  dd   ?
          tx_BOGDANHandle dd   ?
+         tx_BrickHandle  dd   ?
          
          ;Позиция объекта:
          cubePos         dd   1.0, 5.0, 0.0
@@ -159,8 +181,19 @@ section '.data' data readable writeable
          ;P.S. z - мемная координата (как просмотр из-за стены под углом в rainbow six siege),
          ;но по итогу изза ненадобности функционал z был вырезан, так что неважно чему он равен
          
+         ;======Можно вырезать==========
          ;Для пример с поворотом объекта
-         tmp_turn        dd    0.005
+         tmp_pos        dd    0.0
+         tmp_add        dd    0.005
+         tmp_mul        dd    3.0
+         tmp_add_2      dd    10.0
+         ;=============================
+         
+         ;=================Lightning Data==================   
+         LightsCount   dd    1 ;Byte [0-255]   ;Количество свечек
+         LightsPositions:
+              dd   10.0, 3.0, 7.0  ;Тут стоит блок для наглядности
+         ;==================================================
          ;================================================================
          
          

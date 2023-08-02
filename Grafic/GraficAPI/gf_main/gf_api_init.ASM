@@ -34,8 +34,10 @@
 
     invoke  glViewport, 0, 0, [WindowRect.right], [WindowRect.bottom]
     
-    invoke  glClearColor, 0.7, 0.4, 0.2, 1.0
+    invoke  glClearColor, 0.5, 0.66, 0.99, 1.0
     invoke  glEnable, GL_DEPTH_TEST
+    invoke  glEnable, GL_BLEND
+    invoke  glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
  
    ret
  endp

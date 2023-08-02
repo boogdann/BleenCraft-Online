@@ -24,6 +24,8 @@ extensionAddresses:
         glUniform2f             dd      ?   
         glUniform1i             dd      ?
         glGenerateMipmap        dd      ?
+        glUniform3fv            dd      ?
+        glUniform4fv            dd      ?
 
 extensionNames:
         db      "glUniformMatrix4fv", 0
@@ -51,6 +53,8 @@ extensionNames:
         db      "glUniform2f", 0
         db      "glUniform1i", 0
         db      "glGenerateMipmap", 0
+        db      "glUniform3fv", 0
+        db      "glUniform4fv", 0
         db      0
         
 
