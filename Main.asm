@@ -15,50 +15,34 @@ include "Units\Movement\Vmove.asm"
 section '.text' code readable executable     
 
 Start:
-  ;================Module initialize==================
-  ;Сначала нужно проиницилизировать модуль
-  ;P.S. она также иницициализирует всю оконную мишуру
+  ;================Modules initialize=================
   stdcall gf_grafic_init
   ;===================================================
   
   ;=============Project data initialize=========================
-  ;Теперь в качестве примера загрузим куб в видеопамять
-  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle
-  ;P.S. Для загрузки объекта мы кидаем адресс(!) на Handle (dd ?, ?)
+  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle 
 
-  ;Далее загрузим тексуру земли в видеопамять и получим Handle
-  stdcall gf_UploadTexture, tx_grassName 
-  mov [tx_grassHandle], eax
-  stdcall gf_UploadTexture, tx_BOGDAN_Name 
-  mov [tx_BOGDANHandle], eax
-  stdcall gf_UploadTexture, tx_Brick_Name 
-  mov [tx_BrickHandle], eax
+  stdcall gf_UploadTexture, tx_grassName, tx_grassHandle 
+  stdcall gf_UploadTexture, tx_BOGDAN_Name, tx_BOGDANHandle 
+  stdcall gf_UploadTexture, tx_Brick_Name, tx_BrickHandle
   
   stdcall Field.Initialize
-  
-  invoke  ShowCursor, 0
-  ;===============================================================
-  
-  
+  ;========================================
   
   ;===================Project circle==================
-  ;Стандартный цикл оконной процедуры
   .MainCycle:
         invoke  GetMessage, msg, 0, 0, 0
-        invoke TranslateMessage, msg
+        invoke  TranslateMessage, msg
         invoke  DispatchMessage, msg
         jmp     .MainCycle
   ;====================================================
             
-        
-;К примеру простейшая оконная процедура
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
         stdcall checkMoveKeys
         stdcall OnMouseMove, сameraTurn, [sensitivity]
         
-        ;К макросам тоже присмотрись) (Если что кину)
         switch  [uMsg]
         case    .Render,        WM_PAINT
         case    .Destroy,       WM_DESTROY
@@ -69,20 +53,17 @@ proc WindowProc uses ebx,\
         jmp     .Return
 
   .Render:
-        ;Самое интересное это то что в функции RenderScene
-        ;(Она расположена ниже)
+        ;Рендер
         stdcall RenderScene
         jmp     .ReturnZero
-  
   .KeyChar:
+        ;Клавиши 1
         stdcall OnCharDown, [wParam]
         jmp     .ReturnZero
-        
   .KeyDown:
-        ;Выход по Esc
+        ;Клавиши 2
         stdcall OnKeyDown, [wParam]
         jmp     .ReturnZero
- 
   .Destroy:
         invoke ExitProcess, 1
   .ReturnZero:
@@ -92,44 +73,35 @@ proc WindowProc uses ebx,\
 endp
 
 
-;(От себя рекоменлую организовать эту функцию лишь как простой вывод и
-;вынести все действия над объктами наружу, не пихая всё сюда), но дело твоё
-;Пример процедуры для рендера сцены
+
 proc RenderScene
-    ;Сначала нужно проиницилизировать основные данные кадра
+    ;Проиницилизировать основные данные кадра
     stdcall gf_RenderBegin, сameraPos, сameraTurn
   
-    ;Также нужно проиницелизтровать источники света
+    ;Проиницелизтровать источники света
     stdcall gf_CreateLightning, [LightsCount], LightsPositions
     
-    ;Рендер ландшафта: (LandDataArray - 3-x мерный массив ландшафта) (X, Y, Z - размеры)
+    ;Рендер ландшафта:
     ;Ноль на конце (isOnlyWater) - Основной рендер
-    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], obj_CubeHandle, 0
-    
-    ;(Например рендер куба с текстурой земли)  (летает одинокий)
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_grassHandle],\
-                            SunPosition, cubeTurn, [cubeScale]  
-                            ;Блок в позиции солца для наглядности!!!
-                            
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle],\
+    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], 0
+       
+    ;===========;Блок в позиции cвечки для наглядности================                      
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
                             LightsPositions, cubeTurn, [cubeScale]  
-                            ;Блок в позиции cвечки для наглядности!!!
-    ;=======Можно вырезать========
-    fld [tmp_pos]
-    fadd [tmp_add]
-    fstp [tmp_pos]
-    fld [tmp_pos]
-    fcos
-    fmul [tmp_mul]
-    fadd [tmp_add_2]
-    fstp dword[LightsPositions]
-    ;==============================                        
+                            
+    ;Пример использования рендера выделенного объекта
+    stdcall gf_RenderSelectObj3D, obj_CubeHandle,\ 
+                            LightsPositions, cubeTurn, [cubeScale] 
+    ;P.S. Для выделения объекта нужно применить специальный ререндер!!!
+    ;=================================================================           
     
                             
     ;Единица на конце (isOnlyWater) - Рендер воды                       
-    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], obj_CubeHandle, 1
+    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], 1
+    ;Рендер облаков
+    stdcall gf_renderSkyObjs, SkyLand, [SkyLength], [SkyWidth], [SkyHieght]
     
-    ;В самом конце рендера сцены нужно:
+    ;Окончание рендера кадра
     stdcall gf_RenderEnd
   ret
 endp
@@ -152,16 +124,13 @@ section '.data' data readable writeable
          ;Пример данных:
          ;=======================Project data==========================
          ;Объекты
-         obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH) (тип .mobj!)
-         ;P.S. L - в начале это файл с генерацией .mobj c uint8
-         ;     B - в начале это файл с генерацией .mobj c uint16
-         ;     B - cтавить не обязательно (Это по дефолту)
-         obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт, так нужно!!!
+         obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH)
+         obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт
          
          ;Текстуры
-         tx_grassName    db   "Grass_64.mbmw", 0 ;(GF_TEXTURE_PATH) 
-         tx_BOGDAN_Name  db   "BOGDANI_64.mbmw", 0 ;(GF_TEXTURE_PATH) 
-         tx_Brick_Name   db   "Brick_64.mbmw", 0 ;(GF_TEXTURE_PATH) 
+         tx_grassName    db   "Grass_64.mbmw", 0 
+         tx_BOGDAN_Name  db   "BOGDANI_64.mbmw", 0
+         tx_Brick_Name   db   "Brick_64.mbmw", 0
          ;texture Handles:
          tx_grassHandle  dd   ?
          tx_BOGDANHandle dd   ?
@@ -172,7 +141,7 @@ section '.data' data readable writeable
          ;Поворот объекта:  (в градусах)
          cubeTurn        dd   0.0, 0.0, 0.0
          ;Размер объекта:
-         cubeScale       dd   0.5
+         cubeScale       dd   1.0
 
          ;Позиция головы
          сameraPos       dd    0.0, 0.0, -4.0
@@ -181,18 +150,14 @@ section '.data' data readable writeable
          ;P.S. z - мемная координата (как просмотр из-за стены под углом в rainbow six siege),
          ;но по итогу изза ненадобности функционал z был вырезан, так что неважно чему он равен
          
-         ;======Можно вырезать==========
-         ;Для пример с поворотом объекта
-         tmp_pos        dd    0.0
-         tmp_add        dd    0.005
-         tmp_mul        dd    3.0
-         tmp_add_2      dd    10.0
-         ;=============================
-         
          ;=================Lightning Data==================   
          LightsCount   dd    1 ;Byte [0-255]   ;Количество свечек
          LightsPositions:
               dd   10.0, 3.0, 7.0  ;Тут стоит блок для наглядности
+              
+         gf_DaylyKof    db    0
+         ;Пока не реализованно
+         ;В планах сделать так чтобы по итогу 255 стыкавалось с 0
          ;==================================================
          ;================================================================
          
@@ -207,6 +172,22 @@ section '.data' data readable writeable
          WorldLength dd Field.LENGTH ;x
          WorldWidth  dd Field.WIDTH  ;y
          WorldHeight dd Field.HEIGHT ;z
+         
+         ;Богдан вынеси это себе куданибудь
+         SkyLength   dd   10
+         SkyWidth    dd   10
+         SkyHieght   dd   100
+         ;Небо
+         SkyLand  db 1,0,0,0,0,0,0,0,0,0,\ 
+                     0,1,1,0,1,0,0,0,1,1,\
+                     0,0,0,0,0,1,0,0,1,0,\
+                     0,0,0,0,0,0,0,0,0,1,\
+                     0,0,0,0,0,0,0,0,0,1,\
+                     0,0,0,0,1,1,1,1,0,0,\ 
+                     0,0,0,1,1,1,1,1,0,0,\
+                     1,1,0,0,0,0,1,1,1,0,\
+                     1,1,1,0,1,1,0,0,0,0,\ 
+                     1,0,1,0,1,1,1,0,0,0
          ;================================================================
          
          ;=============Data imports================

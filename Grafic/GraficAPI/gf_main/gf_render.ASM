@@ -9,12 +9,10 @@ proc gf_RenderBegin, CameraPos, CameraTurn
   
   ;Загрузка матрицы камеры 
   invoke glUniformMatrix4fv, [gf_view_M], 1, 0, gf_view_matrix
-  
   ;Загрузка позиции камеры
   invoke glUniform3fv, [gf_CameraPos], 1, [CameraPos]
-  ;Настройки
-  invoke glUniform1f, [gf_aChanel], 1.0
-  ;======================
+
+  ;=====================
   invoke glUniform1i, [gf_discardMode], 0;Отсечение пикселей (трава)
   ;======================
 
@@ -34,8 +32,6 @@ proc gf_CreateLightning, LightsCount, LightsPositions
     mov eax, [LightsCount]
     inc eax
     invoke glUniform1i, [gf_LightsCount], eax
-    
-    
     invoke glUniform4fv, [gf_SunPosition], 1, SunPosition
     invoke glUniform3fv, [gf_SunIntensity], 1, SunIntensity
     
@@ -131,8 +127,15 @@ endp
 
 
 
-proc  gf_renderObj3D uses esi, Obj3D_Handle, tx_Handle,\
-                               PosV, TurnV, Scale   
+proc  gf_renderObj3D uses esi, Obj3D_Handle, tx_Handle, tx_color,\
+                               PosV, TurnV, Scale
+                               
+  cmp [tx_Handle], 0
+  jnz @F
+      invoke glUniform3fv, [gf_ObjColor], 1, [tx_color]
+      invoke glUniform1i, [gf_ColorMode], 1
+      invoke glUniform1i, [gf_SkyMode], 1
+  @@:   
 
   ;Создание матрицы (ModelMatrix)
   stdcall gf_CreateModelMatrix, [PosV], [TurnV], [Scale]
@@ -148,7 +151,30 @@ proc  gf_renderObj3D uses esi, Obj3D_Handle, tx_Handle,\
   ;Рендер
   invoke glDrawArrays, GL_TRIANGLES, 0, [esi + 4]
   
+  cmp [tx_Handle], 0
+  jnz @F
+     invoke glUniform1i, [gf_ColorMode], 0
+     invoke glUniform1i, [gf_SkyMode], 0
+  @@:
+  
   ret
+endp
+
+proc gf_RenderSelectObj3D, Obj3D_Handle,\
+                               PosV, TurnV, Scale
+    locals
+       addScale  dd   0.002
+    endl
+
+    invoke  glPolygonMode, GL_FRONT_AND_BACK, GL_LINE
+    fld  [Scale]
+    fadd [addScale]
+    fstp [Scale]
+    stdcall gf_renderObj3D, [Obj3D_Handle], 0, gf_ConturColor,\
+                            [PosV], [TurnV], [Scale] 
+    invoke  glPolygonMode, GL_FRONT_AND_BACK, GL_FILL
+
+    ret
 endp
 
 
@@ -170,13 +196,17 @@ endp
 
 
 
-proc gf_RenderMineLand, LandData, X, Y, Z, MainCubeHandle, isOnlyWater
+
+proc gf_RenderMineLand, LandData, X, Y, Z, isOnlyWater
   locals 
-    _pos dd ?
+    _pos       dd    ?
+    ObjHandle  dd    ?
   endl
   
+  mov [ObjHandle], gf_MAIN_CubeHandle
   cmp [isOnlyWater], 0
   jz @F
+     mov [ObjHandle], gf_MAIN_CubeHandle ;gf_MAIN_WaterHandle
      invoke glUniform1f, [gf_aChanel], [gf_WaterAChanel]
   @@:
     ;Loop 0 -> X
@@ -225,7 +255,7 @@ proc gf_RenderMineLand, LandData, X, Y, Z, MainCubeHandle, isOnlyWater
                        mov [_pos], edx
                        fild [_pos] 
                        fstp [gf_tmp_objPos + 8] ;ecx
-                       stdcall gf_renderCube, gf_tmp_objPos, [MainCubeHandle], eax ;(eax - Texture Handle)
+                       stdcall gf_renderCube, gf_tmp_objPos, [ObjHandle], eax ;(eax - Texture Handle)
                     @@:
                     inc esi
                inc ebx
@@ -237,16 +267,62 @@ proc gf_RenderMineLand, LandData, X, Y, Z, MainCubeHandle, isOnlyWater
     inc ecx
     cmp ecx, [Z]
     jnz .LandRender_x
+    invoke glUniform1f, [gf_aChanel], 1.0
   ret
 endp
+                
 
-;x - 5, y - 5, z - 2
-;((1,1,1,1,1),(1,1,1,1,1),(1,1,1,1,1),(1,1,1,1,1),(1,1,1,1,1)) - z = 0
-;((1,1,1,1,1),(1,1,1,1,1),(1,1,1,1,1),(1,1,1,1,1),(1,1,1,1,1)) - z = 1
-;     x            x            x           x           x
-                          
+proc gf_renderSkyObjs, SkyLand, X, Y, Hieght 
+  locals 
+    _pos dd ?
+    mul  dd 4.0
+  endl
+  
+   fild [Hieght]
+   fstp [gf_tmp_objPos + 4]
+   
+   invoke glUniform3fv, [gf_ObjColor], 1, gf_CloudColor
+   invoke glUniform1i, [gf_ColorMode], 1
+   invoke glUniform1i, [gf_SkyMode], 1
+  
+   mov esi, [SkyLand]
+   mov ecx, 0
+   .LandRender_x:
+         mov edx, 0  
+         .LandRender_y:
+             cmp byte[esi], 0
+             jz @F
+             
+             mov [_pos], ecx
+             fild [_pos] 
+             fmul [mul]
+             fstp [gf_tmp_objPos + 0] ;ecx
+             mov [_pos], edx
+             fild [_pos] 
+             fmul [mul]
+             fstp [gf_tmp_objPos + 8] ;edx 
+             
+             stdcall gf_renderCube, gf_tmp_objPos, gf_MAIN_CloudHandle, 0
+             @@:
+             inc esi 
+         inc edx
+         cmp edx, [X] 
+         jnz .LandRender_y 
+    inc ecx
+    cmp ecx, [Y]
+    jnz .LandRender_x
+    
+    invoke glUniform1i, [gf_ColorMode], 0
+    invoke glUniform1i, [gf_SkyMode], 0
+  ret
+endp       
 
-proc gf_RenderEnd          
+
+proc gf_RenderEnd   
+  ;Рендер солнца
+  stdcall gf_renderObj3D, gf_MAIN_CloudHandle, 0, gf_SunColor,\
+                            SunPosition, gf_zeroVec, 2.0
+
   invoke SwapBuffers, [hdc]
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT 
   
