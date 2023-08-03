@@ -12,7 +12,6 @@
     mov     [hMainWindow], eax
 
     invoke  GetClientRect, eax, WindowRect
-    ;invoke  ShowCursor, 0
     
     invoke  GetDC, [hMainWindow]
     mov     [hdc], eax

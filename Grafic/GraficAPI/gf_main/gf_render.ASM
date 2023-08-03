@@ -12,8 +12,11 @@ proc gf_RenderBegin, CameraPos, CameraTurn
   
   ;Загрузка позиции камеры
   invoke glUniform3fv, [gf_CameraPos], 1, [CameraPos]
-  
+  ;Настройки
   invoke glUniform1f, [gf_aChanel], 1.0
+  ;======================
+  invoke glUniform1i, [gf_discardMode], 0;Отсечение пикселей (трава)
+  ;======================
 
   ret
 endp
@@ -243,7 +246,7 @@ endp
 ;     x            x            x           x           x
                           
 
-proc gf_RenderEnd 
+proc gf_RenderEnd          
   invoke SwapBuffers, [hdc]
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT 
   

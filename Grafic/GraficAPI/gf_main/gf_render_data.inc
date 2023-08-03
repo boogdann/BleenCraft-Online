@@ -13,6 +13,7 @@ UniformLocations:
         gf_CandleRadius       dd      ?
         gf_CameraPos          dd      ?
         gf_aChanel            dd      ?
+        gf_discardMode        dd      ?
         
 UniformNames:  
         db      "view", 0
@@ -29,6 +30,7 @@ UniformNames:
         db      "CandleRadius", 0
         db      "CameraPos", 0
         db      "aChanel", 0
+        db      "discardMode", 0
         db      0
         
  
@@ -95,6 +97,7 @@ Shininess     dd       1.5   ;Float
 
 
 gf_WaterAChanel  dd  0.3
+gf_fogColor      dd  0.5, 0.5, 0.5, 1.0
 
 
 fov             GLfloat         60.0
