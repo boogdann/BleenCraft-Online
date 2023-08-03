@@ -14,6 +14,9 @@ UniformLocations:
         gf_CameraPos          dd      ?
         gf_aChanel            dd      ?
         gf_discardMode        dd      ?
+        gf_ObjColor           dd      ?
+        gf_ColorMode          dd      ?
+        gf_SkyMode            dd      ?
         
 UniformNames:  
         db      "view", 0
@@ -31,6 +34,9 @@ UniformNames:
         db      "CameraPos", 0
         db      "aChanel", 0
         db      "discardMode", 0
+        db      "ObjColor", 0
+        db      "ColorMode", 0
+        db      "SkyMode", 0
         db      0
         
  
@@ -70,6 +76,7 @@ gf_camera_lookvec     dd     ?, ?, ?
 ;############################################
 gf_uplookvec          dd     0.0, 0.0, 0.0
 ;############################################
+gf_zeroVec            dd     0.0, 0.0, 0.0
 
 ;Candles
 CandleIntensity       dd    0.40, 0.2, 0.2
@@ -87,7 +94,9 @@ gf_strCandleId        db    4 dup (?)
 
 ;Sun
 SunIntensity          dd    0.55, 0.5, 0.5, 1.0
-SunPosition           dd    5.0, 15.0, 5.0, 1.0
+SunPosition           dd    20.0, 120.0, 20.0, 1.0
+gf_SunColor           dd    0.97, 0.96, 0.86
+gf_ConturColor        dd    0.0, 0.0, 0.0
 
 ;Objects
 Ka            dd       0.2, 0.2, 0.2 ;Общий свет (им можно сделать день\ночь)
@@ -97,7 +106,7 @@ Shininess     dd       1.5   ;Float
 
 
 gf_WaterAChanel  dd  0.3
-gf_fogColor      dd  0.5, 0.5, 0.5, 1.0
+gf_CloudColor    dd  1.0, 1.0, 1.0
 
 
 fov             GLfloat         60.0
@@ -111,4 +120,10 @@ gf_tmp_objPos   dd    ?,   ?,   ?
 gf_temp_path    db    50   dup   (?)
 
 
+;Siple Objs Names:
+gf_MAIN_cloud_name   db  "LCloud.mobj", 0 
+gf_MAIN_cube_name    db  "LCube.mobj", 0
+;Siple Objs Handles:
+gf_MAIN_CubeHandle   dd   ?, ? 
+gf_MAIN_CloudHandle  dd   ?, ?
 
