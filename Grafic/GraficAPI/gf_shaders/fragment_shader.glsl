@@ -13,7 +13,10 @@ uniform float Shininess;
 uniform float CandleRadius;
 uniform vec3 CameraPos;
 uniform float aChanel; 
-uniform bool  discardMode;
+uniform bool discardMode;
+uniform bool ColorMode;
+uniform bool SkyMode;
+uniform vec3 ObjColor;
 
 struct LightInfo {
     vec4 Position;
@@ -44,8 +47,11 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
 
 void main() {
     vec4 texColor = texture( Tex1, TexCoord );
+    if (ColorMode) {
+        texColor = vec4(ObjColor, 1.0);
+    }
     if (discardMode && (texColor == vec4(1.0, 1.0, 1.0, 1.0))) {
-        discard;
+        discard;//
     }
 
     float dist = abs(distance(CameraPos, FPosition));
@@ -58,13 +64,17 @@ void main() {
     vec4 resColor = (vec4(ambDiff, 1.0) * texColor + vec4(spec, 1.0)); 
 
     //Fog
-    float MaxFogDist = 50;
-    float MinFogDist = 5;
+    float MaxFogDist = 250;
+    float MinFogDist = 50;
 
     vec4 FogColor = vec4(0.2, 0.2, 0.2, 1.0);
     float fogFactor = (MaxFogDist - dist) / (MaxFogDist - MinFogDist);
-    fogFactor = clamp( fogFactor, 0.0, 1.0 );
 
+    if (SkyMode) {
+        fogFactor *= 130;
+        resColor = 0.9 * texColor + vec4(spec, 1.0);
+    }
+    fogFactor = clamp( fogFactor, 0.0, 1.0 );
     resColor = mix( FogColor, resColor, fogFactor );
 
     gl_FragColor = vec4(vec3(resColor), aChanel);

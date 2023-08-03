@@ -1,4 +1,4 @@
-proc gf_UploadTexture, tx_Name 
+proc gf_UploadTexture uses esi, tx_Name, Handle 
     
     invoke glGenTextures, 1, gf_tx_handle
     invoke glBindTexture, GL_TEXTURE_2D, [gf_tx_handle] 
@@ -9,6 +9,8 @@ proc gf_UploadTexture, tx_Name
     invoke glGenerateMipmap, GL_TEXTURE_2D
     
     mov eax, [gf_tx_handle]
+    mov esi, [Handle]
+    mov [esi], eax
 
     ret
 endp

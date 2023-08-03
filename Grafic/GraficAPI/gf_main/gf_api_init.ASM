@@ -16,6 +16,11 @@
     invoke  GetDC, [hMainWindow]
     mov     [hdc], eax
     
+    invoke  ShowCursor, 0
+    invoke  LoadCursor, 0, IDC_ARROW 
+    invoke SetCursor, eax
+    
+    
    ret
  endp
  
@@ -35,8 +40,7 @@
     
     invoke  glClearColor, 0.5, 0.66, 0.99, 1.0
     invoke  glEnable, GL_DEPTH_TEST
-    invoke  glEnable, GL_BLEND
-    invoke  glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
+    invoke glEnable, GL_LINE_SMOOTH
  
    ret
  endp
@@ -99,6 +103,10 @@
     stdcall Matrix.Projection, [fov], [aspect] , [zNear], [zFar]
 
     invoke glUniformMatrix4fv, [gf_projection_M], 1, 0, gf_projection_matrix
+    
+    ;Загрузка стандартных объектов
+    stdcall gf_UploadObj3D, gf_MAIN_cloud_name, gf_MAIN_CloudHandle
+    stdcall gf_UploadObj3D, gf_MAIN_cube_name, gf_MAIN_CubeHandle
     
     ret
  endp
