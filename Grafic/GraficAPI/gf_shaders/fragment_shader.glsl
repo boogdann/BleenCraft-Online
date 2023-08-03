@@ -13,6 +13,7 @@ uniform float Shininess;
 uniform float CandleRadius;
 uniform vec3 CameraPos;
 uniform float aChanel; 
+uniform bool  discardMode;
 
 struct LightInfo {
     vec4 Position;
@@ -42,14 +43,17 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
 
 
 void main() {
+    vec4 texColor = texture( Tex1, TexCoord );
+    if (discardMode && (texColor == vec4(1.0, 1.0, 1.0, 1.0))) {
+        discard;
+    }
+
     float dist = abs(distance(CameraPos, FPosition));
     vec3 ambDiff = vec3(0.0);
     vec3 spec = vec3(0.0);
     for( int i = 0; i < LightsCount; i++ )
          ads( i, lights[i].Position, lights[i].Intensity,
              eyePosition, eyeNorm, ambDiff, spec, Ka, Kd, Ks);
-    
-    vec4 texColor = texture( Tex1, TexCoord );
 
     vec4 resColor = (vec4(ambDiff, 1.0) * texColor + vec4(spec, 1.0)); 
 
