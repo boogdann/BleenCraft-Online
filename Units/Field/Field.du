@@ -4,4 +4,5 @@ Field.Length       dd       ?
 Field.Width        dd       ?
 Field.Height       dd       ?
 Field.Seed         dd       ?
+Field.Matrix       dd       ?
 Tmp                dd       ?
