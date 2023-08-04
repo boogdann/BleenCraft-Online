@@ -5,8 +5,8 @@ in vec4 eyePosition;
 in vec3 eyeNorm;
 in vec3 FPosition;
 
-uniform sampler2D Tex1;
-uniform sampler2D Tex2;
+layout(binding=0) uniform sampler2D Tex1;
+layout(binding=1) uniform sampler2D Tex2;
 uniform vec3 Kd;
 uniform vec3 Ka;
 uniform vec3 Ks;
@@ -17,6 +17,7 @@ uniform float aChanel;
 uniform bool discardMode;
 uniform bool ColorMode;
 uniform bool SkyMode;
+uniform bool isTex2Enable;
 uniform vec3 ObjColor;
 
 struct LightInfo {
@@ -48,9 +49,11 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
 
 void main() {
     vec4 texColor = texture( Tex1, TexCoord );
-    if (true) {
-        //vec4 tex2Color = texture( Tex2, TexCoord );
-        //vec4 texColor = mix(texColor, tex2Color, 1.0);
+    if (isTex2Enable) {
+        vec4 texColor2 = texture( Tex2, TexCoord );
+        if ((texColor2.x > 0.0) && (texColor2.x < 0.9)) {
+            texColor = texColor2;
+        }
     }
     
     if (ColorMode) {
