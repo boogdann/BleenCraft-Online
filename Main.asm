@@ -17,7 +17,7 @@ section '.text' code readable executable
 Start:
   ;================Modules initialize=================
   stdcall gf_grafic_init
-  ;===================================================
+  ;===================================================  
   
   ;=============Project data initialize=========================
   stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle 
@@ -27,7 +27,13 @@ Start:
   stdcall gf_UploadTexture, tx_Brick_Name, tx_BrickHandle
   
   stdcall Field.Initialize
-  ;========================================
+  ;=============================================================
+  
+  ;================Params initialize=====================
+  ;Позволяет автоматически изменять переменную День-Ночь
+  ;1 - Вкл | 0 - Отключение
+  stdcall gf_subscribeDayly, Dayly_Kof, 1
+  ;======================================================
   
   ;===================Project circle==================
   .MainCycle:
@@ -79,7 +85,10 @@ proc RenderScene
     stdcall gf_RenderBegin, сameraPos, сameraTurn
   
     ;Проиницелизтровать источники света
-    stdcall gf_CreateLightning, [LightsCount], LightsPositions
+    ;Последний флаг отвечает за 0 - норма | 1 - под водой
+    stdcall gf_CreateLightning, [LightsCount], LightsPositions, 0
+    ;P.S. Функция в начале обязательна даже с флагом ноль для
+    ;регистрации твоей переменной в модуле
     
     ;Рендер ландшафта:
     ;Ноль на конце (isOnlyWater) - Основной рендер
@@ -87,7 +96,7 @@ proc RenderScene
        
     ;===========;Блок в позиции cвечки для наглядности================                      
     stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
-                            LightsPositions, cubeTurn, [cubeScale]  
+                            LightsPositions, cubeTurn, [cubeScale], 2  
                             
     ;Пример использования рендера выделенного объекта
     stdcall gf_RenderSelectObj3D, obj_CubeHandle,\ 
@@ -121,7 +130,6 @@ section '.data' data readable writeable
          ;===================================================
                   
                   
-         ;Пример данных:
          ;=======================Project data==========================
          ;Объекты
          obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH)
@@ -131,10 +139,11 @@ section '.data' data readable writeable
          tx_grassName    db   "Grass_64.mbmw", 0 
          tx_BOGDAN_Name  db   "BOGDANI_64.mbmw", 0
          tx_Brick_Name   db   "Brick_64.mbmw", 0
+         
          ;texture Handles:
          tx_grassHandle  dd   ?
          tx_BOGDANHandle dd   ?
-         tx_BrickHandle  dd   ?
+         tx_BrickHandle  dd   ? 
          
          ;Позиция объекта:
          cubePos         dd   1.0, 5.0, 0.0
@@ -151,13 +160,14 @@ section '.data' data readable writeable
          ;но по итогу изза ненадобности функционал z был вырезан, так что неважно чему он равен
          
          ;=================Lightning Data==================   
-         LightsCount   dd    1 ;Byte [0-255]   ;Количество свечек
+         LightsCount   dd    0 ;Byte [0-255]   ;Количество свечек
          LightsPositions:
               dd   10.0, 3.0, 7.0  ;Тут стоит блок для наглядности
               
-         gf_DaylyKof    db    0
-         ;Пока не реализованно
-         ;В планах сделать так чтобы по итогу 255 стыкавалось с 0
+         ;Отвечает за измененя параметров сцены (день - ночь)     
+         Dayly_Kof    dw    0   ;0 - 65535
+         ;P.S имеется возможность установить флаг для автоматического
+         ;изменения этого параметра
          ;==================================================
          ;================================================================
          

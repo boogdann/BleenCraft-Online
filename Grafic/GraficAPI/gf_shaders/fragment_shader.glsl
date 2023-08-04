@@ -6,6 +6,7 @@ in vec3 eyeNorm;
 in vec3 FPosition;
 
 uniform sampler2D Tex1;
+uniform sampler2D Tex2;
 uniform vec3 Kd;
 uniform vec3 Ka;
 uniform vec3 Ks;
@@ -47,6 +48,11 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
 
 void main() {
     vec4 texColor = texture( Tex1, TexCoord );
+    if (true) {
+        //vec4 tex2Color = texture( Tex2, TexCoord );
+        //vec4 texColor = mix(texColor, tex2Color, 1.0);
+    }
+    
     if (ColorMode) {
         texColor = vec4(ObjColor, 1.0);
     }

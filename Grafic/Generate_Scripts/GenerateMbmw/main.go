@@ -16,7 +16,8 @@ import (
 
 // _ = binary.Write(file, binary.LittleEndian, data.vertexes[i][j])
 // Задаёт значение для минимума значений rgb с которых пиксель считается пустым
-var minForPixel byte = 252
+var minForPixel byte = 253
+var isBug = true
 
 type pixel struct {
 	r byte
@@ -110,16 +111,26 @@ func GetData(f *os.File, pixelWH int, data *mbmwData) {
 		row.pixels = make([]pixel, 0)
 		var start, end int
 		var isLSpace = true
+		var isSpace_2 = false
+		var isRRewrite = true
 		var cube int
 		for j := 0; j < width; j += pixelWH {
 			var CurPx = GetMaxPx(i, j, pixelWH, img)
-			if !isPxSpace(CurPx) && isLSpace {
-				start = cube
-				isLSpace = false
-				end = 0
+			if !isPxSpace(CurPx) && isLSpace && (!isSpace_2) {
+				if j != 0 || (!isBug) { /////
+					start = cube
+					isLSpace = false
+					isSpace_2 = true
+					end = 0
+				}
 			}
-			if isPxSpace(CurPx) && !isLSpace {
+			if !isPxSpace(CurPx) {
+				end = 0
+				isRRewrite = true
+			}
+			if isPxSpace(CurPx) && !isLSpace && isRRewrite {
 				end = cube
+				isRRewrite = false
 			}
 			cube++
 		}
@@ -130,9 +141,15 @@ func GetData(f *os.File, pixelWH int, data *mbmwData) {
 			row.space_r = uint16(cube - end)
 		}
 
+		if isLSpace {
+			row.space_l = uint16(cube)
+			start = cube
+			end = cube
+		}
+
 		cube = 0
 		for j := 0; j < width; j += pixelWH {
-			if (start <= cube) && ((end == 0) || cube <= end) {
+			if (start <= cube) && ((end == 0) || cube < end) {
 				row.pixelsCount++
 				var CurPx = GetMaxPx(i, j, pixelWH, img)
 				row.pixels = append(row.pixels, CurPx)
