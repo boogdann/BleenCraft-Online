@@ -1,4 +1,13 @@
-proc gf_CreateLightning, LightsCount, LightsPositions, isWater
+proc gf_CreateLightning, LightsCount_u, LightsPositions, isWater
+
+    locals 
+       LightsCount  dd   ?
+    endl
+    
+    mov esi, [LightsCount_u]
+    movzx eax, byte[esi]
+    mov [LightsCount], eax
+    
 
     ;Загрузка освещения
     invoke glUniform3fv, [gf_Ka], 1, Ka
@@ -53,6 +62,7 @@ proc gf_changeDaylyCof
      mov [gf_lastDaylyChange], eax
      mov esi, [gf_dayly_kof_adress] 
      inc word[esi]
+     ;add word[esi], 200   ;Debug
    @@:
    
   ret
