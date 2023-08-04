@@ -5,130 +5,23 @@ proc gf_RenderBegin, CameraPos, CameraTurn
   stdcall gf_get_camera_lookvec, [CameraPos], [CameraTurn] 
   stdcall gf_get_camera_upvec, [CameraTurn]  
   stdcall Matrix.LookAt, [CameraPos], gf_camera_lookvec, gf_uplookvec
-  invoke glGetFloatv, GL_MODELVIEW_MATRIX, gf_view_matrix              
+  invoke glGetFloatv, GL_MODELVIEW_MATRIX, gf_view_matrix             
   
   ;Загрузка матрицы камеры 
   invoke glUniformMatrix4fv, [gf_view_M], 1, 0, gf_view_matrix
   ;Загрузка позиции камеры
   invoke glUniform3fv, [gf_CameraPos], 1, [CameraPos]
 
-  ;=====================
+  ;=====================test=============
   invoke glUniform1i, [gf_discardMode], 0;Отсечение пикселей (трава)
-  ;======================
+  ;=====================================
 
   ret
 endp
 
 
-proc gf_CreateLightning, LightsCount, LightsPositions
-
-    ;Загрузка освещения
-    invoke glUniform3fv, [gf_Ka], 1, Ka
-    invoke glUniform3fv, [gf_Kd], 1, Kd
-    invoke glUniform3fv, [gf_Ks], 1, Ks
-    invoke glUniform1f, [gf_Shininess], [Shininess]
-    invoke glUniform1f, [gf_CandleRadius], [CandleRadius]
-    
-    mov eax, [LightsCount]
-    inc eax
-    invoke glUniform1i, [gf_LightsCount], eax
-    invoke glUniform4fv, [gf_SunPosition], 1, SunPosition
-    invoke glUniform3fv, [gf_SunIntensity], 1, SunIntensity
-    
-    ;Загрузка данных источников освещения
-    mov esi, [LightsPositions]
-    mov ecx, 1
-    inc [LightsCount]
-    .WriteLightningLoop:  
-    cmp ecx, [LightsCount]
-    jz @F
-        stdcall setLightning, esi, ecx
-        add esi, 3
-    inc ecx
-    jmp .WriteLightningLoop
-    @@:
-    dec [LightsCount]
-    
-
-    ret
-endp
-
-
-proc setLightning uses esi ecx edi, LightsPos, LightId
-
-  locals
-    gf_CandlePosition      dd    ?
-    gf_CandleIntensity     dd    ?
-  endl
-
-  mov esi, [LightsPos]
-  fld  dword[esi + 0]
-  fstp [tmpCandlePos + 0] 
-  fld  dword[esi + 4]
-  fstp [tmpCandlePos + 4] 
-  fld  dword[esi + 8]
-  fstp [tmpCandlePos + 8] 
-  
-  
-  mov esi, gf_strCandleId
-  .itoa:
-      mov eax, [LightId]     
-      xor edx, edx    
-      mov ebx, 10      
-      idiv ebx
-      mov [LightId], eax
-      add dl, '0'
-      mov byte[esi], dl
-      inc esi 
-  cmp [LightId], 0
-  jnz .itoa
-  push esi  
-   
-  mov edi, gf_temp_path
-  mov esi, gf_LeftCandleName
-  movzx ecx, byte[gf_LeftCandle_len]
-  rep movsb
-  
-  pop esi
-  @@:
-     dec esi
-     mov al, [esi]
-     mov [edi], al 
-     inc edi
-  cmp esi, gf_strCandleId
-  jnz @B
-  mov ebx, edi
-   
-  mov esi, gf_RightCandleName_1
-  movzx ecx, byte[gf_RightCandle_len_1]
-  rep movsb
-  invoke  glGetUniformLocation, [gf_shaderProgram], gf_temp_path
-  mov [gf_CandlePosition], eax
-
-  mov edi, ebx
-  mov esi, gf_RightCandleName_2
-  movzx ecx, byte[gf_RightCandle_len_2]
-  rep movsb
-  invoke  glGetUniformLocation, [gf_shaderProgram], gf_temp_path
-  mov [gf_CandleIntensity], eax
-  
-  
-  cmp [gf_CandlePosition], -1
-  jnz @F
-    invoke ExitProcess, 0
-  @@:
-  
-  ;Upload candle data
-  invoke glUniform4fv, [gf_CandlePosition], 1, tmpCandlePos 
-  invoke glUniform3fv, [gf_CandleIntensity], 1, CandleIntensity
-
-  ret
-endp
-
-
-
-proc  gf_renderObj3D uses esi, Obj3D_Handle, tx_Handle, tx_color,\
-                               PosV, TurnV, Scale
+proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
+                               PosV, TurnV, Scale, dectroyMode
                                
   cmp [tx_Handle], 0
   jnz @F
@@ -136,6 +29,20 @@ proc  gf_renderObj3D uses esi, Obj3D_Handle, tx_Handle, tx_color,\
       invoke glUniform1i, [gf_ColorMode], 1
       invoke glUniform1i, [gf_SkyMode], 1
   @@:   
+  
+  cmp [dectroyMode], 0
+  jz @F
+      mov esi, tx_Destroy_Handles
+      mov eax, dword[dectroyMode] 
+      dec eax
+      shl eax, 2
+      add esi, eax
+      ;invoke glActiveTexture, GL_TEXTURE1
+      ;invoke glBindTexture, GL_TEXTURE_2D, dword[esi]
+      ;invoke glUniform1i, [gf_Tex2], 0
+  @@:
+  
+
 
   ;Создание матрицы (ModelMatrix)
   stdcall gf_CreateModelMatrix, [PosV], [TurnV], [Scale]
@@ -144,7 +51,7 @@ proc  gf_renderObj3D uses esi, Obj3D_Handle, tx_Handle, tx_color,\
   ;Загрузка текстуры
   invoke glBindTexture, GL_TEXTURE_2D, [tx_Handle]
   invoke glUniform1i, [gf_Tex1], 0
-  
+      
   ;Загрузка объекта
   mov esi, [Obj3D_Handle]
   invoke glBindVertexArray, [esi]
@@ -171,7 +78,7 @@ proc gf_RenderSelectObj3D, Obj3D_Handle,\
     fadd [addScale]
     fstp [Scale]
     stdcall gf_renderObj3D, [Obj3D_Handle], 0, gf_ConturColor,\
-                            [PosV], [TurnV], [Scale] 
+                            [PosV], [TurnV], [Scale], 0 
     invoke  glPolygonMode, GL_FRONT_AND_BACK, GL_FILL
 
     ret
@@ -321,7 +228,7 @@ endp
 proc gf_RenderEnd   
   ;Рендер солнца
   stdcall gf_renderObj3D, gf_MAIN_CloudHandle, 0, gf_SunColor,\
-                            SunPosition, gf_zeroVec, 2.0
+                            SunPosition, gf_zeroVec, 2.0, 0
 
   invoke SwapBuffers, [hdc]
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT 

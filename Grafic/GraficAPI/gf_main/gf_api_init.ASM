@@ -107,6 +107,12 @@
     ;Загрузка стандартных объектов
     stdcall gf_UploadObj3D, gf_MAIN_cloud_name, gf_MAIN_CloudHandle
     stdcall gf_UploadObj3D, gf_MAIN_cube_name, gf_MAIN_CubeHandle
+    ;Загрузка стандартных текстур
+    stdcall gf_UploadTexture, tx_Destroy1_Name, tx_Destroy1_Handle
+    stdcall gf_UploadTexture, tx_Destroy2_Name, tx_Destroy2_Handle
+    stdcall gf_UploadTexture, tx_Destroy3_Name, tx_Destroy3_Handle
+    stdcall gf_UploadTexture, tx_Destroy4_Name, tx_Destroy4_Handle
+    stdcall gf_UploadTexture, tx_Destroy5_Name, tx_Destroy5_Handle
     
     ret
  endp
