@@ -17,7 +17,8 @@ UniformLocations:
         gf_discardMode        dd      ?
         gf_ObjColor           dd      ?
         gf_ColorMode          dd      ?
-        gf_SkyMode            dd      ?
+        gf_SkyMode            dd      ?  
+        gf_isTex2Enable       dd      ?
         
 UniformNames:  
         db      "view", 0
@@ -39,6 +40,7 @@ UniformNames:
         db      "ObjColor", 0
         db      "ColorMode", 0
         db      "SkyMode", 0
+        db      "isTex2Enable", 0
         db      0
         
         

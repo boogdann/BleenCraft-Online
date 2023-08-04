@@ -30,6 +30,15 @@ proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
       invoke glUniform1i, [gf_SkyMode], 1
   @@:   
   
+  ;Создание матрицы (ModelMatrix)
+  stdcall gf_CreateModelMatrix, [PosV], [TurnV], [Scale]
+  invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_model_matrix
+
+  ;Загрузка текстуры
+  invoke glActiveTexture, GL_TEXTURE0
+  invoke glBindTexture, GL_TEXTURE_2D, [tx_Handle]
+  invoke glUniform1i, [gf_Tex1], 0
+  
   cmp [dectroyMode], 0
   jz @F
       mov esi, tx_Destroy_Handles
@@ -37,20 +46,11 @@ proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
       dec eax
       shl eax, 2
       add esi, eax
-      ;invoke glActiveTexture, GL_TEXTURE1
-      ;invoke glBindTexture, GL_TEXTURE_2D, dword[esi]
-      ;invoke glUniform1i, [gf_Tex2], 0
+      invoke glActiveTexture, GL_TEXTURE1
+      invoke glBindTexture, GL_TEXTURE_2D, dword[esi]
+      invoke glUniform1i, [gf_Tex2], 1
+      invoke glUniform1i, [gf_isTex2Enable], 1
   @@:
-  
-
-
-  ;Создание матрицы (ModelMatrix)
-  stdcall gf_CreateModelMatrix, [PosV], [TurnV], [Scale]
-  invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_model_matrix
-
-  ;Загрузка текстуры
-  invoke glBindTexture, GL_TEXTURE_2D, [tx_Handle]
-  invoke glUniform1i, [gf_Tex1], 0
       
   ;Загрузка объекта
   mov esi, [Obj3D_Handle]
@@ -62,6 +62,11 @@ proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
   jnz @F
      invoke glUniform1i, [gf_ColorMode], 0
      invoke glUniform1i, [gf_SkyMode], 0
+  @@:
+  
+  cmp [dectroyMode], 0
+  jz @F
+     invoke glUniform1i, [gf_isTex2Enable], 0
   @@:
   
   ret
