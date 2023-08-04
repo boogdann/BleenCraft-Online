@@ -4,6 +4,7 @@ include "gf_main\gf_api_init.ASM"
 include "gf_main\gf_math.ASM"
 include "gf_main\gf_init_render_data.ASM"
 include "gf_main\gf_render.ASM"
+include "gf_main\gf_set_render.ASM"
 ;\gf_data_init
 include "gf_data_init\gf_obj_init.ASM"
 include "gf_data_init\gf_texture_init.ASM"

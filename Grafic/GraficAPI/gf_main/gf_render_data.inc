@@ -3,6 +3,7 @@ UniformLocations:
         gf_model_M            dd      ?
         gf_projection_M       dd      ?
         gf_Tex1               dd      ?
+        gf_Tex2               dd      ?
         gf_Ka                 dd      ?
         gf_Kd                 dd      ?
         gf_Ks                 dd      ?
@@ -23,6 +24,7 @@ UniformNames:
         db      "model", 0
         db      "projection", 0
         db      "Tex1", 0
+        db      "Tex2", 0
         db      "Ka", 0
         db      "Kd", 0
         db      "Ks", 0
@@ -39,51 +41,27 @@ UniformNames:
         db      "SkyMode", 0
         db      0
         
- 
-VAOhandle         dd     0        
-VBOhandles        dd     ?, ?, ?       
-PosHandle         dd     ?
-NormalHandel      dd     ?
-TextureHandle     dd     ? 
+        
+;Siple Objs Names:
+gf_MAIN_cloud_name   db  "LCloud.mobj", 0 
+gf_MAIN_cube_name    db  "LCube.mobj", 0
+;Siple Objs Handles:
+gf_MAIN_CubeHandle   dd   ?, ? 
+gf_MAIN_CloudHandle  dd   ?, ?
 
-gf_tx_handle      dd     ?
-gf_texture_adress dd     ?
-
-gf_VertexCount             dd        ?
-gf_VertexArrayAdress       dd        ?
-gf_NormalArrayAdress       dd        ?
-gf_TextCordArrayAdress     dd        ?
-
-;#####################Matrix#########################
-gf_view_matrix        Matrix4x4
-gf_model_matrix       Matrix4x4
-gf_projection_matrix  Matrix4x4
-;####################################################
-gf_position_matrix    Matrix4x4     1.0,0.0,0.0,0.0,\
-                                    0.0,1.0,0.0,0.0,\
-                                    0.0,0.0,1.0,0.0,\
-                                    0.0,0.0,0.0,1.0
-;####################################################
-gf_scale_matrix       Matrix4x4     1.0,0.0,0.0,0.0,\
-                                    0.0,1.0,0.0,0.0,\
-                                    0.0,0.0,1.0,0.0,\
-                                    0.0,0.0,0.0,1.0
-;####################################################
-gf_turn_matrix        Matrix4x4
-;####################################################
-gf_camera_lookvec     dd     ?, ?, ?
-
-;############################################
-gf_uplookvec          dd     0.0, 0.0, 0.0
-;############################################
-gf_zeroVec            dd     0.0, 0.0, 0.0
-
-;Candles
-CandleIntensity       dd    0.40, 0.2, 0.2
-CandleRadius          dd    15.0
-tmpCandlePos          dd    ?, ?, ?, 0.0
-
-
+;Textures
+tx_Destroy1_Name     db  "Destroy1_64.mbmw", 0
+tx_Destroy2_Name     db  "Destroy2_64.mbmw", 0
+tx_Destroy3_Name     db  "Destroy3_64.mbmw", 0
+tx_Destroy4_Name     db  "Destroy4_64.mbmw", 0
+tx_Destroy5_Name     db  "Destroy5_64.mbmw", 0
+tx_Destroy_Handles:
+  tx_Destroy1_Handle   dd   ?
+  tx_Destroy2_Handle   dd   ?
+  tx_Destroy3_Handle   dd   ?
+  tx_Destroy4_Handle   dd   ?
+  tx_Destroy5_Handle   dd   ?
+  
 gf_LeftCandleName     db    "lights["
 gf_LeftCandle_len     db    $ - gf_LeftCandleName
 gf_RightCandleName_1  db    "].Position", 0
@@ -91,39 +69,86 @@ gf_RightCandle_len_1  db    $ - gf_RightCandleName_1
 gf_RightCandleName_2  db    "].Intensity", 0
 gf_RightCandle_len_2  db    $ - gf_RightCandleName_2
 gf_strCandleId        db    4 dup (?)
+        
+VAOhandle               dd        0        
+VBOhandles              dd        ?, ?, ?       
+PosHandle               dd        ?
+NormalHandel            dd        ?
+TextureHandle           dd        ? 
 
-;Sun
-SunIntensity          dd    0.55, 0.5, 0.5, 1.0
+gf_tx_handle            dd        ?
+gf_texture_adress       dd        ?
+
+gf_VertexCount          dd        ?
+gf_VertexArrayAdress    dd        ?
+gf_NormalArrayAdress    dd        ?
+gf_TextCordArrayAdress  dd        ?
+
+;==================Matrix=================
+gf_view_matrix        Matrix4x4
+gf_model_matrix       Matrix4x4
+gf_projection_matrix  Matrix4x4
+gf_position_matrix    Matrix4x4     1.0,0.0,0.0,0.0,\
+                                    0.0,1.0,0.0,0.0,\
+                                    0.0,0.0,1.0,0.0,\
+                                    0.0,0.0,0.0,1.0
+gf_scale_matrix       Matrix4x4     1.0,0.0,0.0,0.0,\
+                                    0.0,1.0,0.0,0.0,\
+                                    0.0,0.0,1.0,0.0,\
+                                    0.0,0.0,0.0,1.0
+gf_turn_matrix        Matrix4x4
+;==========================================
+gf_camera_lookvec     dd     ?, ?, ?
+gf_uplookvec          dd     0.0, 0.0, 0.0
+gf_zeroVec            dd     0.0, 0.0, 0.0
+;==========================================
+
+;================Lightning===================
+;Candles
+CandleIntensity       dd    0.40, 0.2, 0.2
+CandleRadius          dd    15.0
+tmpCandlePos          dd    ?, ?, ?, 0.0
+
+;Sun                    
+gf_Dayly_kof          dd    -1.0 ;[-1.0:1.0]
+Max_SunIntensity      dd    0.5, 0.5, 0.5, 1.0
+SunIntensity          dd    ?,   ?,   ?,   1.0 
 SunPosition           dd    20.0, 120.0, 20.0, 1.0
-gf_SunColor           dd    0.97, 0.96, 0.86
-gf_ConturColor        dd    0.0, 0.0, 0.0
-
-;Objects
-Ka            dd       0.2, 0.2, 0.2 ;Общий свет (им можно сделать день\ночь)
-Kd            dd       0.4, 0.4, 0.4
+;Object
+Ka            dd       0.3, 0.3, 0.3
+Kd            dd       0.4, 0.4, 0.4    
 Ks            dd       0.15, 0.15, 0.15
-Shininess     dd       1.5   ;Float
+Shininess     dd       1.5   
+
+gf_dayly_kof_adress     dd     ?
+;Флаг автоуправления день-ночь
+gf_isAutoWhether        db     ?
+gf_lastDaylyChange      dd     ?                    
+;===========================================
 
 
-gf_WaterAChanel  dd  0.3
-gf_CloudColor    dd  1.0, 1.0, 1.0
+;===============Colors======================
+gf_SunColor         dd      0.97, 0.96, 0.86
+gf_ConturColor      dd      0.0, 0.0, 0.0
+gf_WaterAChanel     dd      0.3
+gf_WaterSunIntensty dd      0.44, 0.48, 0.97, 1.0
+gf_CloudColorM      dd      0.1, 0.1, 0.1  ;[0.2:1.0]
+gf_CloudColor       dd      ?, ?, ?  ;[0.2:1.0]
+gf_backgroundColorM dd      0.5, 0.66, 0.99      ;0.01, 0.16, 0.49
+gf_backgroundColor  dd      ?,  ?,  ?
+;===========================================
 
 
+;===============Camera================
 fov             GLfloat         60.0
 zNear           GLfloat         0.001
 zFar            GLfloat         1000.0
 aspect          GLfloat         ?
-
 radian          GLfloat         57.32
+;=====================================
+
 
 gf_tmp_objPos   dd    ?,   ?,   ?
-gf_temp_path    db    50   dup   (?)
+gf_temp_path    db    30   dup   (?)
 
-
-;Siple Objs Names:
-gf_MAIN_cloud_name   db  "LCloud.mobj", 0 
-gf_MAIN_cube_name    db  "LCube.mobj", 0
-;Siple Objs Handles:
-gf_MAIN_CubeHandle   dd   ?, ? 
-gf_MAIN_CloudHandle  dd   ?, ?
 
