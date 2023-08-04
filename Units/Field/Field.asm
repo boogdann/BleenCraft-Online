@@ -48,7 +48,7 @@ proc Field.Initialize uses eax edi ecx ebx, _hHeap, Length, Width, Height
     mov    [Field.Matrix], eax
  
     stdcall Field.PalinNoise2D, [Field.Matrix],\
-            [Field.Length], [Field.Width], 3, [Field.Seed], 2.0, 30
+            [Field.Length], [Field.Width], 7, [Field.Seed], 2.0, 30
             
     
     xor    edx, edx
@@ -468,7 +468,10 @@ proc Field.PalinNoise2D uses esi edi ecx, resAddr, width, height,\
     fdivp
     fild  dword[Leo]
     fmulp
+    
     fistp  dword[edi]
+   ; mov    ebx, 80
+   ; sub    dword[edi], ebx
     
     ; end loop_y
     inc   word[y]
