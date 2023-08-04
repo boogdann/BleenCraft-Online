@@ -206,8 +206,8 @@ section '.data' data readable writeable
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         WorldLength dd 100 ;x
-         WorldWidth  dd 100  ;y
+         WorldLength dd 300 ;x
+         WorldWidth  dd 300  ;y
          WorldHeight dd 60 ;z
          
          ;Богдан вынеси это себе куданибудь
