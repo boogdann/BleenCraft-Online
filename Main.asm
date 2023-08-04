@@ -94,9 +94,10 @@ proc RenderScene
     ;Ноль на конце (isOnlyWater) - Основной рендер
     stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], 0
        
-    ;===========;Блок в позиции cвечки для наглядности================                      
+    ;===========;Блок в позиции cвечки для наглядности================  
+    ;Последний параметр: 0-5 степень разрушенности                     
     stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
-                            LightsPositions, cubeTurn, [cubeScale], 2  
+                            LightsPositions, cubeTurn, [cubeScale], 3  
                             
     ;Пример использования ререндера выделенного объекта (рендер рамки)
     stdcall gf_RenderSelectObj3D, obj_CubeHandle,\ 
