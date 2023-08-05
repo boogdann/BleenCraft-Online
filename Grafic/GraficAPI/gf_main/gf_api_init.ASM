@@ -1,6 +1,7 @@
  proc gf_window_init
     locals
-        hMainWindow     dd              ?
+        hMainWindow     dd          ?
+        center          POINT
     endl
     
     invoke  GetProcessHeap
@@ -16,9 +17,25 @@
     invoke  GetDC, [hMainWindow]
     mov     [hdc], eax
     
-    invoke  ShowCursor, 0
     invoke  LoadCursor, 0, IDC_ARROW 
     invoke SetCursor, eax
+    
+    
+    ;Установка курсора в центр
+    ;Центр экрана по X
+    mov eax, [WindowRect.right]
+    xor edx, edx
+    mov ebx, 2
+    div ebx
+    mov [center.x], eax
+  
+    ;Центр экрана по Y
+    mov eax, [WindowRect.bottom]
+    xor edx, edx
+    mov ebx, 2
+    div ebx
+    mov [center.y], eax
+    invoke SetCursorPos, [center.x], [center.y]
     
     
    ret
