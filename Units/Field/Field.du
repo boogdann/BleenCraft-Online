@@ -1,1 +1,8 @@
-Field.Blocks       db      Field.CAPACITY dup(?)    
+Field.Blocks       dd       ?  
+Field.hHeap        dd       ?
+Field.Length       dd       ?
+Field.Width        dd       ?
+Field.Height       dd       ?
+Field.Seed         dd       ?
+Field.Matrix       dd       ?
+Tmp                dd       ?

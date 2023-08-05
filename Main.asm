@@ -4,12 +4,15 @@ entry Start
 
 ;===============Module incleude================
 include "win32a.inc" 
-;В первую очередь подключить модуль GraficAPI!
 include "Grafic\GraficAPI\GraficAPI.asm"
+;include "CotrollerAPI\CotrollerAPI.asm"
 include "Units\Asm_Includes\Const.asm"
+
+;============For debug=============
 include "Units\Movement\keys.code"
 include "Units\Movement\move.asm"
 include "Units\Movement\Vmove.asm"
+;==================================
 ;==============================================
 
 section '.text' code readable executable     
@@ -26,7 +29,8 @@ Start:
   stdcall gf_UploadTexture, tx_BOGDAN_Name, tx_BOGDANHandle 
   stdcall gf_UploadTexture, tx_Brick_Name, tx_BrickHandle
   
-  stdcall Field.Initialize
+  stdcall Random.Initialize
+  stdcall Field.Initialize, [hHeap], [WorldLength], [WorldWidth], [WorldHeight]
   ;=============================================================
   
   ;================Params initialize=====================
@@ -46,12 +50,17 @@ Start:
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
+        ;stdcall ct_move_check, сameraPos, сameraTurn
+
         stdcall checkMoveKeys
         stdcall OnMouseMove, сameraTurn, [sensitivity]
         
         switch  [uMsg]
         case    .Render,        WM_PAINT
         case    .Destroy,       WM_DESTROY
+        ;case    .Movement,       WM_KEYDOWN
+        ;case    .Movement,       WM_CHAR
+        ;Debug only:
         case    .KeyDown,       WM_KEYDOWN
         case    .KeyChar,       WM_CHAR
         
@@ -62,13 +71,18 @@ proc WindowProc uses ebx,\
         ;Рендер
         stdcall RenderScene
         jmp     .ReturnZero
+        
+  ;============For debug=============      
   .KeyChar:
-        ;Клавиши 1
+        ;Debug only:
         stdcall OnCharDown, [wParam]
         jmp     .ReturnZero
   .KeyDown:
-        ;Клавиши 2
         stdcall OnKeyDown, [wParam]
+        jmp     .ReturnZero
+  ;==================================
+  .Movement:
+        ;
         jmp     .ReturnZero
   .Destroy:
         invoke ExitProcess, 1
@@ -92,7 +106,7 @@ proc RenderScene
     
     ;Рендер ландшафта:
     ;Ноль на конце (isOnlyWater) - Основной рендер
-    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], 0
+    stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], 0
        
     ;===========;Блок в позиции cвечки для наглядности================  
     ;Последний параметр: 0-5 степень разрушенности                     
@@ -103,11 +117,26 @@ proc RenderScene
     stdcall gf_RenderSelectObj3D, obj_CubeHandle,\ 
                             LightsPositions, cubeTurn, [cubeScale] 
     ;P.S. Для выделения объекта нужно применить специальный ререндер!!!
-    ;=================================================================           
+    ;=================================================================   
+    
+    
+    ;Удалить перед пушем!!!!
+    ;#################################################################
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
+                            cubePos1, cubeTurn, [cubeScale], 1  
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
+                            cubePos2, cubeTurn, [cubeScale], 2   
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
+                            cubePos3, cubeTurn, [cubeScale], 3  
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
+                            cubePos4, cubeTurn, [cubeScale], 4       
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
+                            cubePos5, cubeTurn, [cubeScale], 5  
+    ;#################################################################         
     
                             
     ;Единица на конце (isOnlyWater) - Рендер воды                       
-    stdcall gf_RenderMineLand, Field.Blocks, [WorldLength], [WorldWidth], [WorldHeight], 1
+    stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], 1
     ;Рендер облаков
     stdcall gf_renderSkyObjs, SkyLand, [SkyLength], [SkyWidth], [SkyHieght]
     
@@ -154,7 +183,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         сameraPos       dd    0.0, 0.0, -4.0
+         сameraPos       dd    0.0, 35.0, -4.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          
@@ -177,9 +206,9 @@ section '.data' data readable writeable
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         WorldLength dd Field.LENGTH ;x
-         WorldWidth  dd Field.WIDTH  ;y
-         WorldHeight dd Field.HEIGHT ;z
+         WorldLength dd 50 ;x
+         WorldWidth  dd 50  ;y
+         WorldHeight dd 60 ;z
          
          ;Богдан вынеси это себе куданибудь
          SkyLength   dd   10
@@ -196,12 +225,22 @@ section '.data' data readable writeable
                      1,1,0,0,0,0,1,1,1,0,\
                      1,1,1,0,1,1,0,0,0,0,\ 
                      1,0,1,0,1,1,1,0,0,0
+                     
+         ;Удалить перед пушем!!!!
+        ;#############################
+        cubePos1         dd    3.0, 3.0, 0.0
+        cubePos2         dd    4.5, 3.0, 0.0
+        cubePos3         dd    6.0, 3.0, 0.0
+        cubePos4         dd    7.5, 3.0, 0.0
+        cubePos5         dd    9.0, 3.0, 0.0
+        ;#############################
          ;================================================================
          
          ;=============Data imports================
          ;Добавить импорты данных нужные GraficAPI
          include "Grafic\GraficAPI\GraficAPI.inc"
-         include "Units\Movement\MConst.asm"   
+         ;include "CotrollerAPI\CotrollerAPI.inc"
+         include "Units\Movement\MConst.asm"  ;;;;;;; 
          ;=========================================   
 
 section '.idata' import data readable writeable

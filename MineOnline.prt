@@ -4,16 +4,9 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=6
-  countInc=2
+  countAsm=1
+  countInc=0
 [asm]
   asm1="Main.asm"
-  asm2="gf_api_init.ASM"
-  asm3="gf_texture_init.ASM"
-  asm4="gf_init_render_data.ASM"
-  asm5="gf_set_render.ASM"
-  asm6="GraficAPI.ASM"
 [inc]
-  inc1="gf_render_data.inc"
-  inc2="gf_api_init.inc"
 end if
