@@ -5,13 +5,13 @@ entry Start
 ;===============Module incleude================
 include "win32a.inc" 
 include "Grafic\GraficAPI\GraficAPI.asm"
-;include "CotrollerAPI\CotrollerAPI.asm"
+include "CotrollerAPI\CotrollerAPI.asm"
 include "Units\Asm_Includes\Const.asm"
 
 ;============For debug=============
-include "Units\Movement\keys.code"
-include "Units\Movement\move.asm"
-include "Units\Movement\Vmove.asm"
+;include "Units\Movement\keys.code"
+;include "Units\Movement\move.asm"
+;include "Units\Movement\Vmove.asm"
 ;==================================
 ;==============================================
 
@@ -20,6 +20,8 @@ section '.text' code readable executable
 Start:
   ;================Modules initialize=================
   stdcall gf_grafic_init
+  ;Флаг = 1 - показать мышку
+  stdcall ct_change_mouse, 0
   ;===================================================  
   
   ;=============Project data initialize=========================
@@ -50,19 +52,19 @@ Start:
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
 
-        ;stdcall ct_move_check, сameraPos, сameraTurn
+        stdcall ct_move_check, сameraPos, сameraTurn,\
+                               [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
 
-        stdcall checkMoveKeys
-        stdcall OnMouseMove, сameraTurn, [sensitivity]
+        ;stdcall checkMoveKeys
+        ;stdcall OnMouseMove, сameraTurn, [sensitivity]
         
         switch  [uMsg]
         case    .Render,        WM_PAINT
         case    .Destroy,       WM_DESTROY
-        ;case    .Movement,       WM_KEYDOWN
-        ;case    .Movement,       WM_CHAR
+        case    .Movement,      WM_KEYDOWN  
         ;Debug only:
-        case    .KeyDown,       WM_KEYDOWN
-        case    .KeyChar,       WM_CHAR
+        ;case    .KeyDown,       WM_KEYDOWN
+        ;case    .KeyChar,       WM_CHAR
         
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
         jmp     .Return
@@ -72,18 +74,18 @@ proc WindowProc uses ebx,\
         stdcall RenderScene
         jmp     .ReturnZero
         
+        .Movement:
+        stdcall ct_on_keyDown, [wParam] 
+        jmp     .ReturnZero
   ;============For debug=============      
-  .KeyChar:
-        ;Debug only:
-        stdcall OnCharDown, [wParam]
-        jmp     .ReturnZero
-  .KeyDown:
-        stdcall OnKeyDown, [wParam]
-        jmp     .ReturnZero
-  ;==================================
-  .Movement:
-        ;
-        jmp     .ReturnZero
+  ;.KeyChar:
+  ;      ;Debug only:
+  ;      stdcall OnCharDown, [wParam]
+  ;      jmp     .ReturnZero
+  ;.KeyDown:
+  ;      stdcall OnKeyDown, [wParam]
+  ;      jmp     .ReturnZero
+  ;================================== 
   .Destroy:
         invoke ExitProcess, 1
   .ReturnZero:
@@ -117,23 +119,7 @@ proc RenderScene
     stdcall gf_RenderSelectObj3D, obj_CubeHandle,\ 
                             LightsPositions, cubeTurn, [cubeScale] 
     ;P.S. Для выделения объекта нужно применить специальный ререндер!!!
-    ;=================================================================   
-    
-    
-    ;Удалить перед пушем!!!!
-    ;#################################################################
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
-                            cubePos1, cubeTurn, [cubeScale], 1  
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
-                            cubePos2, cubeTurn, [cubeScale], 2   
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
-                            cubePos3, cubeTurn, [cubeScale], 3  
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
-                            cubePos4, cubeTurn, [cubeScale], 4       
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
-                            cubePos5, cubeTurn, [cubeScale], 5  
-    ;#################################################################         
-    
+    ;=================================================================    
                             
     ;Единица на конце (isOnlyWater) - Рендер воды                       
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], 1
@@ -183,7 +169,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         сameraPos       dd    0.0, 35.0, -4.0
+         сameraPos       dd    11.0, 9.0, 10.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          
@@ -225,22 +211,13 @@ section '.data' data readable writeable
                      1,1,0,0,0,0,1,1,1,0,\
                      1,1,1,0,1,1,0,0,0,0,\ 
                      1,0,1,0,1,1,1,0,0,0
-                     
-         ;Удалить перед пушем!!!!
-        ;#############################
-        cubePos1         dd    3.0, 3.0, 0.0
-        cubePos2         dd    4.5, 3.0, 0.0
-        cubePos3         dd    6.0, 3.0, 0.0
-        cubePos4         dd    7.5, 3.0, 0.0
-        cubePos5         dd    9.0, 3.0, 0.0
-        ;#############################
          ;================================================================
          
          ;=============Data imports================
          ;Добавить импорты данных нужные GraficAPI
          include "Grafic\GraficAPI\GraficAPI.inc"
-         ;include "CotrollerAPI\CotrollerAPI.inc"
-         include "Units\Movement\MConst.asm"  ;;;;;;; 
+         include "CotrollerAPI\CotrollerAPI.inc"
+         ;include "Units\Movement\MConst.asm"  
          ;=========================================   
 
 section '.idata' import data readable writeable
