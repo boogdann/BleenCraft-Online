@@ -66,7 +66,7 @@ endp
 proc ct_check_Jump
 
   locals
-      Jump_speed  dd    -0.0007
+      Jump_speed  dd    -0.007
   endl
 
   cmp [ct_isJump], 0

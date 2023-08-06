@@ -2,6 +2,7 @@ proc gf_CreateLightning, LightsCount_u, LightsPositions, isWater
 
     locals 
        LightsCount  dd   ?
+       fog_dist     dd   ?
     endl
     
     mov esi, [LightsCount_u]
@@ -18,7 +19,11 @@ proc gf_CreateLightning, LightsCount_u, LightsPositions, isWater
        stdcall gf_changeDaylyCof
     @@:
     stdcall gf_setDaylyCof  
-    stdcall gf_RecalculateWheherParams, [isWater]
+    stdcall gf_RecalculateWheherParams, [isWater]     
+    
+    fild  [GF_BLOCKS_RADIUS]
+    fstp  [fog_dist]   
+    invoke glUniform1f, [gf_MaxFogDist], [fog_dist]
     
     
     ;«агрузка данных источников освещени€
