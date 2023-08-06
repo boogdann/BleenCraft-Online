@@ -5,17 +5,23 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
       PlIntPos   dd    ?, ?, ?
       MAX_XYZ    dd    ?, ?, ?
       MIN_XYZ    dd    ?, ?, ?
+      ADD_XYZ    dd    ?, ?, ?
+      ADD_YZ_L   dd    ?, ?, ?
+      tmp        dd    ?
     endl
   
     cmp [isOnlyWater], 0
     jz @F
        invoke glUniform1f, [gf_aChanel], [gf_WaterAChanel]
     @@:
-  
-    
+     
     ;Ограничение рендера для оптимизации:
-    ;GF_BLOCKS_RADIUS
+    ;[max(posX - GF_BLOCKS_RADIUS, 0):min(posX + GF_BLOCKS_RADIUS, X)]
+    ;[max(posZ - GF_BLOCKS_RADIUS, 0):min(posZ + GF_BLOCKS_RADIUS, Y)]
+    ;[max(posY - GF_BLOCKS_RADIUS, 0):min(posY + GF_BLOCKS_RADIUS, Z)]
+  
     ;Взятие целой позиции:
+    ;======================
     mov esi, [PlPos]
     fld dword[esi]
     fistp [PlIntPos]
@@ -23,32 +29,144 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     fistp [PlIntPos + 4]
     fld dword[esi + 8]
     fistp [PlIntPos + 8]
+    ;=======================
     
+    ;==========================
     ;Расчёт MIN_X:
+    mov eax, [PlIntPos]
+    sub eax, [GF_BLOCKS_RADIUS]
+    cmp eax, 0
+    jns @F
+      mov eax, 0
+    @@: 
+    cmp eax, [X]
+    jl @F
+      mov eax, [X]
+    @@:
+    mov [MIN_XYZ], eax
+    ;Расчёт MAX_X:
+    mov eax, [PlIntPos]
+    add eax, [GF_BLOCKS_RADIUS]
+    cmp eax, 0
+    jns @F
+      mov eax, 0
+    @@: 
+    cmp eax, [X]
+    jl @F
+      mov eax, [X]
+    @@:
+    mov [MAX_XYZ], eax
+    mov eax, [X]
+    sub eax, [MAX_XYZ]
+    mov [ADD_XYZ], eax
     
-  
-
+    ;Расчёт MIN_Y:
+    mov eax, [PlIntPos + 8]
+    sub eax, [GF_BLOCKS_RADIUS + 4]
+    cmp eax, 0
+    jns @F
+      mov eax, 0
+    @@: 
+    cmp eax, [Y]
+    jl @F
+      mov eax, [Y]
+    @@:
+    mov [MIN_XYZ + 4], eax
+    ;Расчёт MAX_Y:
+    mov eax, [PlIntPos + 8]
+    add eax, [GF_BLOCKS_RADIUS + 4]
+    cmp eax, 0
+    jns @F
+      mov eax, 0
+    @@: 
+    cmp eax, [Y]
+    jl @F
+      mov eax, [Y]
+    @@:
+    mov [MAX_XYZ + 4], eax
+    mov eax, [Y]
+    sub eax, [MAX_XYZ + 4]
+    imul [X]
+    mov [ADD_XYZ + 4], eax
+    mov eax, [MIN_XYZ + 4]
+    imul [X]
+    mov [ADD_YZ_L], eax 
+    
+    ;Расчёт MIN_Z:
+    mov eax, [PlIntPos + 4]
+    sub eax, [GF_BLOCKS_RADIUS + 8]
+    cmp eax, 0
+    jns @F
+      mov eax, 0
+    @@: 
+    cmp eax, [Z]
+    jl @F
+      mov eax, [Z]
+    @@:
+    mov [MIN_XYZ + 8], eax
+    ;Расчёт MAX_Z:
+    mov eax, [PlIntPos + 8]
+    add eax, [GF_BLOCKS_RADIUS + 8]
+    cmp eax, 0
+    jns @F
+      mov eax, 0
+    @@: 
+    cmp eax, [Z]
+    jl @F
+      mov eax, [Z]
+    @@:
+    mov [MAX_XYZ + 8], eax
+    mov eax, [Y]
+    sub eax, [MAX_XYZ + 8]
+    imul [X]
+    imul [Y]
+    mov [ADD_XYZ + 8], eax
+    mov eax, [MIN_XYZ + 8]
+    imul [X]
+    imul [Y]
+    mov [ADD_YZ_L + 4], eax 
+    ;========================
+    
     mov esi, [LandData]
-    mov ecx, 0
-    .LandRender_x:
-        mov edx, 0  
+    ;Render circle:
+    ;==========Z==========
+    add esi, [ADD_YZ_L + 4] 
+    mov ecx, [MIN_XYZ + 8] 
+    .LandRender_z:
+    cmp ecx, [MAX_XYZ + 8]
+    jz .skip_z
+        ;==========Y===========
+        add esi, [ADD_YZ_L]
+        mov edx, [MIN_XYZ + 4]  
         .LandRender_y:
-            mov ebx, 0
-            .LandRender_z:  
+        cmp edx, [MAX_XYZ + 4]
+        jz .skip_y    
+            ;========X=========
+            add esi, [MIN_XYZ]
+            mov ebx, [MIN_XYZ]
+            .LandRender_x:  
+            cmp ebx, [MAX_XYZ]
+            jz .skip_x
                   cmp byte[esi], 0
                   jz @F
                        stdcall gf_render_chank, [isOnlyWater]
                   @@:
-                  inc esi    
+                  add esi, 1    
             inc ebx
-            cmp ebx, [X]
-            jnz .LandRender_z
+            jmp .LandRender_x
+            .skip_x:
+            add esi, [ADD_XYZ] 
+            ;=================
         inc edx
-        cmp edx, [Y] 
-        jnz .LandRender_y 
+        jmp .LandRender_y
+        .skip_y:
+        add esi, [ADD_XYZ + 4]
+        ;=====================
     inc ecx
-    cmp ecx, [Z]
-    jnz .LandRender_x
+    jmp .LandRender_z
+    .skip_z:
+    add esi, [ADD_XYZ + 8]
+    ;=================
     
     invoke glUniform1f, [gf_aChanel], 1.0
   ret

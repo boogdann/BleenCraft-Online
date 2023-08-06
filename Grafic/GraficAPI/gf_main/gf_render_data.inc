@@ -19,6 +19,7 @@ UniformLocations:
         gf_ColorMode          dd      ?
         gf_SkyMode            dd      ?  
         gf_isTex2Enable       dd      ?
+        gf_MaxFogDist         dd      ?
         
 UniformNames:  
         db      "view", 0
@@ -41,6 +42,7 @@ UniformNames:
         db      "ColorMode", 0
         db      "SkyMode", 0
         db      "isTex2Enable", 0
+        db      "MaxFogDist", 0
         db      0
         
         
