@@ -14,12 +14,16 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
 
   locals
     Pl_pos    dd    ?, ?, ? 
+    Pl_feets  dd    1.7
+    Pl_ass    dd    0.3
+    
   endl
   
   mov esi, [playerPos]
   fld dword[esi]
   fistp [Pl_pos]
   fld dword[esi + 4]
+  fsub dword[Pl_feets]
   fistp [Pl_pos + 8]
   fld dword[esi + 8]
   fistp [Pl_pos + 4]
@@ -29,7 +33,7 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
                       
   cmp eax, 1
   jnz @F
-    invoke ExitProcess, 0
+    mov [ct_fall_speed], 0
   @@:
    
   ret
