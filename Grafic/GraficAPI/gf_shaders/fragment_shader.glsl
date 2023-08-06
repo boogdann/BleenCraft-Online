@@ -24,11 +24,11 @@ struct LightInfo {
     vec4 Position;
     vec3 Intensity;
 };
-uniform LightInfo lights[257];
+uniform LightInfo lights[15];
 uniform int LightsCount;
 
 void ads( int i, vec4 LPos, vec3 LIntens, vec4 position, 
-          vec3 norm, out vec3 ambDiff, out vec3 spec, vec3 Ka, vec3 Kd, vec3 Ks ) {
+          vec3 norm, vec3 Ka, vec3 Kd, vec3 Ks, out vec3 ambDiff, out vec3 spec ) {
 
     vec3 s = normalize( vec3(LPos - position) );
     vec3 v = normalize(vec3(-position));
@@ -38,8 +38,9 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
     if (i != 0) {
         float LightDist = abs(distance(vec3(LPos), FPosition));
         CandleCof = max(CandleRadius - LightDist, 0.0) / (CandleRadius / 5);
-        Ka = vec3(0.0, 0.0, 0.0);
-        Ks = vec3(0.0, 0.0, 0.0);
+        Ka = vec3(0.0);
+        Ks = vec3(0.0);
+        if (CandleCof == 0.0) { return; }
     }
 
     ambDiff += CandleCof * LIntens * ( Ka + Kd * max( dot(s, norm), 0.0 ));
@@ -48,35 +49,38 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
 
 
 void main() {
+
+    //Textures
     vec4 texColor = texture( Tex1, TexCoord );
+    if (discardMode) {
+        if (texColor == vec4(1.0)) { discard; }
+    }
+    if (ColorMode) {
+        texColor = vec4(ObjColor, 1.0);
+    }
     if (isTex2Enable) {
         vec4 texColor2 = texture( Tex2, TexCoord );
         if ((texColor2.x > 0.0) && (texColor2.x < 0.9)) {
             texColor = texColor2;
         }
     }
-    
-    if (ColorMode) {
-        texColor = vec4(ObjColor, 1.0);
-    }
-    if (discardMode && (texColor == vec4(1.0, 1.0, 1.0, 1.0))) {
-        discard;//
-    }
 
-    float dist = abs(distance(CameraPos, FPosition));
+    //Lightning
     vec3 ambDiff = vec3(0.0);
     vec3 spec = vec3(0.0);
+
     for( int i = 0; i < LightsCount; i++ )
          ads( i, lights[i].Position, lights[i].Intensity,
-             eyePosition, eyeNorm, ambDiff, spec, Ka, Kd, Ks);
+             eyePosition, eyeNorm, Ka, Kd, Ks, ambDiff, spec);
 
     vec4 resColor = (vec4(ambDiff, 1.0) * texColor + vec4(spec, 1.0)); 
 
     //Fog
+    vec4 FogColor = vec4(0.2, 0.2, 0.2, 1.0);
     float MaxFogDist = 250;
     float MinFogDist = 50;
 
-    vec4 FogColor = vec4(0.2, 0.2, 0.2, 1.0);
+    float dist = abs(distance(CameraPos, FPosition));
     float fogFactor = (MaxFogDist - dist) / (MaxFogDist - MinFogDist);
 
     if (SkyMode) {
@@ -86,5 +90,6 @@ void main() {
     fogFactor = clamp( fogFactor, 0.0, 1.0 );
     resColor = mix( FogColor, resColor, fogFactor );
 
+    //Result
     gl_FragColor = vec4(vec3(resColor), aChanel);
 }

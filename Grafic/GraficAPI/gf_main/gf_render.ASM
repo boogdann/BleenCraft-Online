@@ -12,27 +12,21 @@ proc gf_RenderBegin, CameraPos, CameraTurn
   ;Загрузка позиции камеры
   invoke glUniform3fv, [gf_CameraPos], 1, [CameraPos]
 
-  ;=====================test=============
-  invoke glUniform1i, [gf_discardMode], 0;Отсечение пикселей (трава)
-  ;=====================================
+  ;Устанавливаем начальные параметры
+  invoke glUniform1i, [gf_discardMode], 0
 
   ret
 endp
 
 
 proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
-                               PosV, TurnV, Scale, dectroyMode
-                               
+                               PosV, TurnV, Scale, dectroyMode                      
   cmp [tx_Handle], 0
   jnz @F
       invoke glUniform3fv, [gf_ObjColor], 1, [tx_color]
       invoke glUniform1i, [gf_ColorMode], 1
       invoke glUniform1i, [gf_SkyMode], 1
   @@:   
-  
-  ;Создание матрицы (ModelMatrix)
-  stdcall gf_CreateModelMatrix, [PosV], [TurnV], [Scale]
-  invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_model_matrix
 
   ;Загрузка текстуры
   invoke glActiveTexture, GL_TEXTURE0
@@ -51,6 +45,10 @@ proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
       invoke glUniform1i, [gf_Tex2], 1
       invoke glUniform1i, [gf_isTex2Enable], 1
   @@:
+  
+  ;Создание матрицы (ModelMatrix)
+  stdcall gf_CreateModelMatrix, [PosV], [TurnV], [Scale]
+  invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_model_matrix
       
   ;Загрузка объекта
   mov esi, [Obj3D_Handle]
@@ -72,6 +70,7 @@ proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
   ret
 endp
 
+
 proc gf_RenderSelectObj3D, Obj3D_Handle,\
                                PosV, TurnV, Scale
     locals
@@ -90,7 +89,7 @@ proc gf_RenderSelectObj3D, Obj3D_Handle,\
 endp
 
 
-proc gf_renderCube uses esi ecx edx, cube_Pos, MainCubeHandle, TextureHandle
+proc gf_SimpleObj uses esi ecx edx, cube_Pos, MainCubeHandle, TextureHandle
   stdcall gf_CreatePositionMatrix, [cube_Pos] 
   invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_position_matrix
   
@@ -104,84 +103,7 @@ proc gf_renderCube uses esi ecx edx, cube_Pos, MainCubeHandle, TextureHandle
   invoke glDrawArrays, GL_TRIANGLES, 0, [esi + 4]
 
   ret
-endp
-
-
-
-
-proc gf_RenderMineLand, LandData, X, Y, Z, isOnlyWater
-  locals 
-    _pos       dd    ?
-    ObjHandle  dd    ?
-  endl
-  
-  mov [ObjHandle], gf_MAIN_CubeHandle
-  cmp [isOnlyWater], 0
-  jz @F
-     mov [ObjHandle], gf_MAIN_CubeHandle ;gf_MAIN_WaterHandle
-     invoke glUniform1f, [gf_aChanel], [gf_WaterAChanel]
-  @@:
-    ;Loop 0 -> X
-      ;Loop 0 -> Y
-         ;Loop 0 -> Z
-            ;Render (Pos -> X, Y, Z)
-         ;End
-      ;End
-    ;End
-    ;Loop 0 -> X
-    mov esi, [LandData]
-    mov ecx, 0
-    .LandRender_x:
-         ;Loop 0 -> Y
-         mov edx, 0  
-         .LandRender_y:
-               ;Loop 0 -> Z
-               mov ebx, 0
-               .LandRender_z:
-                    ;Пусто
-                    cmp byte[esi], 0
-                    jz @F
-                       ;Для воды
-                       cmp [isOnlyWater], 0
-                       jnz .skip_1
-                          cmp byte[esi], 255  ;Water Block
-                          jz @F
-                          jmp .skip_2               
-                       .skip_1: 
-                       cmp byte[esi], 255  ;Water Block
-                       jnz @F
-                       .skip_2:
-                       
-                       ;Pos -> X, Y, Z
-                       ;Texture -> byte[esi]
-                       ;Получить handle текстуры
-                       ;stdcall GetTextureHandle, byte[esi]
-                       mov eax, [tx_BOGDANHandle]
-                    
-                       mov [_pos], ebx
-                       fild [_pos] 
-                       fstp [gf_tmp_objPos + 0] ;ebx
-                       mov [_pos], ecx
-                       fild [_pos] 
-                       fstp [gf_tmp_objPos + 4] ;edx
-                       mov [_pos], edx
-                       fild [_pos] 
-                       fstp [gf_tmp_objPos + 8] ;ecx
-                       stdcall gf_renderCube, gf_tmp_objPos, [ObjHandle], eax ;(eax - Texture Handle)
-                    @@:
-                    inc esi
-               inc ebx
-               cmp ebx, [X]
-               jnz .LandRender_z
-         inc edx
-         cmp edx, [Y] 
-         jnz .LandRender_y 
-    inc ecx
-    cmp ecx, [Z]
-    jnz .LandRender_x
-    invoke glUniform1f, [gf_aChanel], 1.0
-  ret
-endp
+endp  
                 
 
 proc gf_renderSkyObjs, SkyLand, X, Y, Hieght 
@@ -208,13 +130,13 @@ proc gf_renderSkyObjs, SkyLand, X, Y, Hieght
              mov [_pos], ecx
              fild [_pos] 
              fmul [mul]
-             fstp [gf_tmp_objPos + 0] ;ecx
+             fstp [gf_tmp_objPos + 0] 
              mov [_pos], edx
              fild [_pos] 
              fmul [mul]
-             fstp [gf_tmp_objPos + 8] ;edx 
+             fstp [gf_tmp_objPos + 8] 
              
-             stdcall gf_renderCube, gf_tmp_objPos, gf_MAIN_CloudHandle, 0
+             stdcall gf_SimpleObj, gf_tmp_objPos, gf_MAIN_CloudHandle, 0
              @@:
              inc esi 
          inc edx
