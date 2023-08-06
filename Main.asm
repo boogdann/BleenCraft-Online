@@ -54,7 +54,7 @@ proc WindowProc uses ebx,\
 
         stdcall ct_move_check, сameraPos, сameraTurn,\
                                [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
-
+        ;Debug only:
         ;stdcall checkMoveKeys
         ;stdcall OnMouseMove, сameraTurn, [sensitivity]
         
@@ -62,9 +62,6 @@ proc WindowProc uses ebx,\
         case    .Render,        WM_PAINT
         case    .Destroy,       WM_DESTROY
         case    .Movement,      WM_KEYDOWN  
-        ;Debug only:
-        ;case    .KeyDown,       WM_KEYDOWN
-        ;case    .KeyChar,       WM_CHAR
         
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
         jmp     .Return
@@ -77,15 +74,6 @@ proc WindowProc uses ebx,\
         .Movement:
         stdcall ct_on_keyDown, [wParam] 
         jmp     .ReturnZero
-  ;============For debug=============      
-  ;.KeyChar:
-  ;      ;Debug only:
-  ;      stdcall OnCharDown, [wParam]
-  ;      jmp     .ReturnZero
-  ;.KeyDown:
-  ;      stdcall OnKeyDown, [wParam]
-  ;      jmp     .ReturnZero
-  ;================================== 
   .Destroy:
         invoke ExitProcess, 1
   .ReturnZero:
@@ -108,7 +96,8 @@ proc RenderScene
     
     ;Рендер ландшафта:
     ;Ноль на конце (isOnlyWater) - Основной рендер
-    stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], 0
+    stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
+                                               [WorldHeight], сameraPos, сameraTurn, 0
        
     ;===========;Блок в позиции cвечки для наглядности================  
     ;Последний параметр: 0-5 степень разрушенности                     
@@ -122,7 +111,8 @@ proc RenderScene
     ;=================================================================    
                             
     ;Единица на конце (isOnlyWater) - Рендер воды                       
-    stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], 1
+    stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
+                                               [WorldHeight], сameraPos, сameraTurn, 1
     ;Рендер облаков
     stdcall gf_renderSkyObjs, SkyLand, [SkyLength], [SkyWidth], [SkyHieght]
     
@@ -143,6 +133,8 @@ section '.data' data readable writeable
          ;Путь к юниту графики 
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
+         ;Оптимизационное ограничение на видимлсть блоков:
+         GF_BLOCKS_RADIUS   dd     50
          ;===================================================
                   
                   
@@ -174,7 +166,7 @@ section '.data' data readable writeable
          сameraTurn      dd    0.0, 0.0, 0.0
          
          ;=================Lightning Data==================   
-         LightsCount   db    1 ;Byte [0-255]   ;Количество свечек
+         LightsCount   db    1 ;Byte [0-15]   ;Количество свечек
          LightsPositions:
               dd   10.0, 3.0, 7.0  ;Тут стоит блок для наглядности
               
@@ -192,8 +184,8 @@ section '.data' data readable writeable
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         WorldLength dd 50 ;x
-         WorldWidth  dd 50  ;y
+         WorldLength dd 75 ;x
+         WorldWidth  dd 75  ;y
          WorldHeight dd 60 ;z
          
          ;Богдан вынеси это себе куданибудь
@@ -225,8 +217,8 @@ section '.idata' import data readable writeable
   ;=============Library imports==============
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
-          opengl32, 'opengl32.DLL',\    ;1) ;Добавь нужные для GraficAPI библиотеки!
-          gdi32,    'GDI32.DLL'         ;2) 
+          opengl32, 'opengl32.DLL',\   
+          gdi32,    'GDI32.DLL'          
                                        
   include 'api\kernel32.inc'
   include 'api\user32.inc'

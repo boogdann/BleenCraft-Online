@@ -10,80 +10,31 @@ proc ct_collisionsBegin uses esi edi, playerPos
 endp
 
 
-proc ct_collisionsCheck, playerPos, Field, X, Y, Z
-    locals              
-      Block           dd     0.5
-      PL_HEIGHT       dd     1.85 ;;
-      PL_UP_SIZE      dd     0.15
-      PL_DOWN_SIZE    dd     1.7
-      X_POS           dd     ?
-      Y_POS           dd     ?
-      Z_POS           dd     ?
-      tmp             dd     2500
-    endl
-    
-    mov esi, [playerPos]
-    mov edi, [Field]
-    
-    ;ct_isJump = 1 если можно прыгать!!!
-    
-    ;Вниз:
-    fld dword[esi + 4]
-    fsub [PL_DOWN_SIZE]
-    fistp dword [Z_POS]  
-    fld dword[esi]
-    fistp dword [X_POS]  
-    fld dword[esi + 8]
-    fistp dword [Y_POS] 
-    push edi
-       stdcall ct_isBlock, [Field], [X], [Y], [X_POS], [Y_POS], [Z_POS]
-       cmp eax, 0
-       jz @F
-          jmp .Registration_Down
-       @@:
-       jmp .skip_Down
-       .Registration_Down:
-          fild [Z_POS]
-          fadd [Block]
-          fadd [PL_DOWN_SIZE]
-          fstp dword[esi + 4]
-          fldz
-          fstp [ct_fall_speed]
-       .skip_Down:
-    pop edi
+proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
 
-  ;1. CheckDown
-
-  .Normal:
+  ;Задачи функции:
+  ;1. Не дать пройти сквозь препятствия
+  ;2. Отследить когда человек на земле, а когда нет 
+  ;  (от этого зависит можно ли прыгать) (ct_isJump)
+  ;  ct_isJump = 1 - можно прыгать | 0 - нельзя
+  
+  ;Пометки:
+  ;К этому моменту расчитано новое положение ([playerPos])
+  ;и в нём человек может быть в колизии и если так, то нужно
+  ;здесь это обработать с учётом что прошлое положение 
+  ;(100% без колизий) хранитьcя в [ct_lastPos]
+  ;Причём просто вернуться к старому положению нельзя
+  ;т.к. есть вариант с "скольжением в доль стены" или
+  ;просто даже ходьба по полу и т.д.
+  
+  ;В итоге имеется:
+  ;playerPos - новая невалидированная позиция
+  ;lastPos - старая валидированная позиция
+  ;Field - адресс на 3-х мерный массив ладшафта
+  ;X, Y, Z - размеры ладшафта
+   
   ret
 endp 
-
-proc ct_isBlock uses esi, Field, XS, YS, x, y, z
-     
-   locals
-      XY_mul      dd     ?
-   endl  
-   mov esi, [Field] 
-   mov eax, 0
-   
-   
-   ;mov eax, [XS]
-   ;imul [YS]
-   ;imul [z]
-   ;add esi, eax
-   
-   ;mov eax, [XS]
-   ;imul [y]
-   ;add esi, eax
-   ;add esi, [x]
-   ;mov eax, 0
-   ;cmp byte[esi], 0
-   ;jz @F
-   ;   mov eax, 1
-   ;@@:
-
-  ret
-endp
 
 
 proc ct_fall_check, playerPos
@@ -106,6 +57,26 @@ proc ct_fall_check, playerPos
   fld  dword[esi + 4]
   fsub [ct_fall_speed]
   fstp dword[esi + 4]
+
+  ret
+endp
+
+
+;Прыжок
+proc ct_check_Jump
+
+  locals
+      Jump_speed  dd    -0.0007
+  endl
+
+  cmp [ct_isJump], 0
+  jz @F
+  invoke  GetAsyncKeyState, VK_SPACE
+  cmp eax, 0
+  jz @F
+      fld [Jump_speed]
+      fstp [ct_fall_speed]
+  @@:
 
   ret
 endp

@@ -13,28 +13,9 @@ proc ct_on_keyDown, wParam
      jmp .final
   @@:
   
-  ;...
+  ;... Другие клавиши
 
   .final:  
-  ret
-endp
-
-
-proc ct_check_Jump
-
-  locals
-      Jump_speed  dd    -0.007
-  endl
-
-  cmp [ct_isJump], 0
-  jz @F
-  invoke  GetAsyncKeyState, VK_SPACE
-  cmp eax, 0
-  jz @F
-      fld [Jump_speed]
-      fstp [ct_fall_speed]
-  @@:
-
   ret
 endp
 
@@ -123,13 +104,6 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmul [Speed] 
       fsubp 
       fstp dword [edi] 
-      ;CameraPos[2] = CameraPos[2] + sin(a) * WalkingSpeed 
-      ;fld dword [edi + 4] 
-      ;fld dword [a] 
-      ;fsin 
-      ;fmul [Speed]  
-      ;faddp 
-      ;fstp dword [edi + 4] 
       ;CameraPos[3] = CameraPos[3] + cos(a) * cos(b) * WalkingSpeed 
       fld dword [edi + 8] 
       fld [a] 
@@ -152,13 +126,6 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmul [Speed]  
       faddp 
       fstp dword [edi] 
-      ;CameraPos[2] = CameraPos[2] + sin(a) * WalkingSpeed 
-      ;fld dword [edi + 4] 
-      ;fld [a] 
-      ;fsin 
-      ;fmul [Speed]  
-      ;fsubp 
-      ;fstp dword [edi + 4] 
       ;CameraPos[3] = CameraPos[3] + cos(a) * cos(b) * WalkingSpeed 
       fld dword [edi + 8] 
       fld [a] 
