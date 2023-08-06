@@ -12,6 +12,7 @@ uniform vec3 Ka;
 uniform vec3 Ks;
 uniform float Shininess;
 uniform float CandleRadius;
+uniform float MaxFogDist;
 uniform vec3 CameraPos;
 uniform float aChanel; 
 uniform bool discardMode;
@@ -77,8 +78,7 @@ void main() {
 
     //Fog
     vec4 FogColor = vec4(0.2, 0.2, 0.2, 1.0);
-    float MaxFogDist = 250;
-    float MinFogDist = 50;
+    float MinFogDist = MaxFogDist - 15;
 
     float dist = abs(distance(CameraPos, FPosition));
     float fogFactor = (MaxFogDist - dist) / (MaxFogDist - MinFogDist);
