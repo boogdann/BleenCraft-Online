@@ -1,5 +1,5 @@
 UniformLocations:
-        gf_view_M             dd      ?
+        gf_MVP                dd      ?
         gf_model_M            dd      ?
         gf_projection_M       dd      ?
         gf_Tex1               dd      ?
@@ -22,7 +22,7 @@ UniformLocations:
         gf_MaxFogDist         dd      ?
         
 UniformNames:  
-        db      "view", 0
+        db      "MVP", 0
         db      "model", 0
         db      "projection", 0
         db      "Tex1", 0
@@ -89,6 +89,8 @@ gf_NormalArrayAdress    dd        ?
 gf_TextCordArrayAdress  dd        ?
 
 ;==================Matrix=================
+gf_MVP_matrix         Matrix4x4  ;gf_pr_view_matrix * model
+gf_pr_view_matrix     Matrix4x4  ;gf_projection_matrix * gf_view_matrix
 gf_view_matrix        Matrix4x4
 gf_model_matrix       Matrix4x4
 gf_projection_matrix  Matrix4x4

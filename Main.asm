@@ -18,7 +18,14 @@ include "Units\Asm_Includes\Const.asm"
 section '.text' code readable executable     
 
 Start:
+  ;#######################
+  invoke  GetProcessHeap
+  mov     [hHeap], eax
+  ;#######################
   ;================Modules initialize=================
+  stdcall Random.Initialize
+  stdcall Field.Initialize, [hHeap], [WorldLength], [WorldWidth], [WorldHeight]
+  
   stdcall gf_grafic_init
   ;Флаг = 1 - показать мышку
   stdcall ct_change_mouse, 0
@@ -30,9 +37,6 @@ Start:
   stdcall gf_UploadTexture, tx_grassName, tx_grassHandle 
   stdcall gf_UploadTexture, tx_BOGDAN_Name, tx_BOGDANHandle 
   stdcall gf_UploadTexture, tx_Brick_Name, tx_BrickHandle
-  
-  stdcall Random.Initialize
-  stdcall Field.Initialize, [hHeap], [WorldLength], [WorldWidth], [WorldHeight]
   ;=============================================================
   
   ;================Params initialize=====================
@@ -134,7 +138,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     30, 30, 30 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     20, 20, 20 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -161,7 +165,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         сameraPos       dd    11.0, 9.0, 10.0
+         сameraPos       dd    11.0, 13.0, 10.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          
@@ -185,7 +189,7 @@ section '.data' data readable writeable
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
          WorldLength dd 75 ;x
-         WorldWidth  dd 75  ;y
+         WorldWidth  dd 75 ;y
          WorldHeight dd 60 ;z
          
          ;Богдан вынеси это себе куданибудь
