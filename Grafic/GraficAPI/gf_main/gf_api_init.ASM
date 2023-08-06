@@ -4,9 +4,6 @@
         center          POINT
     endl
     
-    invoke  GetProcessHeap
-    mov     [hHeap], eax
-    
     invoke  RegisterClass, wndClass
     invoke  CreateWindowEx, 0, className, className, WINDOW_STYLE,\
                             0, 0, 0, 0, 0, 0, 0, 0

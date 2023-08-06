@@ -5,10 +5,10 @@ proc gf_RenderBegin, CameraPos, CameraTurn
   stdcall gf_get_camera_lookvec, [CameraPos], [CameraTurn] 
   stdcall gf_get_camera_upvec, [CameraTurn]  
   stdcall Matrix.LookAt, [CameraPos], gf_camera_lookvec, gf_uplookvec
-  invoke glGetFloatv, GL_MODELVIEW_MATRIX, gf_view_matrix             
+  invoke glGetFloatv, GL_MODELVIEW_MATRIX, gf_view_matrix 
+  ;Создание gf_pr_view_matrix
+  stdcall gf_MatrixMultiply, gf_view_matrix, gf_projection_matrix, gf_pr_view_matrix
   
-  ;Загрузка матрицы камеры 
-  invoke glUniformMatrix4fv, [gf_view_M], 1, 0, gf_view_matrix
   ;Загрузка позиции камеры
   invoke glUniform3fv, [gf_CameraPos], 1, [CameraPos]
 
@@ -49,6 +49,9 @@ proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
   ;Создание матрицы (ModelMatrix)
   stdcall gf_CreateModelMatrix, [PosV], [TurnV], [Scale]
   invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_model_matrix
+  ;Создание матрицы MVP
+  stdcall gf_MatrixMultiply, gf_model_matrix, gf_pr_view_matrix, gf_MVP_matrix
+  invoke glUniformMatrix4fv, [gf_MVP], 1, 0, gf_MVP_matrix
       
   ;Загрузка объекта
   mov esi, [Obj3D_Handle]
@@ -92,6 +95,8 @@ endp
 proc gf_SimpleObj uses esi ecx edx, cube_Pos, MainCubeHandle, TextureHandle
   stdcall gf_CreatePositionMatrix, [cube_Pos] 
   invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_position_matrix
+  stdcall gf_MatrixMultiply, gf_position_matrix, gf_pr_view_matrix, gf_MVP_matrix
+  invoke glUniformMatrix4fv, [gf_MVP], 1, 0, gf_MVP_matrix
   
   ;Загрузка текстуры
   invoke glBindTexture, GL_TEXTURE_2D, [TextureHandle]

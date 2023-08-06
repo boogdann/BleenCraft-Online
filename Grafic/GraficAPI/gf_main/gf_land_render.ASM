@@ -105,7 +105,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     @@:
     mov [MIN_XYZ + 8], eax
     ;Расчёт MAX_Z:
-    mov eax, [PlIntPos + 8]
+    mov eax, [PlIntPos + 4]
     add eax, [GF_BLOCKS_RADIUS + 8]
     cmp eax, 0
     jns @F
@@ -180,6 +180,7 @@ proc gf_render_chank, isOnlyWater
   endl       
   
   ;Проверака на нахождение объкта в видимости:
+  ;Елси да то jmp .SkipRender
   
   
   ;Проверка на существование блока:                    

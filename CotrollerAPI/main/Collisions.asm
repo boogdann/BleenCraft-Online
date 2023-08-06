@@ -12,26 +12,48 @@ endp
 
 proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
 
-  ;Задачи функции:
-  ;1. Не дать пройти сквозь препятствия
-  ;2. Отследить когда человек на земле, а когда нет 
-  ;  (от этого зависит можно ли прыгать) (ct_isJump)
-  ;  ct_isJump = 1 - можно прыгать | 0 - нельзя
+  locals
+    Pl_pos    dd    ?, ?, ? 
+  endl
   
-  ;Пометки:
-  ;К этому моменту расчитано новое положение ([playerPos])
-  ;и в нём человек может быть в колизии и если так, то нужно
-  ;здесь это обработать с учётом что прошлое положение 
-  ;(100% без колизий) хранитьcя в [ct_lastPos]
-  ;Причём просто вернуться к старому положению нельзя
-  ;т.к. есть вариант с "скольжением в доль стены" или
-  ;просто даже ходьба по полу и т.д.
+  mov esi, [playerPos]
+  fld dword[esi]
+  fistp [Pl_pos]
+  fld dword[esi + 4]
+  fistp [Pl_pos + 8]
+  fld dword[esi + 8]
+  fistp [Pl_pos + 4]
+
+  stdcall ct_isBlock, [Field], [X], [Y],\
+                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
+                      
+  cmp eax, 1
+  jnz @F
+    invoke ExitProcess, 0
+  @@:
+   
+  ret
+endp 
+
+
+proc ct_isBlock uses esi, Field, X_SIZE, Y_SIZE, X, Y, Z
+
+  mov esi, [Field.Blocks]
+  mov eax, [X_SIZE]
+  imul [Y_SIZE]
+  imul [Z]
+  add esi, eax
   
-  ;В итоге имеется:
-  ;playerPos - новая невалидированная позиция
-  ;lastPos - старая валидированная позиция
-  ;Field - адресс на 3-х мерный массив ладшафта
-  ;X, Y, Z - размеры ладшафта
+  mov eax, [X_SIZE] 
+  imul [Y]
+  add esi, eax
+  add esi, [X]
+  
+  mov eax, 0
+  cmp byte[esi], 0
+  jz @F
+     mov eax, 1
+  @@:
    
   ret
 endp 
