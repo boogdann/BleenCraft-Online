@@ -131,5 +131,12 @@
     stdcall gf_UploadTexture, tx_Destroy4_Name, tx_Destroy4_Handle
     stdcall gf_UploadTexture, tx_Destroy5_Name, tx_Destroy5_Handle
     
+    ;Инициализация освещения
+    invoke glUniform3fv, [gf_Ka], 1, Ka
+    invoke glUniform3fv, [gf_Kd], 1, Kd
+    invoke glUniform3fv, [gf_Ks], 1, Ks
+    invoke glUniform1f, [gf_Shininess], [Shininess]
+    invoke glUniform1f, [gf_CandleRadius], [CandleRadius]
+    
     ret
  endp

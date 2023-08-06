@@ -7,15 +7,8 @@ proc gf_CreateLightning, LightsCount_u, LightsPositions, isWater
     mov esi, [LightsCount_u]
     movzx eax, byte[esi]
     mov [LightsCount], eax
-    
 
     ;Загрузка освещения
-    invoke glUniform3fv, [gf_Ka], 1, Ka
-    invoke glUniform3fv, [gf_Kd], 1, Kd
-    invoke glUniform3fv, [gf_Ks], 1, Ks
-    invoke glUniform1f, [gf_Shininess], [Shininess]
-    invoke glUniform1f, [gf_CandleRadius], [CandleRadius]
-    
     mov eax, [LightsCount]
     inc eax
     invoke glUniform1i, [gf_LightsCount], eax 
@@ -45,47 +38,6 @@ proc gf_CreateLightning, LightsCount_u, LightsPositions, isWater
 
     ret
 endp
-
-;Измение внешний DaylyCof от времени
-proc gf_changeDaylyCof
-   locals
-      currentTime     dd      ?
-   endl
-   
-   invoke  GetTickCount
-   mov     [currentTime], eax
-   
-   sub     eax, [gf_lastDaylyChange]
-   cmp     eax, 15 
-   jle     @F
-     mov eax, [currentTime]
-     mov [gf_lastDaylyChange], eax
-     mov esi, [gf_dayly_kof_adress] 
-     inc word[esi]
-     ;add word[esi], 200   ;Debug
-   @@:
-   
-  ret
-endp
-
-;Установление внутреннего DaylyCof от внешнего
-proc gf_setDaylyCof
-  locals 
-    tmp_div  dd  32768.0
-    tmp_int  dd  ?
-    tmp      dd  0.0002
-  endl 
-  mov esi, [gf_dayly_kof_adress]  
-  movzx eax, word[esi]
-  sub eax, 65535 / 2
-  mov [tmp_int], eax
-  fild [tmp_int]
-  fdiv [tmp_div]
-  fstp [gf_Dayly_kof]                                                                    
-
-  ret           
-endp
-
 
 proc gf_RecalculateWheherParams, isWater
     locals 
@@ -242,11 +194,52 @@ proc setLightning uses esi ecx edi, LightsPos, LightId
   ret
 endp
 
+
+;Измение внешний DaylyCof от времени
+proc gf_changeDaylyCof
+   locals
+      currentTime     dd      ?
+   endl
+   
+   invoke  GetTickCount
+   mov     [currentTime], eax
+   
+   sub     eax, [gf_lastDaylyChange]
+   cmp     eax, 15 
+   jle     @F
+     mov eax, [currentTime]
+     mov [gf_lastDaylyChange], eax
+     mov esi, [gf_dayly_kof_adress] 
+     inc word[esi]
+     ;xadd word[esi], 200   ;Debug
+   @@:
+  ret
+endp
+
+
+;Установление внутреннего DaylyCof от внешнего
+proc gf_setDaylyCof
+  locals 
+    tmp_div  dd  32768.0
+    tmp_int  dd  ?
+    tmp      dd  0.0002
+  endl 
+  mov esi, [gf_dayly_kof_adress]  
+  movzx eax, word[esi]
+  sub eax, 65535 / 2
+  mov [tmp_int], eax
+  fild [tmp_int]
+  fdiv [tmp_div]
+  fstp [gf_Dayly_kof]                                                                    
+
+  ret           
+endp
+
+
 proc gf_subscribeDayly, DaylyKofAdress, flag
     mov eax, [DaylyKofAdress]
     mov [gf_dayly_kof_adress], eax
     mov eax, [flag]
     mov [gf_isAutoWhether], al
-    
   ret
 endp
