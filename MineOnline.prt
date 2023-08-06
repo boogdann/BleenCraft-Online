@@ -4,20 +4,13 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=9
-  countInc=3
+  countAsm=5
+  countInc=0
 [asm]
   asm1="Main.asm"
-  asm2="gf_render.ASM"
-  asm3="gf_set_render.ASM"
-  asm4="GraficAPI.ASM"
-  asm5="gf_init_render_data.ASM"
-  asm6="gf_api_init.ASM"
-  asm7="gf_land_render.ASM"
-  asm8="Collisions.asm"
-  asm9="CotrollerAPI.asm"
+  asm2="CotrollerAPI.asm"
+  asm3="Collisions.asm"
+  asm4="gf_land_render.ASM"
+  asm5="gf_api_init.ASM"
 [inc]
-  inc1="CotrollerAPI.inc"
-  inc2="gf_api_init.inc"
-  inc3="gf_render_data.inc"
 end if

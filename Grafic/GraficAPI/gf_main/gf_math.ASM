@@ -246,6 +246,49 @@ proc gf_CreateModelMatrix uses esi edi, pos, turn, scale
 endp
 
 
+
+proc gf_MatrixMultiply uses ebx esi edi, Matrix1, Matrix2, ResMatrix
+   locals
+     Temp dd ?
+   endl
+
+   mov ebx, 0
+   .Loop_A1:   ;(i)
+      mov esi, 0
+     .Loop_A2:   ;(j)
+        mov edi, 0
+        mov [Temp], 0.0
+        .Loop_A3:    ;(k)
+           push ebx
+           add ebx, [Matrix1]
+           fld dword [ebx + edi]
+           mov ebx, edi
+           shl ebx, 2
+           add ebx, [Matrix2]
+           fld dword [ebx + esi]
+           fmulp
+           fadd dword [Temp]
+           fstp dword [Temp]
+           pop ebx
+        add edi, 4
+        cmp edi, 16
+        jnz .Loop_A3
+        mov eax, [Temp]
+        push ebx
+        add ebx, [ResMatrix]
+        mov [ebx + esi], eax
+        pop ebx
+      add esi, 4
+      cmp esi, 16
+      jnz .Loop_A2
+   add ebx, 16
+   cmp ebx, 16 * 4
+   jnz .Loop_A1
+   
+  ret
+endp
+
+
 proc gf_CreatePositionMatrix, pos
   mov edi, gf_position_matrix
                         
