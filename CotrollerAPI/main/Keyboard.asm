@@ -14,6 +14,14 @@ proc ct_on_keyDown, wParam
   @@:
   
   ;... Другие клавиши
+  
+  cmp [wParam], VK_F2
+  jnz @F
+  
+    neg [isDebug]
+    
+  @@:
+    
 
   .final:  
   ret

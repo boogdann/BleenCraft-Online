@@ -14,7 +14,10 @@ endp
 
 
 proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
-
+  
+  cmp [isDebug], 1
+  jne .finish
+  
   locals
     Pl_pos    dd    ?, ?, ? 
     Pl_feets  dd    1.6
@@ -113,7 +116,21 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   jne @F
     mov [ct_fall_speed], 0
   @@:
-   
+  
+  
+  cmp [onGround], 1
+  jne @F
+  
+    mov [ct_isJump], 1
+    jmp .finish
+    
+  @@:
+    
+    mov [ct_isJump], 0
+ 
+ .finish:
+ 
+    
   ret
 endp 
 
