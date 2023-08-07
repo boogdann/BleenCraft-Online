@@ -1,0 +1,1 @@
+onGround      dd      0
