@@ -1,3 +1,6 @@
+
+include "CotrollerAPI\main\CollisionsConst.asm"
+
 proc ct_collisionsBegin uses esi edi, playerPos
   mov esi, [playerPos]
   fld dword[esi]
@@ -14,25 +17,100 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
 
   locals
     Pl_pos    dd    ?, ?, ? 
-    Pl_feets  dd    1.7
-    Pl_ass    dd    0.3
+    Pl_feets  dd    1.6
+    Pl_ass  dd  0.3
+    temp    dd  ?
+    
+    X_Next  dd  ?
+    Y_Next  dd  ?
+    Z_Next  dd  ?
     
   endl
   
   mov esi, [playerPos]
+    
   fld dword[esi]
   fistp [Pl_pos]
   fld dword[esi + 4]
-  fsub dword[Pl_feets]
+  fsub dword[Pl_feets]  
   fistp [Pl_pos + 8]
   fld dword[esi + 8]
   fistp [Pl_pos + 4]
-
+  
   stdcall ct_isBlock, [Field], [X], [Y],\
                       [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
                       
-  cmp eax, 1
-  jnz @F
+  cmp [onGround], 1
+  jne @F
+    mov [ct_fall_speed], 0
+  @@:
+  
+  ;2
+  
+  fld dword[esi]
+  fadd dword[Pl_ass]
+  fistp [Pl_pos] 
+  fld dword[esi + 8]
+  fistp [Pl_pos + 4]
+  
+  stdcall ct_isBlock, [Field], [X], [Y],\
+                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
+  
+  cmp [onGround], 1
+  jne @F
+    mov [ct_fall_speed], 0
+  @@:
+  
+  ; 3
+  
+  fld dword[esi]
+  fsub dword[Pl_ass]
+  fsub  dword[Pl_ass]
+  fistp [Pl_pos] 
+  fld dword[esi + 8]
+  fistp [Pl_pos + 4]
+  
+  stdcall ct_isBlock, [Field], [X], [Y],\
+                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
+  
+  cmp [onGround], 1
+  jne @F
+    mov [ct_fall_speed], 0
+  @@:
+  
+  ; 4
+  
+  fld dword[esi]
+  fadd  dword[Pl_ass]
+  fistp [Pl_pos] 
+  fld dword[esi + 8]
+  fadd  dword[Pl_ass]
+  fistp [Pl_pos + 4]
+  
+  stdcall ct_isBlock, [Field], [X], [Y],\
+                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
+  
+  cmp [onGround], 1
+  jne @F
+    mov [ct_fall_speed], 0
+  @@:
+  
+  ;5
+  
+  
+  fld dword[esi]
+  fadd  dword[Pl_ass]
+  fistp [Pl_pos] 
+  fld dword[esi + 8]
+  fsub  dword[Pl_ass]
+  fsub  dword[Pl_ass]
+  fistp [Pl_pos + 4]
+  
+  stdcall ct_isBlock, [Field], [X], [Y],\
+                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
+  
+  cmp [onGround], 1
+  jne @F
     mov [ct_fall_speed], 0
   @@:
    
@@ -41,6 +119,14 @@ endp
 
 
 proc ct_isBlock uses esi, Field, X_SIZE, Y_SIZE, X, Y, Z
+  
+  mov [onGround], 0
+  
+  locals
+  
+    Check   dd  ?
+    
+  endl
 
   mov esi, [Field.Blocks]
   mov eax, [X_SIZE]
@@ -55,10 +141,13 @@ proc ct_isBlock uses esi, Field, X_SIZE, Y_SIZE, X, Y, Z
   
   mov eax, 0
   cmp byte[esi], 0
-  jz @F
-     mov eax, 1
-  @@:
-   
+  jz .finish
+     
+     mov [onGround], 1
+            
+  .finish:
+  
+        
   ret
 endp 
 
