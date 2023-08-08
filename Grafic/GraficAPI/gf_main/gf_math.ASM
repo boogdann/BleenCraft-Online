@@ -164,11 +164,105 @@ proc Matrix.LookAt uses esi edi ebx,\
 endp
 
 
-proc gf_get_camera_lookvec, pos, turn
+proc gf_frastrum uses esi edi ebx, look_vec3, CameraPos, CameraTurn
+    locals
+      Pos    dd   ?, ?, ?
+      Turn   dd   ?, ?, ?
+      leftPlaneTurn  dd  60.0 
+      leftPlanePos   dd  0.0 
+    endl
+    
+    mov ecx, 0
+    @@:
+        fld [CameraPos + ecx]
+        fstp [Pos + ecx]
+        fld [CameraTurn + ecx]
+        fstp [Turn + ecx]
+    add ecx, 4
+    cmp ecx, 12
+    jnz @B
+    
+    ;gf_tmpMMMatrix ;gf_pr_view_matrix
+    lea esi, [gf_frastrum_planes]
+    
+    ;near
+    fld dword[gf_pr_view_matrix + 16 * 0 + 4 * 2]   ;[0][2]
+    fstp dword[esi]
+    fld dword[gf_pr_view_matrix + 16 * 1 + 4 * 2]   ;[1][2]
+    fstp dword[esi + 4]
+    fld dword[gf_pr_view_matrix + 16 * 2 + 4 * 2]   ;[2][2]
+    fstp dword[esi + 8]
+    fld dword[gf_pr_view_matrix + 16 * 3 + 4 * 2]   ;[3][2]
+    fstp dword[esi + 12]
+    add esi, 16
+    ;left
+    fld dword[gf_pr_view_matrix + 16 * 0 + 4 * 3]   ;[0][3]
+    fadd dword[gf_pr_view_matrix + 16 * 0 + 4 * 0]  ;[0][0]
+    fstp dword[esi]
+    fld dword[gf_pr_view_matrix + 16 * 1 + 4 * 3]   ;[1][3]
+    fadd dword[gf_pr_view_matrix + 16 * 1 + 4 * 0]  ;[1][0]
+    fstp dword[esi + 4]
+    fld dword[gf_pr_view_matrix + 16 * 2 + 4 * 3]   ;[2][3]
+    fadd dword[gf_pr_view_matrix + 16 * 2 + 4 * 0]  ;[2][0]
+    fstp dword[esi + 8]
+    fld dword[gf_pr_view_matrix + 16 * 3 + 4 * 3]   ;[3][3]
+    fadd dword[gf_pr_view_matrix + 16 * 3 + 4 * 0]  ;[3][0]
+    fstp dword[esi + 12]
+    add esi, 16
+    ;right
+    fld dword[gf_pr_view_matrix + 16 * 0 + 4 * 3]   ;[0][3]
+    fsub dword[gf_pr_view_matrix + 16 * 0 + 4 * 0]  ;[0][0]
+    fstp dword[esi]
+    fld dword[gf_pr_view_matrix + 16 * 1 + 4 * 3]   ;[1][3]
+    fsub dword[gf_pr_view_matrix + 16 * 1 + 4 * 0]  ;[1][0]
+    fstp dword[esi + 4]
+    fld dword[gf_pr_view_matrix + 16 * 2 + 4 * 3]   ;[2][3]
+    fsub dword[gf_pr_view_matrix + 16 * 2 + 4 * 0]  ;[2][0]
+    fstp dword[esi + 8]
+    fld dword[gf_pr_view_matrix + 16 * 3 + 4 * 3]   ;[3][3]
+    fsub dword[gf_pr_view_matrix + 16 * 3 + 4 * 0]  ;[3][0]
+    fstp dword[esi + 12]
+    add esi, 16
+    ;top
+    fld dword[gf_pr_view_matrix + 16 * 0 + 4 * 3]   ;[0][3]
+    fsub dword[gf_pr_view_matrix + 16 * 0 + 4 * 1]  ;[0][1]
+    fstp dword[esi]
+    fld dword[gf_pr_view_matrix + 16 * 1 + 4 * 3]   ;[1][3]
+    fsub dword[gf_pr_view_matrix + 16 * 1 + 4 * 1]  ;[1][1]
+    fstp dword[esi + 4]
+    fld dword[gf_pr_view_matrix + 16 * 2 + 4 * 3]   ;[2][3]
+    fsub dword[gf_pr_view_matrix + 16 * 2 + 4 * 1]  ;[2][1]
+    fstp dword[esi + 8]
+    fld dword[gf_pr_view_matrix + 16 * 3 + 4 * 3]   ;[3][3]
+    fsub dword[gf_pr_view_matrix + 16 * 3 + 4 * 1]  ;[3][1]
+    fstp dword[esi + 12]
+    add esi, 16
+    ;bottom
+    fld dword[gf_pr_view_matrix + 16 * 0 + 4 * 3]   ;[0][3]
+    fadd dword[gf_pr_view_matrix + 16 * 0 + 4 * 1]  ;[0][1]
+    fstp dword[esi]
+    fld dword[gf_pr_view_matrix + 16 * 1 + 4 * 3]   ;[1][3]
+    fadd dword[gf_pr_view_matrix + 16 * 1 + 4 * 1]  ;[1][1]
+    fstp dword[esi + 4]
+    fld dword[gf_pr_view_matrix + 16 * 2 + 4 * 3]   ;[2][3]
+    fadd dword[gf_pr_view_matrix + 16 * 2 + 4 * 1]  ;[2][1]
+    fstp dword[esi + 8]
+    fld dword[gf_pr_view_matrix + 16 * 3 + 4 * 3]   ;[0][3]
+    fadd dword[gf_pr_view_matrix + 16 * 3 + 4 * 1]  ;[0][2]
+    fstp dword[esi + 12]
+    add esi, 16
+    
+  ret
+endp
+
+
+
+
+
+proc gf_get_camera_lookvec uses esi edi, pos, turn
     locals
        a  dd  ?
        b  dd  ?
-       c  dd  ?
        PiDegree dd 180.0
     endl
     mov esi, [turn]
@@ -184,11 +278,7 @@ proc gf_get_camera_lookvec, pos, turn
     fmul dword[esi + 4]
     fdiv [PiDegree]
     fstp [b]
-    ;Calculate c in radian
-    fldpi
-    fmul dword[esi + 8]
-    fdiv [PiDegree]
-    fstp [c] 
+    
     
     fld dword[edi + 0]
     fld [a]
@@ -517,9 +607,26 @@ proc gf_MatrixMultiply4x4 uses ebx ecx edx, matrix1, matrix2, matrix_res
 endp
 
 
+proc dupVec3 uses edi esi, Vec1, Vec2
+  locals
+    res   dd    ?
+  endl
+  mov esi, [Vec1]
+  mov edi, [Vec2]
+  
+  fld  dword[esi]
+  fmul dword[edi]
+  fld  dword[esi + 4]
+  fmul dword[edi + 4]
+  faddp
+  fld  dword[esi + 8]
+  fmul dword[edi + 8]
+  faddp
+  fstp [res]
+  mov eax, [res]
 
-
-;;Vector3
+  ret
+endp
 
 proc Vector3.Normalize uses edi,\
      vector

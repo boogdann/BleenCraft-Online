@@ -78,10 +78,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
     fdiv dword [PiDegree] 
     fstp dword [a] 
     ;Calculate b in radian 
-    fldpi
-    fmul dword [esi + 4] 
-    fdiv dword [PiDegree] 
-    fstp dword [b] 
+    mov [a], 0.0
  
     cmp [Direction], 1 ;Forward 
     jz .MoveForward 

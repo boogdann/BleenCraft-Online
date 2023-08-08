@@ -2,18 +2,30 @@
 proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnlyWater
 
     locals
-      PlIntPos   dd    ?, ?, ?
-      MAX_XYZ    dd    ?, ?, ?
-      MIN_XYZ    dd    ?, ?, ?
-      ADD_XYZ    dd    ?, ?, ?
-      ADD_YZ_L   dd    ?, ?, ?
-      tmp        dd    ?
+      PlIntPos     dd    ?, ?, ?
+      MAX_XYZ      dd    ?, ?, ?
+      MIN_XYZ      dd    ?, ?, ?
+      ADD_XYZ      dd    ?, ?, ?
+      ADD_YZ_L     dd    ?, ?, ?
+      tmp          dd    ?
+      VertexCount  dd    ?
     endl
   
+    
     cmp [isOnlyWater], 0
     jz @F
        invoke glUniform1f, [gf_aChanel], [gf_WaterAChanel]
+       ;mov esi, [Water]
+       ;invoke glBindVertexArray, [esi]
+       mov eax, dword[esi + 4]
+       mov [VertexCount], eax
+       jmp .next
     @@:
+    lea esi, [gf_MAIN_CubeHandle]
+    invoke glBindVertexArray, [esi]
+    mov eax, dword[esi + 4]
+    mov [VertexCount], eax
+    .next:
      
     ;Ограничение рендера для оптимизации:
     ;[max(posX - GF_BLOCKS_RADIUS, 0):min(posX + GF_BLOCKS_RADIUS, X)]
@@ -149,7 +161,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
             jz .skip_x
                   cmp byte[esi], 0
                   jz @F
-                       stdcall gf_render_chank, [isOnlyWater]
+                       stdcall gf_render_chank, [isOnlyWater], [VertexCount]
                   @@:
                   add esi, 1    
             inc ebx
@@ -173,31 +185,10 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
 endp
 
 
-proc gf_render_chank, isOnlyWater
+proc gf_render_chank, isOnlyWater, VertexCount
   locals 
     _pos       dd    ?
-    ObjHandle  dd    ?
   endl       
-  
-  ;Проверака на нахождение объкта в видимости:
-  ;Елси да то jmp .SkipRender
-  
-  
-  ;Проверка на существование блока:                    
-  cmp [isOnlyWater], 0
-  jnz .skip_1
-    cmp byte[esi], 255  
-    jz .SkipRender
-    mov [ObjHandle], gf_MAIN_CubeHandle
-  jmp .skip_2               
-  .skip_1: 
-  cmp byte[esi], 255 
-  jnz .SkipRender
-     mov [ObjHandle], 0 ;Water Handle
-  .skip_2:
-  
-  ;Расчёт текстуры по byte[esi] в eax:
-  mov eax, [tx_BOGDANHandle]
   
   ;Расчёт позиции блока
   mov [_pos], ebx
@@ -210,9 +201,67 @@ proc gf_render_chank, isOnlyWater
   fild [_pos] 
   fstp [gf_tmp_objPos + 8] 
   
+  ;Проверака на нахождение объкта в видимости:
+  stdcall gf_frastrum_check, gf_tmp_objPos 
+  cmp eax, 0
+  jz .SkipRender 
+  
+  ;Проверка на существование блока:                    
+  cmp [isOnlyWater], 0
+  jnz .skip_1
+    cmp byte[esi], 255  
+    jz .SkipRender
+  jmp .skip_2               
+  .skip_1: 
+  cmp byte[esi], 255 
+  jnz .SkipRender
+  .skip_2:
+  
+  ;Расчёт текстуры по byte[esi] в eax:
+  mov eax, [tx_BOGDANHandle]
+  
   ;Рендер:
-  stdcall gf_SimpleObj, gf_tmp_objPos, [ObjHandle], eax
+  stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], eax
                        
   .SkipRender:
+  ret
+endp
+
+
+proc gf_frastrum_check uses esi edi ecx edx, obj_pos
+  locals
+    distance    dd     ? 
+    ObjRadius   dd     -2.0 
+  endl
+
+  ;Check frastrum
+  lea esi, [gf_frastrum_planes]
+  mov edi, [obj_pos]
+  
+  
+  mov ecx, 0
+  .CheckLoop:
+    stdcall dupVec3, esi, edi
+    mov [distance], eax
+    fld [distance]
+    fadd dword[esi + 12]
+    fsub [ObjRadius]
+    fistp [distance]
+    
+    cmp [distance], 0
+    jle .frFalse
+    add esi, 4 * 4
+  inc ecx
+  cmp ecx, 5
+  jnz .CheckLoop
+  
+
+  ;Return:
+  mov eax, 1
+  jmp @F
+  .frFalse:
+    mov eax, 0
+  @@:
+
   ret
 endp
