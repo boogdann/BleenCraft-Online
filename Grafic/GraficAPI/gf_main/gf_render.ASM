@@ -8,13 +8,16 @@ proc gf_RenderBegin, CameraPos, CameraTurn
   invoke glGetFloatv, GL_MODELVIEW_MATRIX, gf_view_matrix 
   ;Создание gf_pr_view_matrix
   stdcall gf_MatrixMultiply, gf_view_matrix, gf_projection_matrix, gf_pr_view_matrix
+
+  
+  stdcall gf_frastrum, gf_camera_lookvec, [CameraPos], [CameraTurn]
   
   ;Загрузка позиции камеры
   invoke glUniform3fv, [gf_CameraPos], 1, [CameraPos]
 
   ;Устанавливаем начальные параметры
   invoke glUniform1i, [gf_discardMode], 0
-
+  
   ret
 endp
 
@@ -92,7 +95,7 @@ proc gf_RenderSelectObj3D, Obj3D_Handle,\
 endp
 
 
-proc gf_SimpleObj uses esi ecx edx, cube_Pos, MainCubeHandle, TextureHandle
+proc gf_SimpleObj uses esi ecx edx, cube_Pos, VertexCount, TextureHandle
   stdcall gf_CreatePositionMatrix, [cube_Pos] 
   invoke glUniformMatrix4fv, [gf_model_M], 1, 0, gf_position_matrix
   stdcall gf_MatrixMultiply, gf_position_matrix, gf_pr_view_matrix, gf_MVP_matrix
@@ -102,10 +105,7 @@ proc gf_SimpleObj uses esi ecx edx, cube_Pos, MainCubeHandle, TextureHandle
   invoke glBindTexture, GL_TEXTURE_2D, [TextureHandle]
   invoke glUniform1i, [gf_Tex1], 0
   
-  mov esi, [MainCubeHandle]
-  invoke glBindVertexArray, [esi]
-  
-  invoke glDrawArrays, GL_TRIANGLES, 0, [esi + 4]
+  invoke glDrawArrays, GL_TRIANGLES, 0, [VertexCount]
 
   ret
 endp  
@@ -113,9 +113,15 @@ endp
 
 proc gf_renderSkyObjs, SkyLand, X, Y, Hieght 
   locals 
-    _pos dd ?
-    mul  dd 4.0
+    _pos        dd     ?
+    _mul        dd     4.0
+    VertexCount dd     36
   endl
+  
+   lea esi, [gf_MAIN_CloudHandle]
+   invoke glBindVertexArray, [esi]
+   mov eax, dword[esi + 4]
+   mov [VertexCount], eax
   
    fild [Hieght]
    fstp [gf_tmp_objPos + 4]
@@ -124,7 +130,7 @@ proc gf_renderSkyObjs, SkyLand, X, Y, Hieght
    invoke glUniform1i, [gf_ColorMode], 1
    invoke glUniform1i, [gf_SkyMode], 1
   
-   mov esi, [SkyLand]
+   mov esi, [SkyLand]                
    mov ecx, 0
    .LandRender_x:
          mov edx, 0  
@@ -134,14 +140,14 @@ proc gf_renderSkyObjs, SkyLand, X, Y, Hieght
              
              mov [_pos], ecx
              fild [_pos] 
-             fmul [mul]
+             fmul [_mul]
              fstp [gf_tmp_objPos + 0] 
              mov [_pos], edx
              fild [_pos] 
-             fmul [mul]
+             fmul [_mul]
              fstp [gf_tmp_objPos + 8] 
              
-             stdcall gf_SimpleObj, gf_tmp_objPos, gf_MAIN_CloudHandle, 0
+             stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], 0
              @@:
              inc esi 
          inc edx

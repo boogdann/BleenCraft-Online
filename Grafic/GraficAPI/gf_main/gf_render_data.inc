@@ -1,7 +1,6 @@
 UniformLocations:
         gf_MVP                dd      ?
         gf_model_M            dd      ?
-        gf_projection_M       dd      ?
         gf_Tex1               dd      ?
         gf_Tex2               dd      ?
         gf_Ka                 dd      ?
@@ -20,11 +19,11 @@ UniformLocations:
         gf_SkyMode            dd      ?  
         gf_isTex2Enable       dd      ?
         gf_MaxFogDist         dd      ?
+        gf_FogColor           dd      ?
         
 UniformNames:  
         db      "MVP", 0
         db      "model", 0
-        db      "projection", 0
         db      "Tex1", 0
         db      "Tex2", 0
         db      "Ka", 0
@@ -43,6 +42,7 @@ UniformNames:
         db      "SkyMode", 0
         db      "isTex2Enable", 0
         db      "MaxFogDist", 0
+        db      "FogColor", 0
         db      0
         
         
@@ -103,6 +103,7 @@ gf_scale_matrix       Matrix4x4     1.0,0.0,0.0,0.0,\
                                     0.0,0.0,1.0,0.0,\
                                     0.0,0.0,0.0,1.0
 gf_turn_matrix        Matrix4x4
+gf_frastrum_planes    dd            6 * 4 dup (?)     
 ;==========================================
 gf_camera_lookvec     dd     ?, ?, ?
 gf_uplookvec          dd     0.0, 0.0, 0.0
@@ -138,17 +139,18 @@ gf_SunColor         dd      0.97, 0.96, 0.86
 gf_ConturColor      dd      0.0, 0.0, 0.0
 gf_WaterAChanel     dd      0.3
 gf_WaterSunIntensty dd      0.44, 0.48, 0.97, 1.0
-gf_CloudColorM      dd      0.1, 0.1, 0.1  ;[0.2:1.0]
-gf_CloudColor       dd      ?, ?, ?  ;[0.2:1.0]
-gf_backgroundColorM dd      0.5, 0.66, 0.99      ;0.01, 0.16, 0.49
+gf_CloudColorM      dd      0.1, 0.1, 0.1  
+gf_CloudColor       dd      ?, ?, ?  
+gf_backgroundColorM dd      0.5, 0.66, 0.99     
 gf_backgroundColor  dd      ?,  ?,  ?
+gf_Fog_Color        dd      0.2, 0.2, 0.2, 1.0
 ;===========================================
 
 
 ;===============Camera================
 fov             GLfloat         60.0
 zNear           GLfloat         0.001
-zFar            GLfloat         1000.0
+zFar            GLfloat         300.0
 aspect          GLfloat         ?
 radian          GLfloat         57.32
 ;=====================================

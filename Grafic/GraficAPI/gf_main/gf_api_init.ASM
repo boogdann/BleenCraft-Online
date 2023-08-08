@@ -115,8 +115,7 @@
  
     ;Создание матрицы проекции    
     stdcall Matrix.Projection, [fov], [aspect] , [zNear], [zFar]
-
-    invoke glUniformMatrix4fv, [gf_projection_M], 1, 0, gf_projection_matrix
+    
     
     ;Загрузка стандартных объектов
     stdcall gf_UploadObj3D, gf_MAIN_cloud_name, gf_MAIN_CloudHandle
@@ -133,7 +132,8 @@
     invoke glUniform3fv, [gf_Kd], 1, Kd
     invoke glUniform3fv, [gf_Ks], 1, Ks
     invoke glUniform1f, [gf_Shininess], [Shininess]
-    invoke glUniform1f, [gf_CandleRadius], [CandleRadius]
+    invoke glUniform1f, [gf_CandleRadius], [CandleRadius]  
+    invoke glUniform4fv, [gf_FogColor], 1, gf_Fog_Color
     
     ret
  endp

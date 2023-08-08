@@ -7,6 +7,7 @@ include "win32a.inc"
 include "Grafic\GraficAPI\GraficAPI.asm"
 include "CotrollerAPI\CotrollerAPI.asm"
 include "Units\Asm_Includes\Const.asm"
+include "Units\Asm_Includes\Code.asm"
 
 ;============For debug=============
 ;include "Units\Movement\keys.code"
@@ -55,9 +56,9 @@ Start:
             
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
-
+     
         stdcall ct_move_check, сameraPos, сameraTurn,\
-                               [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
+                               [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]                      
         ;Debug only:
         ;stdcall checkMoveKeys
         ;stdcall OnMouseMove, сameraTurn, [sensitivity]
@@ -125,8 +126,6 @@ proc RenderScene
   ret
 endp
 
-  include "Units\Asm_Includes\Code.asm"
-
 section '.data' data readable writeable
          ;Обязательно нужно выставить переменные окружения:
          ;===============Global variables===================
@@ -138,7 +137,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     20, 20, 20 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     75, 75, 40 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -188,8 +187,8 @@ section '.data' data readable writeable
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         WorldLength dd 75 ;x
-         WorldWidth  dd 75 ;y
+         WorldLength dd 100 ;x
+         WorldWidth  dd 100 ;y
          WorldHeight dd 60 ;z
          
          ;Богдан вынеси это себе куданибудь
