@@ -72,13 +72,13 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
                                 
 .OnMove:  
 
-    ;Calculate a in radian 
-    fldpi 
-    fmul dword [esi] 
-    fdiv dword [PiDegree] 
-    fstp dword [a] 
-    ;Calculate b in radian 
+    ;Calculate a in radian          
     mov [a], 0.0
+    ;Calculate b in radian 
+    fldpi
+    fmul dword [esi + 4] 
+    fdiv dword [PiDegree] 
+    fstp dword [b] 
  
     cmp [Direction], 1 ;Forward 
     jz .MoveForward 
