@@ -20,6 +20,7 @@ uniform bool ColorMode;
 uniform bool SkyMode;
 uniform bool isTex2Enable;
 uniform vec3 ObjColor;
+uniform vec4 FogColor;
 
 struct LightInfo {
     vec4 Position;
@@ -39,9 +40,9 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
     if (i != 0) {
         float LightDist = abs(distance(vec3(LPos), FPosition));
         CandleCof = max(CandleRadius - LightDist, 0.0) / (CandleRadius / 5);
+        if (CandleCof < 0.1) { return; }
         Ka = vec3(0.0);
         Ks = vec3(0.0);
-        if (CandleCof == 0.0) { return; }
     }
 
     ambDiff += CandleCof * LIntens * ( Ka + Kd * max( dot(s, norm), 0.0 ));
@@ -77,16 +78,13 @@ void main() {
     vec4 resColor = (vec4(ambDiff, 1.0) * texColor + vec4(spec, 1.0)); 
 
     //Fog
-    vec4 FogColor = vec4(0.2, 0.2, 0.2, 1.0);
-    float MinFogDist = MaxFogDist - 15;
-
     float dist = abs(distance(CameraPos, FPosition));
-    float fogFactor = (MaxFogDist - dist) / (MaxFogDist - MinFogDist);
-
     if (SkyMode) {
-        fogFactor *= 130;
+        dist /= 10;
         resColor = 0.9 * texColor + vec4(spec, 1.0);
     }
+    float fogFactor = (MaxFogDist - dist) / (15); //MinFogDist
+
     fogFactor = clamp( fogFactor, 0.0, 1.0 );
     resColor = mix( FogColor, resColor, fogFactor );
 
