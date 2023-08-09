@@ -137,7 +137,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     75, 75, 40 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     100, 100, 40 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -148,7 +148,7 @@ section '.data' data readable writeable
          
          ;Текстуры
          tx_grassName    db   "Grass_64.mbmw", 0 
-         tx_BOGDAN_Name  db   "BOGDANI_64.mbmw", 0
+         tx_BOGDAN_Name  db   "BOGDANI2_64.mbmw", 0
          tx_Brick_Name   db   "Brick_64.mbmw", 0
          
          ;texture Handles:
@@ -187,9 +187,9 @@ section '.data' data readable writeable
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         WorldLength dd 100 ;x
-         WorldWidth  dd 100 ;y
-         WorldHeight dd 60 ;z
+         WorldLength dd 200 ;x
+         WorldWidth  dd 200 ;y
+         WorldHeight dd 40 ;z
          
          ;Богдан вынеси это себе куданибудь
          SkyLength   dd   10

@@ -17,7 +17,8 @@ import (
 // _ = binary.Write(file, binary.LittleEndian, data.vertexes[i][j])
 // Задаёт значение для минимума значений rgb с которых пиксель считается пустым
 var minForPixel byte = 253
-var isBug = true
+var isBug = false
+var Premission uint32 = 10
 
 type pixel struct {
 	r byte
@@ -104,7 +105,7 @@ func GetData(f *os.File, pixelWH int, data *mbmwData) {
 	img, _ := bmp.Decode(f)
 	var width = img.Bounds().Max.X
 	var height = img.Bounds().Max.Y
-	data.rowBytesCount = 100 * 3 * uint32(width/pixelWH)
+	data.rowBytesCount = Premission * 3 * uint32(width/pixelWH)
 	for i := 0; i < height; i += pixelWH {
 		data.rowsCount++
 		var row row
