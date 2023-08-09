@@ -26,7 +26,7 @@ proc gf_GetTextureData, tx_Name
     spaceCount           dw       ?
     pixelsCount          dw       ?
     pixel                db       ?, ?, ?
-    Permission           dd       100
+    Permission           dd       10
   endl
   
     mov esi, GF_TEXTURE_PATH

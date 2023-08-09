@@ -218,7 +218,7 @@ proc gf_render_chank, isOnlyWater, VertexCount
   .skip_2:
   
   ;Расчёт текстуры по byte[esi] в eax:
-  mov eax, [tx_BOGDANHandle]
+  mov eax, [tx_BOGDANHandle] ;tx_BOGDANHandle
   
   ;Рендер:
   stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], eax

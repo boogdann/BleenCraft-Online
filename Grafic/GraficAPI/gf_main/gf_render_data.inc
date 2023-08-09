@@ -54,6 +54,9 @@ gf_MAIN_CubeHandle   dd   ?, ?
 gf_MAIN_CloudHandle  dd   ?, ?
 
 ;Textures
+tx_test_name         db  "test_64.mbmw", 0
+tx_test_Handle       dd  ?
+
 tx_Destroy1_Name     db  "Destroy1_64.mbmw", 0
 tx_Destroy2_Name     db  "Destroy2_64.mbmw", 0
 tx_Destroy3_Name     db  "Destroy3_64.mbmw", 0
