@@ -686,6 +686,28 @@ proc Vector3.Cross uses esi edi ebx,\
         ret
 endp
 
+
+proc gf_SubVec3 uses esi edi ebx, P1, P2, Vec
+
+  mov edi, [P1]
+  mov esi, [P2]
+  mov ebx, [Vec]
+  
+  fld dword[edi]
+  fsub dword[esi]
+  fstp dword[ebx]
+  fld dword[edi + 4]
+  fsub dword[esi + 4]
+  fstp dword[ebx + 4]
+  fld dword[edi + 8]
+  fsub dword[esi + 8]
+  fstp dword[ebx + 8]
+  
+
+  ret
+endp
+
+
 proc Vector3.Length uses esi,\
      vector
 

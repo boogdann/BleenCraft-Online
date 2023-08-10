@@ -160,6 +160,7 @@ radian          GLfloat         57.32
 
 
 gf_tmp_objPos   dd    ?,   ?,   ?
+gf_ViewVec3     dd    ?,   ?,   ?
 gf_temp_path    db    30   dup   (?)
 
 
