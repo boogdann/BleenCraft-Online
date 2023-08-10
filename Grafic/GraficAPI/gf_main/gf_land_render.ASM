@@ -161,7 +161,8 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
             jz .skip_x
                   cmp byte[esi], 0
                   jz @F
-                       stdcall gf_render_chank, [isOnlyWater], [VertexCount]
+                       stdcall gf_render_chank, [isOnlyWater],\
+                                                [VertexCount], [X], [Y], [Z]
                   @@:
                   add esi, 1    
             inc ebx
@@ -185,7 +186,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
 endp
 
 
-proc gf_render_chank, isOnlyWater, VertexCount
+proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
   locals 
     _pos       dd    ?
   endl       
@@ -203,6 +204,10 @@ proc gf_render_chank, isOnlyWater, VertexCount
   
   ;Проверака на нахождение объкта в видимости:
   stdcall gf_frastrum_check, gf_tmp_objPos 
+  cmp eax, 0
+  jz .SkipRender 
+          
+  stdcall gf_checkBlockVisible, [X], [Y], [Z] 
   cmp eax, 0
   jz .SkipRender 
   
@@ -224,6 +229,71 @@ proc gf_render_chank, isOnlyWater, VertexCount
   stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], eax
                        
   .SkipRender:
+  ret
+endp
+
+
+proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
+  
+  locals
+    sw    dd  ?, ?, ?   
+    plane dd  ?
+  endl
+  
+  ;Check 1
+  mov eax, [X]
+  imul [Y]
+  cmp ecx, [Z]
+  jz @F
+    add esi, eax      
+    cmp byte[esi], 0
+    jz .SkipCheck
+    sub esi, eax 
+  @@:
+  cmp ecx, 0
+  jz @F
+    sub esi, eax        
+    cmp byte[esi], 0  
+    jz .SkipCheck
+    add esi, eax
+  @@: 
+  cmp ebx, [X]
+  jz @F
+    inc esi        
+    cmp byte[esi], 0  
+    jz .SkipCheck
+    dec esi
+  @@: 
+  cmp ebx, 0
+  jz @F
+    dec esi       
+    cmp byte[esi], 0  
+    jz .SkipCheck
+    inc esi 
+  @@: 
+  cmp edx, [Y]
+  jz @F
+    add esi, [X]       
+    cmp byte[esi], 0  
+    jz .SkipCheck
+    sub esi, [X]   
+  @@: 
+  cmp edx, 0
+  jz @F
+    sub esi, [X]      
+    cmp byte[esi], 0  
+    jz .SkipCheck
+  @@: 
+  jmp .frFalse
+
+  .SkipCheck:
+  ;Return:
+  mov eax, 1
+  jmp @F
+  .frFalse:
+    mov eax, 0
+  @@:
+  
   ret
 endp
 

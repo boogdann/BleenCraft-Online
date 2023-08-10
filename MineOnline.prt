@@ -4,13 +4,15 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=4
+  countAsm=6
   countInc=1
 [asm]
   asm1="Main.asm"
   asm2="gf_texture_init.ASM"
   asm3="gf_api_init.ASM"
   asm4="gf_render.ASM"
+  asm5="gf_land_render.ASM"
+  asm6="gf_math.ASM"
 [inc]
   inc1="gf_render_data.inc"
 end if
