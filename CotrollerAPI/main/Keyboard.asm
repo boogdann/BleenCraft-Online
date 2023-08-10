@@ -32,14 +32,14 @@ proc ct_check_moves, CameraPos, CameraTurn
   locals 
     Speed   dd   ?
     curTime  dd  ?
-    distancePerSecond  dd 1.5
+    distancePerSecond  dd 250.0
     
     ;ÓÚÎ‡‰Œ◊ ¿
-    shiftConst         dd 5.0 ;dd 0.5
+    shiftConst         dd 150.0 ;dd 0.5
     
   endl
   
-  invoke GetTickCount
+    invoke GetTickCount
     mov edx, eax
     sub eax, [time.deltaTime]
     
@@ -49,13 +49,13 @@ proc ct_check_moves, CameraPos, CameraTurn
     cmp [curTime], 0
     jle .Skip 
     
+    fild dword[curTime]
     fld dword[distancePerSecond]
     invoke  GetAsyncKeyState, VK_SHIFT
     cmp eax, 0
     jz @F
-      fadd  [shiftConst] 
+      fsub  [shiftConst] 
     @@:
-    fild dword[curTime]
     fdivp
     fstp dword[Speed]
 
