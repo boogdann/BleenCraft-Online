@@ -31,16 +31,33 @@ endp
 proc ct_check_moves, CameraPos, CameraTurn
   locals 
     Speed   dd   ?
+    curTime  dd  ?
+    distancePerSecond  dd 1.5
+    
+    ;отладќ„ ј
+    shiftConst         dd 5.0 ;dd 0.5
+    
   endl
   
-  mov eax, [сt_WalkingSpeed]
-  mov [Speed], eax
-  invoke  GetAsyncKeyState, VK_SHIFT
-  cmp eax, 0
-  jz @F
-      mov eax, [сt_RunningSpeed]
-      mov [Speed], eax
-  @@:
+  invoke GetTickCount
+    mov edx, eax
+    sub eax, [time.deltaTime]
+    
+    mov [curTime], eax
+    mov [time.deltaTime], edx    
+    
+    cmp [curTime], 0
+    jle .Skip 
+    
+    fld dword[distancePerSecond]
+    invoke  GetAsyncKeyState, VK_SHIFT
+    cmp eax, 0
+    jz @F
+      fadd  [shiftConst] 
+    @@:
+    fild dword[curTime]
+    fdivp
+    fstp dword[Speed]
 
   ;’ождени€:
   invoke  GetAsyncKeyState, $57 
@@ -64,6 +81,8 @@ proc ct_check_moves, CameraPos, CameraTurn
      stdcall ct_moves, [CameraPos], [CameraTurn], [Speed], 4
   @@:
 
+  .Skip:
+
   ret
 endp
 
@@ -72,7 +91,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
   locals 
        a  dd  ? 
        b  dd  ? 
-       PiDegree dd 180.0 
+       PiDegree dd 180.0
     endl   
   
     mov esi, [CameraTurn] 

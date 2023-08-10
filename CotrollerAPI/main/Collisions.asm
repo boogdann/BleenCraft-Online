@@ -185,6 +185,7 @@ proc ct_fall_check, playerPos
     mov [ct_last_ch_spd], eax
   @@:
   
+  ;ÏĞÀÂÈËÜÍÎ ÁËßÒÜ
   mov esi, [playerPos]
   fld  dword[esi + 4]
   fsub [ct_fall_speed]

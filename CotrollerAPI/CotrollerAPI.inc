@@ -10,3 +10,7 @@ ct_lastPos         dd    ?, ?, ?
 
 ct_is_mouse        dd    1
 ct_isJump          dd    1
+
+isDebug            dd    1
+time.deltaTime     dd    0.0
+curDistance        dd    ?
