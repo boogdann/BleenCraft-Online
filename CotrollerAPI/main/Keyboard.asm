@@ -32,14 +32,14 @@ proc ct_check_moves, CameraPos, CameraTurn
   locals 
     Speed   dd   ?
     curTime  dd  ?
-    distancePerSecond  dd 250.0
+    distancePerSecond  dd 130.0
     
     ;ÓÚÎ‡‰Œ◊ ¿
-    shiftConst         dd 150.0 ;dd 0.5
+    shiftConst         dd 100.0 ;dd 0.5
     
   endl
   
-    invoke GetTickCount
+  invoke GetTickCount
     mov edx, eax
     sub eax, [time.deltaTime]
     
@@ -98,7 +98,10 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
     mov edi, [CameraPos] 
                                 
 .OnMove:  
-
+     
+    cmp [ct_isMoving], 1
+    jne .Skip
+                    
     ;Calculate a in radian          
     mov [a], 0.0
     ;Calculate b in radian 
