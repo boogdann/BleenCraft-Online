@@ -19,6 +19,7 @@ include "Units\Asm_Includes\Code.asm"
 section '.text' code readable executable     
 
 Start:
+  
   ;#######################
   invoke  GetProcessHeap
   mov     [hHeap], eax
@@ -72,8 +73,12 @@ proc WindowProc uses ebx,\
         jmp     .Return
 
   .Render:
+        
         ;Рендер
         stdcall RenderScene
+        
+        mov [isFalling], 1
+        
         jmp     .ReturnZero
         
         .Movement:
@@ -137,7 +142,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     150, 150, 40 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     75, 75, 40 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -164,7 +169,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         сameraPos       dd    11.0, 13.0, 10.0
+         сameraPos       dd    11.0, 18.0, 10.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          

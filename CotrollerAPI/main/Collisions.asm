@@ -1,4 +1,3 @@
-
 include "CotrollerAPI\main\CollisionsConst.asm"
 
 proc ct_collisionsBegin uses esi edi, playerPos
@@ -22,6 +21,8 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
     Pl_pos    dd    ?, ?, ? 
     Pl_feets  dd    1.6
     Pl_ass  dd  0.3
+    Pl_step dd  0.4
+    Pl_chest  dd  -1.0
     temp    dd  ?
     
     X_Next  dd  ?
@@ -30,8 +31,11 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
     
   endl
   
+  mov [toSkip], 0
+  mov [ct_isJump], 0
+   
   mov esi, [playerPos]
-    
+
   fld dword[esi]
   fistp [Pl_pos]
   fld dword[esi + 4]
@@ -45,7 +49,8 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
                       
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
+    mov [toSkip], 1
   @@:
   
   ;2
@@ -61,7 +66,8 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
+    mov [toSkip], 1
   @@:
   
   ; 3
@@ -78,7 +84,8 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
+    mov [toSkip], 1
   @@:
   
   ; 4
@@ -95,12 +102,12 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
+    mov [toSkip], 1
   @@:
   
   ;5
-  
-  
+   
   fld dword[esi]
   fadd  dword[Pl_ass]
   fistp [Pl_pos] 
@@ -114,20 +121,31 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
-  @@:
-  
-  
-  cmp [onGround], 1
-  jne @F
-  
     mov [ct_isJump], 1
-    jmp .finish
-    
+    mov [toSkip], 1                                       
   @@:
-    
-    mov [ct_isJump], 0
- 
+  
+  ;6
+  
+  ;fld dword[esi]
+;  fsub  dword[Pl_ass]
+;  fadd  dword[Pl_step]
+;  fistp [Pl_pos] 
+;  fld dword[esi + 8]
+;  fadd  dword[Pl_ass]
+;  fistp [Pl_pos + 4]
+;  fld dword[esi + 4]
+;  fadd dword[Pl_chest]
+;  fistp [Pl_pos + 8]
+;  
+;  stdcall ct_isBlock, [Field], [X], [Y],\
+;                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
+;  
+;  cmp [onGround], 1
+;  jne @F
+;    mov [ct_isMoving], 0                                       
+;  @@:                    
+   
  .finish:
  
     
@@ -135,7 +153,7 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
 endp 
 
 
-proc ct_isBlock uses esi, Field, X_SIZE, Y_SIZE, X, Y, Z
+proc ct_isBlock uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
   
   mov [onGround], 0
   
@@ -161,45 +179,71 @@ proc ct_isBlock uses esi, Field, X_SIZE, Y_SIZE, X, Y, Z
   jz .finish
      
      mov [onGround], 1
+     mov [toSkip], 1
             
   .finish:
-  
-        
+
+         
   ret
 endp 
 
 
 proc ct_fall_check, playerPos
-  locals
-    g       dd      0.00002
-    curTime dd     ?
-  endl
   
+  cmp [isFalling], 1
+  jne .Skip
+  
+  cmp [toSkip], 1
+  je .Skip
+  
+  cmp [onGround], 1
+  je .Skip
+  
+  locals
+    g       dd      0.000009
+    divConst          dd  900000.0
+    mulConst          dd  3.0
+    curFallSpeed      dd  ? 
+  endl
+   
   invoke GetTickCount
-  sub eax, [ct_last_ch_spd]
-  cmp eax, 10
-  jl @F
-    fld  [ct_fall_speed]
-    fadd [g]
-    fstp [ct_fall_speed]
-    mov [ct_last_ch_spd], eax
-  @@:
+  
+  sub eax, [fallTime]
+  mov edx, eax
+  mov [fallTime], eax
+  
+  fild [fallTime]
+  fdiv [divConst]
+  fstp [fallTime]
+               
+  fld [g]
+  fmul [fallTime]
+  fadd [ct_fall_speed]
+  fstp [ct_fall_speed]
+  
+  fld [fallTime]
+  fmul [ct_fall_speed]
+  ;fdiv [mulConst]
+  fstp [curFallSpeed]
+  
+  mov [fallTime], edx
   
   ;œ–¿¬»À‹ÕŒ ¡Àﬂ“‹
   mov esi, [playerPos]
   fld  dword[esi + 4]
-  fsub [ct_fall_speed]
+  fsub [curFallSpeed]
   fstp dword[esi + 4]
 
+.Skip:
+    
   ret
 endp
 
-
 ;œ˚ÊÓÍ
-proc ct_check_Jump
+proc ct_check_Jump, playerPos 
 
   locals
-      Jump_speed  dd    -0.007
+      Jump_speed  dd    -0.005
   endl
 
   cmp [ct_isJump], 0
@@ -207,6 +251,8 @@ proc ct_check_Jump
   invoke  GetAsyncKeyState, VK_SPACE
   cmp eax, 0
   jz @F
+      mov [onGround], 0
+      mov [toSkip], 0
       fld [Jump_speed]
       fstp [ct_fall_speed]
   @@:

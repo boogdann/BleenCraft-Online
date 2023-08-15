@@ -7,6 +7,7 @@ _isCursor          dd    1
 ñt_WalkingSpeed    dd    0.03
 ñt_RunningSpeed    dd    0.06
 ct_lastPos         dd    ?, ?, ?
+ct_isMoving        dd    1
 
 ct_is_mouse        dd    1
 ct_isJump          dd    1
@@ -14,3 +15,7 @@ ct_isJump          dd    1
 isDebug            dd    1
 time.deltaTime     dd    0.0
 curDistance        dd    ?
+
+fallTime           dd    0.0
+isFalling          dd    0
+toSkip             dd    0

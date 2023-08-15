@@ -32,14 +32,14 @@ proc ct_check_moves, CameraPos, CameraTurn
   locals 
     Speed   dd   ?
     curTime  dd  ?
-    distancePerSecond  dd 250.0
+    distancePerSecond  dd 130.0
     
     ;ÓÚÎ‡‰Œ◊ ¿
-    shiftConst         dd 150.0 ;dd 0.5
+    shiftConst         dd 100.0 ;dd 0.5
     
   endl
   
-    invoke GetTickCount
+  invoke GetTickCount
     mov edx, eax
     sub eax, [time.deltaTime]
     
@@ -92,13 +92,23 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
        a  dd  ? 
        b  dd  ? 
        PiDegree dd 180.0
+       
+       Pl_step dd  0.4
+       Pl_chest  dd  1.0
+       
+       tempVector dd 0, 0, 0
+       tempCamera dd 0.0, 0.0, 0.0
+       
     endl   
   
     mov esi, [CameraTurn] 
     mov edi, [CameraPos] 
                                 
 .OnMove:  
-
+    
+    cmp [ct_isMoving], 1
+    jne .Skip
+                       
     ;Calculate a in radian          
     mov [a], 0.0
     ;Calculate b in radian 
@@ -107,6 +117,19 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
     fdiv dword [PiDegree] 
     fstp dword [b] 
  
+    fld dword [edi + 4]
+    fsub dword [Pl_chest]
+    fistp dword [tempVector + 4]
+ 
+    fld dword [edi + 4]
+    fstp dword [tempCamera + 4] 
+ 
+    fld dword [edi]
+    fstp dword [tempCamera]
+      
+    fld dword [edi + 8]
+    fstp dword [tempCamera + 8]
+  
     cmp [Direction], 1 ;Forward 
     jz .MoveForward 
     cmp [Direction], 2 ;Right
@@ -126,8 +149,13 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fsin 
       fmulp 
       fmul [Speed] 
-      fsubp 
-      fstp dword [edi] 
+      fsubp
+      ;[Field.Blocks] 
+      fstp dword [edi]
+      
+      fld dword [edi]
+      fistp dword [tempVector]
+      
       ;CameraPos[3] = CameraPos[3] + cos(a) * cos(b) * WalkingSpeed 
       fld dword [edi + 8] 
       fld [a] 
@@ -137,7 +165,44 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmulp 
       fmul [Speed]  
       faddp 
-      fstp dword [edi + 8] 
+      fstp dword [edi + 8]
+      
+      fld dword [edi + 8]
+      fistp dword [tempVector + 8]
+      
+      stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
+      
+      cmp [onGround], 1
+      jne @F
+      
+        fld dword[tempCamera]
+        fstp dword [edi]
+
+        fld dword [tempCamera + 8]
+        fstp dword [edi + 8]
+        
+        jmp .Skip
+                             
+      @@:  
+      
+      fild dword[tempVector + 4]
+      fadd [Pl_chest]
+      fadd [Pl_chest]
+      fistp dword[tempVector + 4]
+      
+      stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
+      
+      cmp [onGround], 1
+      jne @F
+      
+        fld dword[tempCamera]
+        fstp dword [edi]
+
+        fld dword [tempCamera + 8]
+        fstp dword [edi + 8]
+                             
+      @@:
+      
     Jmp .Skip 
     .MoveBackWard: 
       ;CameraPos[1] = CameraPos[1] + cos(a)*sin(b) * WalkingSpeed 
@@ -149,7 +214,11 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmulp 
       fmul [Speed]  
       faddp 
-      fstp dword [edi] 
+      fstp dword [edi]
+      
+      fld dword [edi]
+      fistp dword [tempVector]
+       
       ;CameraPos[3] = CameraPos[3] + cos(a) * cos(b) * WalkingSpeed 
       fld dword [edi + 8] 
       fld [a] 
@@ -159,7 +228,44 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmulp 
       fmul [Speed] 
       fsubp 
-      fstp dword [edi + 8] 
+      fstp dword [edi + 8]
+      
+      fld dword [edi + 8]
+      fistp dword [tempVector + 8]
+      
+      stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
+      
+      cmp [onGround], 1
+      jne @F
+      
+        fld dword[tempCamera]
+        fstp dword [edi]
+
+        fld dword [tempCamera + 8]
+        fstp dword [edi + 8]
+        
+        jmp .Skip
+                             
+      @@:
+      
+      fild dword[tempVector + 4]
+      fadd [Pl_chest]
+      fadd [Pl_chest]
+      fistp dword[tempVector + 4]
+      
+      stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
+      
+      cmp [onGround], 1
+      jne @F
+      
+        fld dword[tempCamera]
+        fstp dword [edi]
+
+        fld dword [tempCamera + 8]
+        fstp dword [edi + 8]
+                             
+      @@:
+       
     Jmp .Skip 
     .MoveLeft: 
       ;CameraPos[1] = CameraPos[1] - cos(b) * WalkingSpeed 
@@ -169,13 +275,54 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmul [Speed] 
       fsubp 
       fstp dword [edi] 
+      
+      fld dword [edi]
+      fistp dword [tempVector]
+      
       ;CameraPos[3] = CameraPos[3] - sin(b) * WalkingSpeed 
       fld dword [edi + 8] 
       fld  [b] 
       fsin 
       fmul [Speed]  
       fsubp 
-      fstp dword [edi + 8] 
+      fstp dword [edi + 8]
+      
+      fld dword [edi + 8]
+      fistp dword [tempVector + 8]
+      
+      stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
+      
+      cmp [onGround], 1
+      jne @F
+      
+        fld dword[tempCamera]
+        fstp dword [edi]
+
+        fld dword [tempCamera + 8]
+        fstp dword [edi + 8]
+        
+        jmp .Skip
+                             
+      @@:
+      
+      fild dword[tempVector + 4]
+      fadd [Pl_chest]
+      fadd [Pl_chest]
+      fistp dword[tempVector + 4]
+      
+      stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
+      
+      cmp [onGround], 1
+      jne @F
+      
+        fld dword[tempCamera]
+        fstp dword [edi]
+
+        fld dword [tempCamera + 8]
+        fstp dword [edi + 8]
+                             
+      @@:
+       
     Jmp .Skip 
     .MoveRight: 
       ;CameraPos[1] = CameraPos[1] + cos(b) * WalkingSpeed 
@@ -184,7 +331,11 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fcos 
       fmul [Speed] 
       faddp 
-      fstp dword [edi] 
+      fstp dword [edi]
+      
+      fld dword [edi]
+      fistp dword [tempVector]
+       
       ;CameraPos[3] = CameraPos[3] + sin(b) * WalkingSpeed 
       fld dword [edi + 8] 
       fld [b] 
@@ -192,6 +343,43 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmul [Speed] 
       faddp 
       fstp dword [edi + 8] 
+      
+      fld dword [edi + 8]
+      fistp dword [tempVector + 8]
+      
+      stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
+      
+      cmp [onGround], 1
+      jne @F
+      
+        fld dword[tempCamera]
+        fstp dword [edi]
+
+        fld dword [tempCamera + 8]
+        fstp dword [edi + 8]
+        
+        jmp .Skip
+                             
+      @@:
+      
+      fild dword[tempVector + 4]
+      fadd [Pl_chest]
+      fadd [Pl_chest]
+      fistp dword[tempVector + 4]
+      
+      stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
+      
+      cmp [onGround], 1
+      jne @F
+      
+        fld dword[tempCamera]
+        fstp dword [edi]
+
+        fld dword [tempCamera + 8]
+        fstp dword [edi + 8]
+                             
+      @@:
+      
     Jmp .Skip 
  
     .Skip:
