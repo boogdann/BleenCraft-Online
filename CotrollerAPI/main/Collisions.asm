@@ -1,4 +1,3 @@
-
 include "CotrollerAPI\main\CollisionsConst.asm"
 
 proc ct_collisionsBegin uses esi edi, playerPos
@@ -11,6 +10,7 @@ proc ct_collisionsBegin uses esi edi, playerPos
   fstp [ct_lastPos + 8]
   ret
 endp
+
 
 proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
@@ -32,7 +32,8 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   endl
   
   mov [toSkip], 0
-  
+  mov [ct_isJump], 0
+   
   mov esi, [playerPos]
 
   fld dword[esi]
@@ -48,7 +49,7 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
                       
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
     mov [toSkip], 1
   @@:
   
@@ -65,7 +66,7 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
     mov [toSkip], 1
   @@:
   
@@ -83,7 +84,7 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
     mov [toSkip], 1
   @@:
   
@@ -101,7 +102,7 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
     mov [toSkip], 1
   @@:
   
@@ -120,41 +121,31 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
   
   cmp [onGround], 1
   jne @F
-    mov [ct_fall_speed], 0
+    mov [ct_isJump], 1
     mov [toSkip], 1                                       
   @@:
   
   ;6
   
-  fld dword[esi]
-  fsub  dword[Pl_ass]
-  fadd  dword[Pl_step]
-  fistp [Pl_pos] 
-  fld dword[esi + 8]
-  fadd  dword[Pl_ass]
-  fistp [Pl_pos + 4]
-  fld dword[esi + 4]
-  fadd dword[Pl_chest]
-  fistp [Pl_pos + 8]
-  
-  stdcall ct_isBlock, [Field], [X], [Y],\
-                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
-  
-  cmp [onGround], 1
-  jne @F
-    mov [ct_isMoving], 0                                       
-  @@:
-    
-  cmp [onGround], 1
-  jne @F
-  
-    mov [ct_isJump], 1
-    jmp .finish
-    
-  @@:
-    
-    mov [ct_isJump], 0
- 
+  ;fld dword[esi]
+;  fsub  dword[Pl_ass]
+;  fadd  dword[Pl_step]
+;  fistp [Pl_pos] 
+;  fld dword[esi + 8]
+;  fadd  dword[Pl_ass]
+;  fistp [Pl_pos + 4]
+;  fld dword[esi + 4]
+;  fadd dword[Pl_chest]
+;  fistp [Pl_pos + 8]
+;  
+;  stdcall ct_isBlock, [Field], [X], [Y],\
+;                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
+;  
+;  cmp [onGround], 1
+;  jne @F
+;    mov [ct_isMoving], 0                                       
+;  @@:                    
+   
  .finish:
  
     
@@ -162,7 +153,7 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
 endp 
 
 
-proc ct_isBlock uses esi, Field, X_SIZE, Y_SIZE, X, Y, Z
+proc ct_isBlock uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
   
   mov [onGround], 0
   
@@ -210,7 +201,7 @@ proc ct_fall_check, playerPos
   
   locals
     g       dd      0.000009
-    divConst          dd  90000000.0
+    divConst          dd  900000.0
     mulConst          dd  3.0
     curFallSpeed      dd  ? 
   endl
@@ -247,7 +238,6 @@ proc ct_fall_check, playerPos
     
   ret
 endp
-
 
 ;Ïðûæîê
 proc ct_check_Jump, playerPos 
