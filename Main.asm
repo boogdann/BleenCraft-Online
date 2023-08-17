@@ -28,6 +28,8 @@ Start:
   stdcall Random.Initialize
   stdcall Field.Initialize, [hHeap], [WorldLength], [WorldWidth], [WorldHeight]
   
+  stdcall Field.SetBlockIndex, 15, 15, 4, 1
+  
   stdcall gf_grafic_init
   ;Флаг = 1 - показать мышку
   stdcall ct_change_mouse, 0

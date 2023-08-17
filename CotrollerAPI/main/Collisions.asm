@@ -124,28 +124,7 @@ proc ct_collisionsCheck, playerPos, lastPos, Field, X, Y, Z
     mov [ct_isJump], 1
     mov [toSkip], 1                                       
   @@:
-  
-  ;6
-  
-  ;fld dword[esi]
-;  fsub  dword[Pl_ass]
-;  fadd  dword[Pl_step]
-;  fistp [Pl_pos] 
-;  fld dword[esi + 8]
-;  fadd  dword[Pl_ass]
-;  fistp [Pl_pos + 4]
-;  fld dword[esi + 4]
-;  fadd dword[Pl_chest]
-;  fistp [Pl_pos + 8]
-;  
-;  stdcall ct_isBlock, [Field], [X], [Y],\
-;                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
-;  
-;  cmp [onGround], 1
-;  jne @F
-;    mov [ct_isMoving], 0                                       
-;  @@:                    
-   
+
  .finish:
  
     
@@ -200,10 +179,11 @@ proc ct_fall_check, playerPos
   je .Skip
   
   locals
-    g       dd      0.000009
-    divConst          dd  900000.0
+    g       dd      0.0000009
+    divConst          dd  9000000.0
     mulConst          dd  3.0
     curFallSpeed      dd  ? 
+    tempVector        dd  0, 0, 0
   endl
    
   invoke GetTickCount
@@ -228,12 +208,14 @@ proc ct_fall_check, playerPos
   
   mov [fallTime], edx
   
-  ;œ–¿¬»À‹ÕŒ ¡Àﬂ“‹
   mov esi, [playerPos]
+  
+  ;œ–¿¬»À‹ÕŒ ¡Àﬂ“‹
   fld  dword[esi + 4]
   fsub [curFallSpeed]
   fstp dword[esi + 4]
 
+  
 .Skip:
     
   ret

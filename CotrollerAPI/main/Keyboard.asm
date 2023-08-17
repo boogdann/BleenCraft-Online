@@ -180,13 +180,11 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
 
         fld dword [tempCamera + 8]
         fstp dword [edi + 8]
-        
-        jmp .Skip
                              
       @@:  
       
       fild dword[tempVector + 4]
-      fadd [Pl_chest]
+      ;fsub [Pl_chest]
       fadd [Pl_chest]
       fistp dword[tempVector + 4]
       
@@ -244,13 +242,12 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fld dword [tempCamera + 8]
         fstp dword [edi + 8]
         
-        jmp .Skip
                              
       @@:
       
       fild dword[tempVector + 4]
       fadd [Pl_chest]
-      fadd [Pl_chest]
+      ;fadd [Pl_chest]
       fistp dword[tempVector + 4]
       
       stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
@@ -301,13 +298,12 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fld dword [tempCamera + 8]
         fstp dword [edi + 8]
         
-        jmp .Skip
                              
       @@:
       
       fild dword[tempVector + 4]
       fadd [Pl_chest]
-      fadd [Pl_chest]
+      ;fadd [Pl_chest]
       fistp dword[tempVector + 4]
       
       stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
@@ -358,13 +354,12 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fld dword [tempCamera + 8]
         fstp dword [edi + 8]
         
-        jmp .Skip
                              
       @@:
       
       fild dword[tempVector + 4]
       fadd [Pl_chest]
-      fadd [Pl_chest]
+      ;fadd [Pl_chest]
       fistp dword[tempVector + 4]
       
       stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [tempVector + 4]
