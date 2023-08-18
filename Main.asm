@@ -28,6 +28,8 @@ Start:
   stdcall Random.Initialize
   stdcall Field.Initialize, [hHeap], [WorldLength], [WorldWidth], [WorldHeight]
   
+  stdcall Field.SetBlockIndex, 15, 15, 4, 1
+  
   stdcall gf_grafic_init
   ;Флаг = 1 - показать мышку
   stdcall ct_change_mouse, 0
@@ -142,7 +144,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     75, 75, 40 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     400, 400, 40 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -192,8 +194,8 @@ section '.data' data readable writeable
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         WorldLength dd 200 ;x
-         WorldWidth  dd 200 ;y
+         WorldLength dd 100 ;x
+         WorldWidth  dd 100 ;y
          WorldHeight dd 40 ;z
          
          ;Богдан вынеси это себе куданибудь
