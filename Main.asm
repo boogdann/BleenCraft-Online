@@ -5,25 +5,17 @@ entry Start
 ;===============Module incleude================
 include "win32a.inc" 
 include "Grafic\GraficAPI\GraficAPI.asm"
+include "Interface\Interface.asm"
 include "CotrollerAPI\CotrollerAPI.asm"
 include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
-
-;============For debug=============
-;include "Units\Movement\keys.code"
-;include "Units\Movement\move.asm"
-;include "Units\Movement\Vmove.asm"
-;==================================
 ;==============================================
 
 section '.text' code readable executable     
 
 Start:
-  
-  ;#######################
   invoke  GetProcessHeap
   mov     [hHeap], eax
-  ;#######################
   ;================Modules initialize=================
   stdcall Random.Initialize
   stdcall Field.Initialize, [hHeap], [WorldLength], [WorldWidth], [WorldHeight]
@@ -62,9 +54,6 @@ proc WindowProc uses ebx,\
      
         stdcall ct_move_check, сameraPos, сameraTurn,\
                                [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]                      
-        ;Debug only:
-        ;stdcall checkMoveKeys
-        ;stdcall OnMouseMove, сameraTurn, [sensitivity]
         
         switch  [uMsg]
         case    .Render,        WM_PAINT
@@ -75,7 +64,6 @@ proc WindowProc uses ebx,\
         jmp     .Return
 
   .Render:
-        
         ;Рендер
         stdcall RenderScene
         
@@ -219,7 +207,7 @@ section '.data' data readable writeable
          ;Добавить импорты данных нужные GraficAPI
          include "Grafic\GraficAPI\GraficAPI.inc"
          include "CotrollerAPI\CotrollerAPI.inc"
-         ;include "Units\Movement\MConst.asm"  
+         include "Interface\Interface.inc" 
          ;=========================================   
 
 section '.idata' import data readable writeable
