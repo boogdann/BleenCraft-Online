@@ -5,4 +5,6 @@ Field.Width        dd       ?
 Field.Height       dd       ?
 Field.Seed         dd       ?
 Field.Matrix       dd       ?
+Field.TmpMatrix    dd       ?
+Field.TmpSeed      dd       ?
 Tmp                dd       ?

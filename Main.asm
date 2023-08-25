@@ -19,23 +19,15 @@ include "Units\Asm_Includes\Code.asm"
 section '.text' code readable executable     
 
 Start:
-  
-  ;#######################
-  invoke  GetProcessHeap
-  mov     [hHeap], eax
-  ;#######################
+    invoke  GetProcessHeap
+    mov    [hHeap], eax    
   ;================Modules initialize=================
-  stdcall Random.Initialize
-  stdcall Field.Initialize, [hHeap], [WorldLength], [WorldWidth], [WorldHeight]
-  
-  stdcall Field.SetBlockIndex, 15, 15, 3, 1
-  stdcall Field.SetBlockIndex, 16, 15, 4, 1
-  stdcall Field.SetBlockIndex, 17, 15, 5, 1
-  stdcall Field.SetBlockIndex, 18, 15, 6, 1
-  stdcall Field.SetBlockIndex, 19, 15, 7, 1
-  stdcall Field.SetBlockIndex, 20, 15, 8, 1
-  stdcall Field.SetBlockIndex, 21, 15, 9, 1
-  
+  stdcall Field.Initialize, [WorldPower] ,[WorldHeight] 
+  mov     eax, [Field.Length]
+  mov     [WorldLength], eax
+  mov     eax, [Field.Width]
+  mov     [WorldWidth], eax
+      
   stdcall gf_grafic_init
   ;Флаг = 1 - показать мышку
   stdcall ct_change_mouse, 0
@@ -150,7 +142,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     400, 400, 40 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     200, 200, 40 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -177,7 +169,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         сameraPos       dd    11.0, 18.0, 10.0
+         сameraPos       dd    500.0, 90.0, 500.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          
@@ -200,9 +192,11 @@ section '.data' data readable writeable
          WindowRect      RECT       ?, ?, ?, ?
          ;P.S. WindowRect.right - Ширина экрана | WindowRect.bottom - Высота экрана
          
-         WorldLength dd 100 ;x
-         WorldWidth  dd 100 ;y
-         WorldHeight dd 40 ;z
+         WorldPower  dd 10 ; размер мира задаётся степенью двойки
+         
+         WorldLength dd ? ;x ЭТИ ДВЕ ХУЙНИ НЕ ТРОГАТЬ
+         WorldWidth  dd ? ;y
+         WorldHeight dd 250  ;z
          
          ;Богдан вынеси это себе куданибудь
          SkyLength   dd   10
