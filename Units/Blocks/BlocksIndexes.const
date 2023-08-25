@@ -1,6 +1,6 @@
 ;                   
 Block.Air                =      0
-Block.Water              =      1
+Block.Water              =      255
 
 ;                   Wood
 Block.Log                =      2
