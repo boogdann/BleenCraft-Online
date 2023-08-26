@@ -182,9 +182,10 @@ proc ct_fall_check, playerPos
     divConst          dd  9000000.0
     div2Const          dd  2.0
     curFallSpeed      dd  ? 
-    tempVector        dd  0, 0, 0
     delS              dd  ?
     ;prevS             dd  ?
+    tempVector        dd  0, 0, 0  
+    newY              dd  ?
     
   endl
    
@@ -225,11 +226,37 @@ proc ct_fall_check, playerPos
   
   mov esi, [playerPos]
   
+  fld dword[esi + 4]
+  fistp [tempVector + 4]
+  
+  fld dword[esi]
+  fistp [tempVector]
+  
+  fld dword[esi + 8]
+  fistp [tempVector + 8]
+  
   ;œ–¿¬»À‹ÕŒ ¡Àﬂ“‹
   fld  dword[esi + 4]
   fsub [delS]
   fstp dword[esi + 4]
   
+  fld dword[esi + 4]
+  fistp [newY]
+  
+  stdcall ct_isBlock, [Field.Blocks], [WorldWidth], [WorldLength], [tempVector], [tempVector + 8], [newY]
+  
+  cmp [onGround], 1
+  jne @F
+  
+    fild [tempVector + 4]
+    fstp dword[esi + 4]  
+  
+    fldz
+    fstp [ct_fall_speed]
+  
+  @@:
+  
+   
 .Skip:
     
   ret

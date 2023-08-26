@@ -1,24 +1,38 @@
 ;               
 ;              proc Field.Initialize
-proc Field.Initialize uses eax edi ecx ebx, _hHeap, Length, Width, Height
+proc Field.Initialize uses eax edi ecx ebx, power, Height
     locals
-        x   dw    ?
-        y   dw    ?
-        z   dw    ?  
-        Size dd   ?  
+        x      dd  ?
+        y      dd  ?
+        z      dd  ?  
+        Size   dd  ?
+        Size_  dd  ?
+        chancX dd  ? 
+        numChanc dd ?
+        startChanc dd ?
+        startChancBaseMatrix dd ?
     endl 
     
-    mov    edi, [_hHeap]
-    mov    [Field.hHeap], edi
-         
-    mov    edi, [Length]
-    mov    [Field.Length], edi
-    xchg   eax, edi 
+    xor    eax, eax
     
-    mov    edi, [Width]
-    mov    [Field.Width], edi
-    mul    edi
+    stdcall Random.Initialize
     
+    invoke  GetProcessHeap
+    mov    [Field.hHeap], eax
+    
+    xor    edx, edx
+    mov    eax, 1
+    mov    cl, byte[power]
+    shl    eax, cl
+    inc    eax
+    mov    dword[Size_], eax
+    mov    [Field.Length], eax
+    mov    [Field.Width], eax
+    
+    mul    eax
+    mov    edi, eax
+             
+
     mov    edi, [Height]
     mov    [Field.Height], edi
     mul    edi
@@ -27,54 +41,58 @@ proc Field.Initialize uses eax edi ecx ebx, _hHeap, Length, Width, Height
     mov   [Field.Blocks], eax
 
 ;   alloc memory for Field.Seed    
-    mov    eax, [Field.Length]
-    mov    edi, [Field.Width]
-    mul    edi
+;    mov    eax, [Field.Length]
+;    mov    edi, [Field.Width]
+;    mul    edi
+;    
+;    mov    edi, 4
+;    mul    edi 
+;    
+;    mov    ebx, eax
+;    
+;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
+;    mov    [Field.Seed], eax
+;    
+;    stdcall Field.GenerateSeed
     
-    mov    edi, 4
-    mul    edi 
-    
-    mov    ebx, eax
-    
-    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
-    mov    [Field.Seed], eax
-    
-    stdcall Field.GenerateSeed
-    
-    
-    xchg  eax, ebx
+    xor    edx, edx
+    mov    eax, [Size_]
+    mul    eax
+    mov    ebx, 4
+    mul    ebx
 ;   alloc memory for Field.Matrix  
     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
     mov    [Field.Matrix], eax
- 
-    stdcall Field.PalinNoise2D, [Field.Matrix],\
-            [Field.Length], [Field.Width], 2, [Field.Seed], 2.0, 10
-            
     
+    stdcall DiamondSquare.Initialize, [power], 0f, 1f, TRUE, 100f 
+    stdcall DiamondSquare.Generate, [Field.Matrix]
+    ;mov    [Field.Matrix], eax
+   
+   
     xor    edx, edx
     mov    eax, [Field.Length]
     mul    dword[Field.Width]
     mov    dword[Size], eax
     
-    mov    word[x], 0        
+    mov    dword[x], 0        
 .Iterate_X:
     xor    edx, edx
-    movzx  eax, word[x]
+    mov    eax, [x]
     mul    dword[Field.Width]
     mov    ecx, eax
     
-    mov    word[y], 0
+    mov    dword[y], 0
 .Iterate_Y:
     mov    eax, ecx
-    movzx  edi, word[y]
+    mov    edi, dword[y]
     add    eax, edi
     add    eax, [Field.Blocks]
     xchg   eax, edi
     
     xor    edx, edx
-    movzx  eax, word[x]
+    mov    eax, dword[x]
     mul    dword[Field.Length]
-    movzx  ebx, word[y]
+    mov    ebx, dword[y]
     add    eax, ebx
     mov    ebx, 4
     xor    edx, edx
@@ -84,45 +102,28 @@ proc Field.Initialize uses eax edi ecx ebx, _hHeap, Length, Width, Height
     
     mov    eax, [esi]    
     
-    mov    word[z], 0
+    mov    dword[z], 0
 .Iterate_Z:
     mov    byte[edi], Block.Dirt
     add    edi, [Size]
     
-    inc    word[z]
-    movzx  ebx, word[z]
+    inc    dword[z]
+    mov    ebx, [z]
     cmp    ebx, eax
     jl     .Iterate_Z
 
-    inc   word[y]
-    movzx eax, word[y]
+    inc   dword[y]
+    mov   eax, dword[y]
     cmp   eax, dword[Field.Width]
     jl    .Iterate_Y
     
-    inc   word[x]
-    movzx eax, word[x]
+    inc   dword[x]
+    mov   eax, dword[x]
     cmp   eax, dword[Field.Length]    
     jl    .Iterate_X
-    
-;    stdcall Field.SetBlockIndex, 12, 12, 5, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 5, Blocks.STONE 
-;    stdcall Field.SetBlockIndex, 14, 12, 5, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 6, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 7, Blocks.STONE
-;    
-;    stdcall Field.SetBlockIndex, 12, 12, 12, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 12, Blocks.STONE 
-;    stdcall Field.SetBlockIndex, 14, 12, 12, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 13, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 14, Blocks.STONE
-;    
-;    stdcall Field.SetBlockIndex, 10, 10, 2, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 11, 10, 2, Blocks.STONE 
-;    stdcall Field.SetBlockIndex, 12, 10, 2, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 11, 10, 3, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 11, 10, 4, Blocks.STONE    
-
+   
 .Finish:
+    invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     ret
 endp
 
@@ -214,7 +215,7 @@ proc Field.SetBlockIndex uses edi eax esi ecx, X: dword, Y: dword, Z: dword, Blo
      ret
 endp
 
-proc Field.PalinNoise2D uses esi edi ecx, resAddr, width, height,\
+proc Field.PalinNoise2D uses esi edi ecx ebx edx, resAddr, width, height,\
                         octaves, seedAddr, fBias, Leo 
     locals
         x           dw    ?
@@ -460,6 +461,11 @@ proc Field.PalinNoise2D uses esi edi ecx, resAddr, width, height,\
     mov   edi, 4
     xor   edx, edx
     mul   edi
+    ;
+    ;mov   esi, eax
+    ;add   esi, [seedAddr]
+    ;
+    
     add   eax, [resAddr]
     xchg  eax, edi
     
@@ -468,7 +474,10 @@ proc Field.PalinNoise2D uses esi edi ecx, resAddr, width, height,\
     fdivp
     fild  dword[Leo]
     fmulp
-    
+    ;
+    ;fstp    dword[esi]
+    ;fld     dword[esi]
+    ;
     fistp  dword[edi]
    ; mov    ebx, 80
    ; sub    dword[edi], ebx
@@ -518,3 +527,166 @@ proc Field.TestBounds uses ebx, X: dword, Y: dword, Z: dword
 .Finish:   
      ret
 endp
+
+;    xor    edx, edx
+;    mov    eax, [SizeMatrix]
+;    mul    eax
+;    mov    ebx, 4
+;    mul    ebx
+;    xchg   ecx, eax
+;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, ecx
+;    mov    [Field.TmpMatrix], eax 
+;
+;    xor    edx, edx
+;    mov    eax, [SizeMatrix]
+;    mul    eax
+;    mov    ebx, 4
+;    mul    ebx
+;    xchg   ecx, eax    
+;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, ecx
+;    mov    [Field.TmpSeed], eax       
+    
+;    stdcall Field.PalinNoise2D, [Field.Matrix],\
+;            [], [Field.Width], 2, [Field.Seed], 2.0, 10
+            
+;    xor    edx, edx
+;    mov    eax, [Field.Length]
+;    div    dword[SizeMatrix]
+;    
+;    mov    dword[numChanc], eax
+;    
+;    
+;    mov    dword[chancX], 0
+;    mov    ebx, 4
+;    
+;.Iterate_Chanc:  
+;  mov    eax, [SizeMatrix]
+;  mul    dword[chancX]
+;  mul    ebx
+;  mov    edi, [Field.Seed]
+;  add    edi, eax
+;  mov    [startChanc], edi
+;
+;  mov    edi, [Field.TmpSeed]
+;  mov    dword[y], 0
+;  .Iterate_Y:
+;  xor    edx, edx
+;  mov    eax, [y]
+;  mul    [Field.Length]
+;  mul    ebx
+;  mov    esi, [startChanc]
+;  add    esi, eax
+;  
+;  mov    ecx, [SizeMatrix]
+;  rep    movsd
+;  
+;  inc    dword[y]
+;  mov    eax, [y]
+;  cmp    eax, [SizeMatrix]
+;  jl     .Iterate_Y
+;  
+;  stdcall Field.PalinNoise2D, [Field.TmpMatrix],\
+;      [SizeMatrix], [SizeMatrix], 2, [Field.TmpSeed], 2.0, 10 
+;      
+;
+;  mov    eax, [SizeMatrix]
+;  mul    dword[chancX]
+;  mul    ebx
+;  add    eax, [Field.Matrix]
+;  mov    [startChancBaseMatrix], eax
+;    
+;  mov    esi, [Field.TmpMatrix]      
+;  mov    dword[y], 0
+;  .Iterate_Y1:
+;  xor    edx, edx
+;  mov    eax, [y]
+;  mul    [Field.Length]
+;  mul    ebx
+;  mov    edi, [startChancBaseMatrix]
+;  add    edi, eax
+;  
+;  mov    ecx, [SizeMatrix]
+;  rep    movsd
+;  
+;  inc    dword[y]
+;  mov    eax, [y]
+;  cmp    eax, [SizeMatrix]
+;  jl     .Iterate_Y1    
+;  
+;  
+;  inc    dword[chancX]
+;  mov    eax, [chancX]
+;  cmp    eax, [numChanc]
+;  jl     .Iterate_Chanc
+;    
+;    
+;    xor    edx, edx
+;    mov    eax, [Field.Length]
+;    mul    dword[Field.Width]
+;    mov    dword[Size], eax
+;    
+;    mov    word[x], 0        
+;.Iterate_X:
+;    xor    edx, edx
+;    movzx  eax, word[x]
+;    mul    dword[Field.Width]
+;    mov    ecx, eax
+;    
+;    mov    word[y], 0
+;.Iterate_Y2:
+;    mov    eax, ecx
+;    movzx  edi, word[y]
+;    add    eax, edi
+;    add    eax, [Field.Blocks]
+;    xchg   eax, edi
+;    
+;    xor    edx, edx
+;    movzx  eax, word[x]
+;    mul    dword[Field.Length]
+;    movzx  ebx, word[y]
+;    add    eax, ebx
+;    mov    ebx, 4
+;    xor    edx, edx
+;    mul    ebx
+;    add    eax, [Field.Matrix]
+;    xchg   eax, esi
+;    
+;    mov    eax, [esi]    
+;    
+;    mov    word[z], 0
+;.Iterate_Z:
+;    mov    byte[edi], Block.Dirt
+;    add    edi, [Size]
+;    
+;    inc    word[z]
+;    movzx  ebx, word[z]
+;    cmp    ebx, eax
+;    jl     .Iterate_Z
+;
+;    inc   word[y]
+;    movzx eax, word[y]
+;    cmp   eax, dword[Field.Width]
+;    jl    .Iterate_Y2
+;    
+;    inc   word[x]
+;    movzx eax, word[x]
+;    cmp   eax, dword[Field.Length]    
+;    jl    .Iterate_X
+    
+;    stdcall Field.SetBlockIndex, 12, 12, 5, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 13, 12, 5, Blocks.STONE 
+;    stdcall Field.SetBlockIndex, 14, 12, 5, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 13, 12, 6, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 13, 12, 7, Blocks.STONE
+;    
+;    stdcall Field.SetBlockIndex, 12, 12, 12, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 13, 12, 12, Blocks.STONE 
+;    stdcall Field.SetBlockIndex, 14, 12, 12, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 13, 12, 13, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 13, 12, 14, Blocks.STONE
+;    
+;    stdcall Field.SetBlockIndex, 10, 10, 2, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 11, 10, 2, Blocks.STONE 
+;    stdcall Field.SetBlockIndex, 12, 10, 2, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 11, 10, 3, Blocks.STONE
+;    stdcall Field.SetBlockIndex, 11, 10, 4, Blocks.STONE 
