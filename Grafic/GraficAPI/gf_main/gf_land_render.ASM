@@ -241,22 +241,31 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
   endl
   
   ;Check 1
+  ;ebx - x [x]
+  ;ecx - y [z]
+  ;edx - z [y]
+  ;of block
+  
+  push edx ebx
   mov eax, [X]
   imul [Y]
+  pop ebx edx
+  ;y check
   cmp ecx, [Z]
   jz @F
-    add esi, eax      
+    add esi, eax
     cmp byte[esi], 0
     jz .SkipCheck
-    sub esi, eax 
+    sub esi, eax
   @@:
   cmp ecx, 0
   jz @F
-    sub esi, eax        
-    cmp byte[esi], 0  
+    sub esi, eax
+    cmp byte[esi], 0
     jz .SkipCheck
     add esi, eax
-  @@: 
+  @@:
+  
   cmp ebx, [X]
   jz @F
     inc esi        
@@ -270,7 +279,8 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     cmp byte[esi], 0  
     jz .SkipCheck
     inc esi 
-  @@: 
+  @@:
+  
   cmp edx, [Y]
   jz @F
     add esi, [X]       
@@ -278,20 +288,23 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     jz .SkipCheck
     sub esi, [X]   
   @@: 
+  
   cmp edx, 0
   jz @F
-    sub esi, [X]      
+    sub esi, [X]
     cmp byte[esi], 0  
     jz .SkipCheck
-  @@: 
+    add esi, [X]
+  @@:
+   
   jmp .frFalse
 
   .SkipCheck:
   ;Return:
-  mov eax, 1
+  mov eax, 1 ;RENDER
   jmp @F
   .frFalse:
-    mov eax, 0
+    mov eax, 0 ;NO RENDER
   @@:
   
   ret

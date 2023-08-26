@@ -142,7 +142,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     200, 200, 40 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     40, 40, 40 ;(По x, y, z)
          ;===================================================
                   
                   
