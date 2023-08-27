@@ -11,9 +11,10 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
         numChanc dd ?
         startChanc dd ?
         startChancBaseMatrix dd ?
+        base    dd    ?
     endl 
     
-    xor    eax, eax
+    mov   dword[base], 40
     
     stdcall Random.Initialize
     
@@ -111,6 +112,18 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     mov    ebx, [z]
     cmp    ebx, eax
     jl     .Iterate_Z
+    
+    cmp    ebx, [base]
+    jnl    .Skip
+
+.SetWater:  
+    mov    byte[edi], Block.Water
+    add    edi, [Size]
+    inc    ebx
+    cmp    ebx, [base]
+    jl     .SetWater
+        
+.Skip:
 
     inc   dword[y]
     mov   eax, dword[y]
