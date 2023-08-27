@@ -55,6 +55,8 @@
     invoke  glClearColor, 0.5, 0.66, 0.99, 1.0
     invoke  glEnable, GL_DEPTH_TEST
     invoke  glEnable, GL_LINE_SMOOTH
+    invoke  glEnable, GL_BLEND
+    invoke  glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
 
  
    ret
