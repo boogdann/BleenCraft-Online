@@ -11,12 +11,13 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
       VertexCount  dd    ?
     endl
   
-    
     cmp [isOnlyWater], 0
     jz @F
        invoke glUniform1f, [gf_aChanel], [gf_WaterAChanel]
-       ;mov esi, [Water]
-       ;invoke glBindVertexArray, [esi]
+       
+       lea esi, [gf_MAIN_CubeHandle] ;Water
+       invoke glBindVertexArray, [esi]
+       
        mov eax, dword[esi + 4]
        mov [VertexCount], eax
        jmp .next
@@ -189,7 +190,7 @@ endp
 proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
   locals 
     _pos       dd    ?
-  endl       
+  endl
   
   ;Расчёт позиции блока
   mov [_pos], ebx

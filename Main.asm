@@ -8,12 +8,6 @@ include "Grafic\GraficAPI\GraficAPI.asm"
 include "CotrollerAPI\CotrollerAPI.asm"
 include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
-
-;============For debug=============
-;include "Units\Movement\keys.code"
-;include "Units\Movement\move.asm"
-;include "Units\Movement\Vmove.asm"
-;==================================
 ;==============================================
 
 section '.text' code readable executable     
@@ -142,7 +136,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     40, 40, 40 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     70, 70, 40 ;(По x, y, z)
          ;===================================================
                   
                   
