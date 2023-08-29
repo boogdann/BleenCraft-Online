@@ -199,7 +199,7 @@ endp
 ;    Input:  Word X, Word Y, Word Z, byte BlockIndex
 ;    Output: eax <- BlockIndex or ErrorCode
 ;
-proc Field.SetBlockIndex uses edi eax esi ecx, X: dword, Y: dword, Z: dword, BlockIndex: byte     
+proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X: dword, Y: dword, Z: dword, BlockIndex: byte     
      xor    eax, eax
 
      mov    eax, dword[Y]  

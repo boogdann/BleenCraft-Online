@@ -773,15 +773,19 @@ proc ProcGen.GenerateTree uses eax ecx ebx edi esi, x, y, z
         localY      dd    ?
         localZ      dd    ?
         height      dd    ?
+        heightCrown dd    ?
+        startBaseSize dd  ?
     endl
     
+    mov    dword[startBaseSize], 5
     mov    dword[baseSize], 5
+    mov    dword[heightCrown], 4
     
     stdcall Random.GetInt, 6, 8
     mov    dword[height], eax
     
     add    eax, [z]
-    sub    eax, 4
+    sub    eax, [heightCrown]
     mov    [localZ], eax
     mov    ecx, 2
 .Iterate_z:
@@ -825,6 +829,117 @@ loop .Iterate_z
 loop .Iterate_Logs
     stdcall Field.SetBlockIndex, [x], [y], [localZ], Block.Leaves
     
+    stdcall ProcGen.RebuildCrown, [x], [y], [z], [height], [heightCrown], [startBaseSize]
 .Finish:
     ret
 endp 
+
+proc ProcGen.RebuildCrown uses eax ebx ecx esi edi, x, y, z, height, heightCrown, baseSize
+
+    locals
+        startHeight   dd    ?  
+        layer         dd    ?
+    endl
+    mov    dword[layer], 0
+.Iterate_layers:
+    mov    edi, [height]
+    add    edi, [z]
+    sub    edi, [heightCrown]
+    add    edi, [layer]
+    add    edi, [layer]
+    mov    [startHeight], edi
+        
+    mov    ecx, [baseSize]
+    shr    ecx, 1
+;   [-, -]
+    mov    esi, [x]
+    sub    esi, ecx
+    mov    ebx, [y]
+    sub    ebx, ecx
+    mov    edi, [startHeight]
+    
+    stdcall Random.GetInt, 1, 100
+    cmp    eax, 50
+    jl     .Skip1
+    stdcall Field.SetBlockIndex, esi, ebx, edi, Block.Air
+.Skip1:
+
+    inc    edi
+    stdcall Random.GetInt, 1, 100
+    cmp    eax, 50
+    jl     .Skip2
+    stdcall Field.SetBlockIndex, esi, ebx, edi, Block.Air
+    
+.Skip2:
+
+;   [+, -]
+    mov    esi, [x]
+    add    esi, ecx
+    mov    ebx, [y]
+    sub    ebx, ecx
+    mov    edi, [startHeight]
+
+    stdcall Random.GetInt, 1, 100
+    cmp    eax, 50
+    jl     .Skip3
+    stdcall Field.SetBlockIndex, esi, ebx, edi, Block.Air
+.Skip3:
+
+    inc    edi
+    stdcall Random.GetInt, 1, 100
+    cmp    eax, 50
+    jl     .Skip4
+    stdcall Field.SetBlockIndex, esi, ebx, edi, Block.Air    
+
+.Skip4:
+
+;   [-, +]
+    mov    esi, [x]
+    sub    esi, ecx
+    mov    ebx, [y]
+    add    ebx, ecx
+    mov    edi, [startHeight]
+
+    stdcall Random.GetInt, 1, 100
+    cmp    eax, 50
+    jl     .Skip5
+    stdcall Field.SetBlockIndex, esi, ebx, edi, Block.Air
+.Skip5:
+
+    inc    edi
+    stdcall Random.GetInt, 1, 100
+    cmp    eax, 50
+    jl     .Skip6
+    stdcall Field.SetBlockIndex, esi, ebx, edi, Block.Air
+
+.Skip6:
+
+;   [+, +]
+    mov    esi, [x]
+    add    esi, ecx
+    mov    ebx, [y]
+    add    ebx, ecx
+    mov    edi, [startHeight]
+
+    stdcall Random.GetInt, 1, 100
+    cmp    eax, 50
+    jl     .Skip7
+    stdcall Field.SetBlockIndex, esi, ebx, edi, Block.Air
+.Skip7:
+
+    inc    edi
+    stdcall Random.GetInt, 1, 100
+    cmp    eax, 50
+    jl     .Skip8
+    stdcall Field.SetBlockIndex, esi, ebx, edi, Block.Air
+    
+.Skip8:
+    shr    dword[baseSize], 1
+    inc    dword[layer]
+    cmp    dword[layer], 2
+    jl     .Iterate_layers   
+
+.Finish:
+    ret
+endp
+    
