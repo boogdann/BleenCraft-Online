@@ -65,7 +65,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
     mov    [Field.Matrix], eax
     
-    stdcall DiamondSquare.Initialize, [power], 0f, 1f, TRUE, 100f 
+    stdcall DiamondSquare.Initialize, [power], 0f, 1f, FALSE, 100f 
     stdcall DiamondSquare.Generate, [Field.Matrix]
     ;mov    [Field.Matrix], eax
    
@@ -134,6 +134,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     mov   eax, dword[x]
     cmp   eax, dword[Field.Length]    
     jl    .Iterate_X
+   
+   stdcall ProcGen.GenerateTree, 500, 500, 100
+   
    
 .Finish:
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]

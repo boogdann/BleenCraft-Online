@@ -136,7 +136,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     70, 70, 40 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     400, 400, 40 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -163,7 +163,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         сameraPos       dd    500.0, 90.0, 500.0
+         сameraPos       dd    500.0, 110.0, 500.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          
@@ -188,7 +188,7 @@ section '.data' data readable writeable
          
          WorldPower  dd 10 ; размер мира задаётся степенью двойки
          
-         WorldLength dd ? ;x ЭТИ ДВЕ ХУЙНИ НЕ ТРОГАТЬ
+         WorldLength dd ? ;x НЕ ТРОГАТЬ
          WorldWidth  dd ? ;y
          WorldHeight dd 250  ;z
          

@@ -135,7 +135,7 @@ proc DiamondSquare.Generate uses ecx edi edx ebx, resAddr
     ; mov    [NewResAddr], eax
 
     stdcall DiamondSquare.Normalize, [resAddr]
-    stdcall DiamondSquare.Multiply, [resAddr], 250, 0
+    stdcall DiamondSquare.Multiply, [resAddr], 100, 50
     ;mov    eax, [NewResAddr]
 .Finish:
     ret
@@ -757,11 +757,74 @@ proc DiamondSquare.Multiply uses eax ebx edi ecx, resAddr, Num, NumSub
     fld    dword[edi]
     fmulp
     fistp  dword[edi]
-    sub    [edi], eax
+    add    [edi], eax
         
     add    edi, 4
 loop .Iterate_Y
 
+.Finish:
+    ret
+endp 
+
+proc ProcGen.GenerateTree uses eax ecx ebx edi esi, x, y, z
+    locals
+        baseSize    dd    ?
+        localX      dd    ?
+        localY      dd    ?
+        localZ      dd    ?
+        height      dd    ?
+    endl
+    
+    mov    dword[baseSize], 5
+    
+    stdcall Random.GetInt, 6, 8
+    mov    dword[height], eax
+    
+    add    eax, [z]
+    sub    eax, 4
+    mov    [localZ], eax
+    mov    ecx, 2
+.Iterate_z:
+    push   ecx
+    mov    ecx, 2
+.Iterate_layers:
+    push   ecx
+    mov    ecx, [baseSize]
+    
+    mov    eax, [baseSize]
+    shr    eax, 1
+    
+    mov    edi, [x]
+    sub    edi, eax
+.Iterate_x:
+    mov    esi, [y]
+    sub    esi, eax
+    
+    push   ecx
+    mov    ecx, [baseSize]
+.Iterate_y:
+    stdcall Field.SetBlockIndex, edi, esi, [localZ], Block.Leaves 
+    inc    esi
+loop .Iterate_y
+    inc    edi
+    pop    ecx 
+loop .Iterate_x
+    inc    dword[localZ]    
+    pop    ecx
+loop .Iterate_layers
+    sub    dword[baseSize], 2
+    pop    ecx
+loop .Iterate_z
+
+    mov    ecx, [height]
+    mov    ebx, [z]
+    mov    [localZ], ebx
+.Iterate_Logs:
+    stdcall Field.SetBlockIndex, [x], [y], [localZ], Block.Log
+    inc    [localZ]
+loop .Iterate_Logs
+    stdcall Field.SetBlockIndex, [x], [y], [localZ], Block.Leaves
+    
 .Finish:
     ret
 endp 
