@@ -12,9 +12,10 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
         startChanc dd ?
         startChancBaseMatrix dd ?
         base    dd    ?
+        numTree dd  ?
     endl 
     
-    mov   dword[base], 40
+    mov   dword[base], 60
     
     stdcall Random.Initialize
     
@@ -33,7 +34,6 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     mul    eax
     mov    edi, eax
              
-
     mov    edi, [Height]
     mov    [Field.Height], edi
     mul    edi
@@ -135,8 +135,62 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     cmp   eax, dword[Field.Length]    
     jl    .Iterate_X
    
-   stdcall ProcGen.GenerateTree, 500, 500, 100
-   
+;   stdcall ProcGen.GenerateTree, 500, 500, 100
+    mov    dword[numTree], 200000
+    mov    ecx, 0
+.GenerateTrees:
+    push   ecx
+    mov    ebx, [Field.Length]
+    sub    ebx, 30
+    xor    eax, eax
+    stdcall Random.GetInt, 399, 501
+    add    eax, 6
+    mov    [x], eax
+
+    mov    ebx, [Field.Length]
+    sub    ebx, 30    
+    stdcall Random.GetInt, 401, 501
+    add    eax, 6
+    mov    [y], eax   
+    
+    xor    edx, edx
+    mov    eax, [x]
+    mul    [Field.Length]
+    add    eax, [y]
+    mov    ebx, 4
+    mul    ebx
+    add    eax, [Field.Matrix]
+    
+    mov    edi, [eax]
+    mov    [z], edi
+;    sub    dword[z], 1
+ ;   add    dword[z], 1
+    stdcall Field.GetBlockIndex, [x], [y], [z]
+    cmp    eax, Block.Air
+    jnz    .Continue
+
+    mov    eax, [x]
+    sub    eax, 4
+    mov    ebx, [y]
+    sub    ebx, 4
+    
+;    mov    eax, 500
+;    mov    ebx, 500
+
+;    stdcall Field.IsEmptyArea, eax, ebx, [z], 7, 7, 8
+;    cmp    eax, FALSE
+;    jz    .Continue 
+
+    
+    stdcall ProcGen.GenerateTree, [x], [y], [z]
+    ;stdcall ProcGen.GenerateTree, [x], [y], [z]
+    
+.Continue:
+    
+    pop    ecx
+    inc    ecx
+    cmp    ecx, [numTree]
+    jl     .GenerateTrees   
    
 .Finish:
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
@@ -157,6 +211,57 @@ proc Field.GenerateSeed uses edi ecx eax
     add     edi, 4
     loop   .Iterate
     
+    ret
+endp
+
+proc Field.IsEmptyArea uses edx edi esi ecx, x, y, z, lenX, lenY, lenZ
+    locals
+        localX    dd    ?
+        localY    dd    ?
+        localZ    dd    ?
+        i         dd    ?; x
+        j         dd    ?; y
+        k         dd    ?; z
+    endl
+  
+.Iterate_z:
+    xor    edx, edx
+    mov    eax, [Field.Length]
+    mul    dword[Field.Width]
+    mul    dword[k]
+    mov    edi, [Field.Blocks]
+    add    edi, eax
+    
+    mov    esi, edi
+    
+.Iterate_x:
+    mov    eax, [i]
+    mul    dword[lenY]
+    add    esi, eax
+    
+    mov    edi, esi
+    mov    ecx, [lenX]
+    mov    eax, Block.Air
+    repe   scasb
+    jcxz   .Skip
+    mov    eax, FALSE
+    jmp    .Finish
+
+.Skip:
+
+    inc    dword[i]
+    mov    eax, dword[i]
+    cmp    eax, [lenX]
+    jl     .Iterate_x
+
+
+    inc    dword[k]
+    mov    eax, [k]
+    cmp    eax, [lenZ]
+    jl     .Iterate_z
+
+    mov    eax, TRUE
+.Finish:
     ret
 endp
 
