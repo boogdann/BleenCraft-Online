@@ -13,6 +13,8 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
         startChancBaseMatrix dd ?
         base    dd    ?
         numTree dd  ?
+        numChanc dd ?
+        sizeChanc dd ?
     endl 
     
     mov   dword[base], 60
@@ -40,21 +42,6 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     
     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
     mov   [Field.Blocks], eax
-
-;   alloc memory for Field.Seed    
-;    mov    eax, [Field.Length]
-;    mov    edi, [Field.Width]
-;    mul    edi
-;    
-;    mov    edi, 4
-;    mul    edi 
-;    
-;    mov    ebx, eax
-;    
-;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
-;    mov    [Field.Seed], eax
-;    
-;    stdcall Field.GenerateSeed
     
     xor    edx, edx
     mov    eax, [Size_]
@@ -135,36 +122,53 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     cmp   eax, dword[Field.Length]    
     jl    .Iterate_X
    
-;   stdcall ProcGen.GenerateTree, 500, 500, 100
-    mov    dword[numTree], 200000
+    stdcall Random.Initialize
+    
+    mov   eax, [power]
+    mov   dword[numChanc], eax
+    xor   edx, edx
+    mov   eax, [Field.Length]
+    div   dword[power]
+    mov   dword[sizeChanc], eax
+    
+    stdcall ProcGen.GenerateTree, 500, 500, 100
     mov    ecx, 0
+.IterateChancs:
+    push   ecx
+    
+    mov    ecx, [sizeChanc]
+    shr    ecx, 2
+    cmp    ecx, 2
+    jnl    .Skip123
+    mov    ecx, 2
+.Skip123:
+    stdcall Random.GetInt, 1, ecx
+    mov    ecx, eax
+    
 .GenerateTrees:
     push   ecx
-    mov    ebx, [Field.Length]
+    mov    ebx, [sizeChanc]
     sub    ebx, 30
-    xor    eax, eax
-    stdcall Random.GetInt, 399, 501
+    stdcall Random.GetInt, 0, ebx
     add    eax, 6
     mov    [x], eax
 
-    mov    ebx, [Field.Length]
+    mov    ebx, [sizeChanc]
     sub    ebx, 30    
-    stdcall Random.GetInt, 401, 501
+    stdcall Random.GetInt, 0, ebx
     add    eax, 6
     mov    [y], eax   
     
     xor    edx, edx
-    mov    eax, [x]
-    mul    [Field.Length]
-    add    eax, [y]
+    mov    eax, [y]
+    mul    [Field.Width]
+    add    eax, [x]
     mov    ebx, 4
     mul    ebx
     add    eax, [Field.Matrix]
     
     mov    edi, [eax]
     mov    [z], edi
-;    sub    dword[z], 1
- ;   add    dword[z], 1
     stdcall Field.GetBlockIndex, [x], [y], [z]
     cmp    eax, Block.Air
     jnz    .Continue
@@ -183,14 +187,17 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
 
     
     stdcall ProcGen.GenerateTree, [x], [y], [z]
-    ;stdcall ProcGen.GenerateTree, [x], [y], [z]
     
 .Continue:
+    pop    ecx
+    dec    ecx
+    cmp    ecx, 1
+    ja    .GenerateTrees
     
     pop    ecx
     inc    ecx
-    cmp    ecx, [numTree]
-    jl     .GenerateTrees   
+    cmp    ecx, [numChanc]
+    jl     .IterateChancs   
    
 .Finish:
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
