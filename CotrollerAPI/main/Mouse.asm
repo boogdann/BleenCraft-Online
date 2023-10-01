@@ -1,20 +1,3 @@
-proc ct_change_mouse, isShowen
-  cmp [isShowen], 1
-  jnz .hide
-     cmp [ct_is_mouse], 1
-     jz @F
-     invoke  ShowCursor, 1
-     mov [ct_is_mouse], 1
-  jmp @F
-  .hide: 
-     cmp [ct_is_mouse], 0
-     jz @F
-     invoke  ShowCursor, 0
-     mov [ct_is_mouse], 0
-  @@:
-  ret
-endp
-
 proc ct_check_turns uses esi, playerTurn
   locals
       center       POINT
@@ -82,5 +65,22 @@ proc ct_check_turns uses esi, playerTurn
   
   invoke SetCursorPos, [center.x], [center.y]
   
+  ret
+endp
+
+proc ct_change_mouse, isShowen
+  cmp [isShowen], 1
+  jnz .hide
+     cmp [ct_is_mouse], 1
+     jz @F
+     invoke  ShowCursor, 1
+     mov [ct_is_mouse], 1
+  jmp @F
+  .hide: 
+     cmp [ct_is_mouse], 0
+     jz @F
+     invoke  ShowCursor, 0
+     mov [ct_is_mouse], 0
+  @@:
   ret
 endp
