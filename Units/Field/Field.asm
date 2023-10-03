@@ -15,6 +15,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
         numTree dd  ?
         numChanc dd ?
         sizeChanc dd ?
+        tmp       dd ?
     endl 
     
     mov   dword[base], 60
@@ -152,23 +153,43 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     stdcall Random.GetInt, 0, ebx
     add    eax, 6
     mov    [x], eax
-
+  
     mov    ebx, [sizeChanc]
     sub    ebx, 30    
     stdcall Random.GetInt, 0, ebx
     add    eax, 6
     mov    [y], eax   
+
+    xor    edx, edx
+    mov    eax, ecx
+    div    dword[power]
+    inc    eax
+    inc    edx
     
+    mov    ecx, eax
+    mov    dword[tmp], edx
+        
     xor    edx, edx
     mov    eax, [y]
-    mul    [Field.Width]
+    mul    [sizeChanc]
+    mul    dword[tmp]
     add    eax, [x]
+    mul    ecx
     mov    ebx, 4
     mul    ebx
     add    eax, [Field.Matrix]
     
     mov    edi, [eax]
     mov    [z], edi
+    
+    mov    eax, dword[x]
+    mul    dword[tmp]
+    mov    dword[x], eax
+    
+    mov    eax, dword[y]
+    mul    ecx
+    mov    dword[y], eax
+    
     stdcall Field.GetBlockIndex, [x], [y], [z]
     cmp    eax, Block.Air
     jnz    .Continue
