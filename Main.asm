@@ -13,14 +13,22 @@ include "Units\Asm_Includes\Code.asm"
 section '.text' code readable executable     
 
 Start:
-    invoke  GetProcessHeap
-    mov    [hHeap], eax    
+  invoke  GetProcessHeap
+  mov    [hHeap], eax    
   ;================Modules initialize=================
   stdcall Field.Initialize, [WorldPower] ,[WorldHeight] 
   mov     eax, [Field.Length]
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
+  
+  stdcall Field.GenerateSpawnPoint
+  mov     ebx, [eax]
+  mov     [cameraPos], ebx
+  mov     ebx, [eax+4]
+  mov     [cameraPos+4], ebx
+  mov     ebx, [eax+8]
+  mov     [cameraPos+8], ebx
       
   stdcall gf_grafic_init
   ;Флаг = 1 - показать мышку
@@ -52,7 +60,7 @@ Start:
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
      
-        stdcall ct_move_check, сameraPos, сameraTurn,\
+        stdcall ct_move_check, cameraPos, сameraTurn,\
                                [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]                      
         ;Debug only:
         ;stdcall checkMoveKeys
@@ -90,7 +98,7 @@ endp
 
 proc RenderScene
     ;Проиницилизировать основные данные кадра
-    stdcall gf_RenderBegin, сameraPos, сameraTurn
+    stdcall gf_RenderBegin, cameraPos, сameraTurn
   
     ;Проиницелизтровать источники света
     ;Последний флаг отвечает за 0 - норма | 1 - под водой
@@ -101,8 +109,8 @@ proc RenderScene
     ;Рендер ландшафта:
     ;Ноль на конце (isOnlyWater) - Основной рендер
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
-                                               [WorldHeight], сameraPos, сameraTurn, 0
-       
+                                               [WorldHeight], cameraPos, сameraTurn, 0
+                                                              
     ;===========;Блок в позиции cвечки для наглядности================  
     ;Последний параметр: 0-5 степень разрушенности                     
     stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
@@ -116,7 +124,7 @@ proc RenderScene
                             
     ;Единица на конце (isOnlyWater) - Рендер воды                       
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
-                                               [WorldHeight], сameraPos, сameraTurn, 1
+                                               [WorldHeight], cameraPos, сameraTurn, 1
     ;Рендер облаков
     stdcall gf_renderSkyObjs, SkyLand, [SkyLength], [SkyWidth], [SkyHieght]
     
@@ -163,7 +171,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         сameraPos       dd    50.0, 110.0, 50.0
+         cameraPos       dd    50.0, 110.0, 50.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          

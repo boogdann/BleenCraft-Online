@@ -221,6 +221,48 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     jl     .IterateChancs   
    
 .Finish:
+
+
+;   save spawn point
+    mov    ecx, 1000
+.GenerateSpawnPoint:
+    mov    ebx, [Field.Length]
+    sub    ebx, 2
+    stdcall Random.GetInt, 0, ebx  
+    mov    dword[x], ebx
+
+    mov    ebx, [Field.Length]
+    sub    ebx, 2    
+    stdcall Random.GetInt, 0, ebx
+    mov    dword[y], ebx
+    
+    xor    edx, edx
+    mov    eax, [x]
+    mul    [Field.Length]
+    add    eax, [y]
+    mov    ebx, 4
+    mul    ebx
+    add    eax, [Field.Matrix]
+    
+    mov    edi, [eax]
+    inc    edi
+    mov    [z], edi
+    stdcall Field.GetBlockIndex, [x], [y], [z]
+    cmp    eax, Block.Air
+    jz     ._Break  
+    loop   .GenerateSpawnPoint  
+     
+._Break:
+
+    fild   dword[x]
+    fstp   dword[Field.SpawnPoint]
+    
+    fild   dword[z]
+    fstp   dword[Field.SpawnPoint+4]
+    
+    fild   dword[y]
+    fstp   dword[Field.SpawnPoint+8]
+    
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     ret
 endp
@@ -239,6 +281,11 @@ proc Field.GenerateSeed uses edi ecx eax
     add     edi, 4
     loop   .Iterate
     
+    ret
+endp
+
+proc Field.GenerateSpawnPoint
+    mov    eax, Field.SpawnPoint
     ret
 endp
 
