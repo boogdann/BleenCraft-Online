@@ -1,4 +1,4 @@
-proc gf_UploadTexture uses esi, tx_Name, Handle 
+proc gf_UploadTexture uses esi edi, tx_Name, Handle 
     
     invoke glGenTextures, 1, gf_tx_handle
     invoke glBindTexture, GL_TEXTURE_2D, [gf_tx_handle] 
@@ -59,7 +59,7 @@ proc gf_GetTextureData, tx_Name
     invoke  ReadFile, [hFile], edi, 4, 0, 0   
 
 
-    ;Выделить память rowBytesCount * (rowsCount * 50)
+    ;Выделить память rowBytesCount * (rowsCount * Permission)
     mov eax, [Permission]
     imul eax, [rowBytesCount]
     imul eax, [rowsCount]
