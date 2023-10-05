@@ -11,17 +11,14 @@ proc ct_on_keyDown, wParam
        stdcall ct_change_mouse, 0
      .skip:
      jmp .final
-  @@:
+  @@:     
   
   ;... Другие клавиши
-  
+             
   cmp [wParam], VK_F2
   jnz @F
-  
     neg [isDebug]
-    
-  @@:
-    
+  @@: 
 
   .final:  
   ret
@@ -33,31 +30,29 @@ proc ct_check_moves, CameraPos, CameraTurn
     Speed   dd   ?
     curTime  dd  ?
     distancePerSecond  dd 130.0
-    
-    ;отладОЧКА
-    shiftConst         dd 100.0 ;dd 0.5
+    shiftConst         dd 100.0
     
   endl
   
   invoke GetTickCount
-    mov edx, eax
-    sub eax, [time.deltaTime]
+  mov edx, eax
+  sub eax, [time.deltaTime]
     
-    mov [curTime], eax
-    mov [time.deltaTime], edx    
+  mov [curTime], eax
+  mov [time.deltaTime], edx    
     
-    cmp [curTime], 0
-    jle .Skip 
+  cmp [curTime], 0
+  jle .Skip 
     
-    fild dword[curTime]
-    fld dword[distancePerSecond]
-    invoke  GetAsyncKeyState, VK_SHIFT
-    cmp eax, 0
-    jz @F
+  fild dword[curTime]
+  fld dword[distancePerSecond]
+  invoke  GetAsyncKeyState, VK_SHIFT
+  cmp eax, 0
+  jz @F
       fsub  [shiftConst] 
-    @@:
-    fdivp
-    fstp dword[Speed]
+  @@:
+  fdivp
+  fstp dword[Speed]
 
   ;Хождения:
   invoke  GetAsyncKeyState, $57 

@@ -1,4 +1,5 @@
 proc gf_RenderBegin, CameraPos, CameraTurn 
+
   ;Создание матрицы камеры
   invoke  glMatrixMode, GL_MODELVIEW
   invoke  glLoadIdentity
@@ -169,7 +170,7 @@ proc gf_RenderEnd
                             SunPosition, gf_zeroVec, 2.0, 0
 
   invoke SwapBuffers, [hdc]
-  invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT 
+  invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
   
   ret
 endp
