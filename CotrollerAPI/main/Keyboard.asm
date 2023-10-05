@@ -89,7 +89,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
        PiDegree dd 180.0
        
        Pl_step dd  0.0001
-       Pl_chest  dd  1.0
+       Pl_chest  dd  1.0 
        
        tempVector dd 0, 0, 0
        tempCamera dd 0.0, 0.0, 0.0
@@ -97,7 +97,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
     endl   
   
     mov esi, [CameraTurn] 
-    mov edi, [CameraPos] 
+    mov edi, [CameraPos]  
                                 
 .OnMove:  
     
@@ -149,7 +149,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fstp dword [edi]
       
       fld dword [edi]
-      fistp dword [tempVector]
+      fistp dword [tempVector]    
       
       fld dword [edi + 8]
       fistp [tempVector + 8]
@@ -162,7 +162,8 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fld dword[tempCamera]
         fstp dword [edi]
                         
-      @@:  
+      @@:                         
+      
       
       ;CameraPos[3] = CameraPos[3] + cos(a) * cos(b) * WalkingSpeed 
       fld dword [edi + 8] 
@@ -189,7 +190,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fld dword [tempCamera + 8]
         fstp dword [edi + 8]  
                 
-      @@:  
+      @@:            
       
       fild dword[tempVector + 4]
       fadd [Pl_chest]
@@ -213,7 +214,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       
       fld dword [edi + 8]
       fistp dword [tempVector + 8]
-      
+               
       fld [tempCamera]
       fistp [tempVector]
       
@@ -242,7 +243,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       
       fld dword [edi]
       fistp dword [tempVector]
-      
+                    
       fld dword [edi + 8]
       fistp [tempVector + 8]
       
@@ -269,7 +270,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       
       fld dword [edi + 8]
       fistp dword [tempVector + 8]
-      
+               
       fld [tempCamera]
       fistp [tempVector]
       
@@ -281,7 +282,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fld dword [tempCamera + 8]
         fstp dword [edi + 8]  
                 
-      @@:  
+      @@:   
       
       fild dword[tempVector + 4]
       fadd [Pl_chest]
@@ -302,7 +303,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fstp dword [edi]
                         
       @@: 
-      
+                    
       fld dword [edi + 8]
       fistp dword [tempVector + 8]
       
@@ -332,7 +333,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       
       fld dword [edi]
       fistp dword [tempVector]
-      
+              
       fld dword [edi + 8]
       fistp [tempVector + 8]
       
@@ -356,7 +357,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       
       fld dword [edi + 8]
       fistp dword [tempVector + 8]
-      
+            
       fld [tempCamera]
       fistp [tempVector]
       
@@ -368,7 +369,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fld dword [tempCamera + 8]
         fstp dword [edi + 8]  
                 
-      @@:  
+      @@:    
       
       fild dword[tempVector + 4]
       fadd [Pl_chest]
@@ -389,7 +390,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fstp dword [edi]
                         
       @@: 
-      
+         
       fld dword [edi + 8]
       fistp dword [tempVector + 8]
       
@@ -415,7 +416,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmul [Speed] 
       faddp 
       fstp dword [edi]
-      
+                       
       fld dword [edi]
       fistp dword [tempVector]
       
@@ -439,7 +440,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fmul [Speed] 
       faddp 
       fstp dword [edi + 8] 
-      
+       
       fld dword [edi + 8]
       fistp dword [tempVector + 8]
       
@@ -459,7 +460,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
       fild dword[tempVector + 4]
       fadd [Pl_chest]
       fistp dword[tempVector + 4]
-      
+         
       fld dword [edi]
       fistp dword [tempVector]
       
@@ -475,7 +476,7 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fstp dword [edi]
                         
       @@: 
-      
+          
       fld dword [edi + 8]
       fistp dword [tempVector + 8]
       
