@@ -16,7 +16,9 @@ include "gf_shaders\gf_shader_init.ASM"
 ;library headers
 include "api\opengl.inc"
 include "api\gdi32.inc"
-
+;assets scripts
+include "..\..\Assets\TextuteHandler.ASM"
+include "..\..\Assets\TextuteHandler.inc"
 
 proc gf_grafic_init uses esi edi  
     stdcall gf_window_init         

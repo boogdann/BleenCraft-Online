@@ -164,9 +164,11 @@ func GetData(f *os.File, pixelWH int, data *mbmwData) {
 }
 
 func saveData(file *os.File, data *mbmwData) {
+	c := 0
 	_ = binary.Write(file, binary.LittleEndian, data.rowBytesCount)
 	_ = binary.Write(file, binary.LittleEndian, data.rowsCount)
 	for _, v := range data.rows {
+		c++
 		_ = binary.Write(file, binary.LittleEndian, v.space_l)
 		_ = binary.Write(file, binary.LittleEndian, v.pixelsCount)
 		for _, p := range v.pixels {
@@ -176,4 +178,5 @@ func saveData(file *os.File, data *mbmwData) {
 		}
 		_ = binary.Write(file, binary.LittleEndian, v.space_r)
 	}
+	println(c)
 }

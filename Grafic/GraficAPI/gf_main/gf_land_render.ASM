@@ -15,7 +15,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     jz @F
        invoke glUniform1f, [gf_aChanel], [gf_WaterAChanel]
        
-       lea esi, [gf_MAIN_CubeHandle] ;Water
+       lea esi, [gf_MAIN_WaterHandle] ;Water
        invoke glBindVertexArray, [esi]
        
        mov eax, dword[esi + 4]
@@ -223,11 +223,24 @@ proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
   jnz .SkipRender
   .skip_2:
   
+  ;TextureHandles
   ;Расчёт текстуры по byte[esi] в eax:
-  mov eax, [tx_BOGDANHandle] ;tx_BOGDANHandle
+  movzx eax, byte[esi]
+  dec eax
+  imul eax, 4
+  add eax, TextureHandles
+  cmp eax, tx_EOF
+  jl @F
+    mov eax, TextureHandles
+    add eax, 4
+  @@:
+  cmp byte[esi], 255
+  jnz @F
+    mov eax, tx_Water_Handle
+  @@:
   
   ;Рендер:
-  stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], eax
+  stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], [eax]
                        
   .SkipRender:
   ret
