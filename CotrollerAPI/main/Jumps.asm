@@ -9,7 +9,7 @@ proc ct_fall_check, playerPos
      
      ;Ограничения
      MAX_TICKS_COUNT  dd  100
-     MIN_TICKS_COUNT  dd  5
+     MIN_TICKS_COUNT  dd  10
   endl
   
   cmp [isFalling], 1

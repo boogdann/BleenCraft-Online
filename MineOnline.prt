@@ -4,7 +4,7 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=6
+  countAsm=7
   countInc=2
 [asm]
   asm1="Main.asm"
@@ -13,6 +13,7 @@ if 2 * 2 = 5
   asm4="gf_texture_init.ASM"
   asm5="TextuteHandler.ASM"
   asm6="GraficAPI.ASM"
+  asm7="Jumps.asm"
 [inc]
   inc1="gf_render_data.inc"
   inc2="TextuteHandler.inc"
