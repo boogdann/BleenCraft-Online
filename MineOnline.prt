@@ -4,17 +4,17 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=8
-  countInc=1
+  countAsm=7
+  countInc=2
 [asm]
   asm1="Main.asm"
-  asm2="Collisions.asm"
-  asm3="CollisionsConst.asm"
-  asm4="Jumps.asm"
-  asm5="Keyboard.asm"
-  asm6="Mouse.asm"
-  asm7="CotrollerAPI.asm"
-  asm8="Swimming.asm"
+  asm2="gf_api_init.ASM"
+  asm3="gf_land_render.ASM"
+  asm4="gf_texture_init.ASM"
+  asm5="TextuteHandler.ASM"
+  asm6="GraficAPI.ASM"
+  asm7="Jumps.asm"
 [inc]
-  inc1="CotrollerAPI.inc"
+  inc1="gf_render_data.inc"
+  inc2="TextuteHandler.inc"
 end if

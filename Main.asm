@@ -13,16 +13,25 @@ include "Units\Asm_Includes\Code.asm"
 section '.text' code readable executable     
 
 Start:
-    invoke  GetProcessHeap
-    mov    [hHeap], eax    
+  invoke  GetProcessHeap
+  mov    [hHeap], eax   
+  
   ;================Modules initialize=================
   stdcall Field.Initialize, [WorldPower] ,[WorldHeight] 
   mov     eax, [Field.Length]
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
+  
+  stdcall Field.GenerateSpawnPoint
+  mov     ebx, [eax]
+  mov     [cameraPos], ebx
+  mov     ebx, [eax+4]
+  mov     [cameraPos+4], ebx
+  mov     ebx, [eax+8]
+  mov     [cameraPos+8], ebx
       
-  stdcall gf_grafic_init
+  stdcall gf_grafic_init 
   ;Флаг = 1 - показать мышку
   stdcall ct_change_mouse, 0
   ;===================================================  
@@ -30,9 +39,8 @@ Start:
   ;=============Project data initialize=========================
   stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle 
 
-  stdcall gf_UploadTexture, tx_grassName, tx_grassHandle 
+  stdcall gf_LoadTextures
   stdcall gf_UploadTexture, tx_BOGDAN_Name, tx_BOGDANHandle 
-  stdcall gf_UploadTexture, tx_Brick_Name, tx_BrickHandle
   ;=============================================================
   
   ;================Params initialize=====================
@@ -52,11 +60,8 @@ Start:
 proc WindowProc uses ebx,\
      hWnd, uMsg, wParam, lParam
      
-        stdcall ct_move_check, сameraPos, сameraTurn,\
+        stdcall ct_move_check, cameraPos, сameraTurn,\
                                [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]                      
-        ;Debug only:
-        ;stdcall checkMoveKeys
-        ;stdcall OnMouseMove, сameraTurn, [sensitivity]
         
         switch  [uMsg]
         case    .Render,        WM_PAINT
@@ -67,15 +72,12 @@ proc WindowProc uses ebx,\
         jmp     .Return
 
   .Render:
-        
         ;Рендер
         stdcall RenderScene
-        
         mov [isFalling], 1
-        
         jmp     .ReturnZero
         
-        .Movement:
+  .Movement:
         stdcall ct_on_keyDown, [wParam] 
         jmp     .ReturnZero
   .Destroy:
@@ -90,7 +92,7 @@ endp
 
 proc RenderScene
     ;Проиницилизировать основные данные кадра
-    stdcall gf_RenderBegin, сameraPos, сameraTurn
+    stdcall gf_RenderBegin, cameraPos, сameraTurn
   
     ;Проиницелизтровать источники света
     ;Последний флаг отвечает за 0 - норма | 1 - под водой
@@ -101,11 +103,11 @@ proc RenderScene
     ;Рендер ландшафта:
     ;Ноль на конце (isOnlyWater) - Основной рендер
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
-                                               [WorldHeight], сameraPos, сameraTurn, 0
-       
+                                               [WorldHeight], cameraPos, сameraTurn, 0
+                                                              
     ;===========;Блок в позиции cвечки для наглядности================  
     ;Последний параметр: 0-5 степень разрушенности                     
-    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BrickHandle], 0,\
+    stdcall gf_renderObj3D, obj_CubeHandle, [tx_BOGDANHandle], 0,\
                             LightsPositions, cubeTurn, [cubeScale], 3  
                             
     ;Пример использования ререндера выделенного объекта (рендер рамки)
@@ -116,7 +118,7 @@ proc RenderScene
                             
     ;Единица на конце (isOnlyWater) - Рендер воды                       
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
-                                               [WorldHeight], сameraPos, сameraTurn, 1
+                                               [WorldHeight], cameraPos, сameraTurn, 1
     ;Рендер облаков
     stdcall gf_renderSkyObjs, SkyLand, [SkyLength], [SkyWidth], [SkyHieght]
     
@@ -136,7 +138,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     40, 40, 70 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     25, 25, 40 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -146,14 +148,10 @@ section '.data' data readable writeable
          obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт
          
          ;Текстуры
-         tx_grassName    db   "Grass_64.mbmw", 0 
-         tx_BOGDAN_Name  db   "BOGDANI2_64.mbmw", 0
-         tx_Brick_Name   db   "Brick_64.mbmw", 0
+         tx_BOGDAN_Name  db   "BOGDANI_64.mbmw", 0
          
          ;texture Handles:
-         tx_grassHandle  dd   ?
          tx_BOGDANHandle dd   ?
-         tx_BrickHandle  dd   ? 
          
          ;Позиция объекта:
          cubePos         dd   1.0, 5.0, 0.0
@@ -163,7 +161,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         сameraPos       dd    500.0, 110.0, 500.0
+         cameraPos       dd    50.0, 110.0, 50.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          
@@ -190,7 +188,7 @@ section '.data' data readable writeable
          
          WorldLength dd ? ;x НЕ ТРОГАТЬ
          WorldWidth  dd ? ;y
-         WorldHeight dd 250  ;z
+         WorldHeight dd 150  ;z
          
          ;Богдан вынеси это себе куданибудь
          SkyLength   dd   10
@@ -213,7 +211,6 @@ section '.data' data readable writeable
          ;Добавить импорты данных нужные GraficAPI
          include "Grafic\GraficAPI\GraficAPI.inc"
          include "CotrollerAPI\CotrollerAPI.inc"
-         ;include "Units\Movement\MConst.asm"  
          ;=========================================   
 
 section '.idata' import data readable writeable

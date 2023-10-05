@@ -1,16 +1,15 @@
-proc ct_fall_check, playerPos, Field, X, Y
+proc ct_fall_check, playerPos
   
   locals
      fallTime      dd     ?
      curFallSpeed  dd     ?
-     fallingVelocity  dd     0.0005
+     tempVelocity  dd     0.0005
      tempHeight    dd     0.01
-     maxSpeed      dd     0.0
-             
-     ;Ограничения
+     tmp dd 100.0
+     
+     ;ГЋГЈГ°Г Г­ГЁГ·ГҐГ­ГЁГї
      MAX_TICKS_COUNT  dd  100
-     MIN_TICKS_COUNT  dd  5
-    
+     MIN_TICKS_COUNT  dd  10
   endl
   
   cmp [isFalling], 1
@@ -23,45 +22,42 @@ proc ct_fall_check, playerPos, Field, X, Y
   je .Skip
   
   cmp [ct_isStartOfJump], 1
-  jz .startOfJump 
+  jz .startOfJump
   
-  ;Расчитываем сколько прошло тактов
+  ;ГђГ Г±Г·ГЁГІГ»ГўГ ГҐГ¬ Г±ГЄГ®Г«ГјГЄГ® ГЇГ°Г®ГёГ«Г® ГІГ ГЄГІГ®Гў
   invoke GetTickCount
   mov edx, eax
   sub eax, [prevTime]
   mov [fallTime], eax
   
-  ;Достаточно ли тактов?
+  ;Г„Г®Г±ГІГ ГІГ®Г·Г­Г® Г«ГЁ ГІГ ГЄГІГ®Гў?
   mov ecx, [MIN_TICKS_COUNT]
   cmp [fallTime], ecx
   jl .Skip
-  ;Если да, то сетаем последний прыжок текущим временем
+  ;Г…Г±Г«ГЁ Г¤Г , ГІГ® Г±ГҐГІГ ГҐГ¬ ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© ГЇГ°Г»Г¦Г®ГЄ ГІГҐГЄГіГ№ГЁГ¬ ГўГ°ГҐГ¬ГҐГ­ГҐГ¬
   mov [prevTime], edx  
   
-  ;Не слишком ли много тактов?
+  ;ГЌГҐ Г±Г«ГЁГёГЄГ®Г¬ Г«ГЁ Г¬Г­Г®ГЈГ® ГІГ ГЄГІГ®Гў?
   mov ecx, [MAX_TICKS_COUNT]
   cmp [fallTime], ecx
   jg .Skip
 
-  ;Расчёт итоговой скорости
+  ;ГђГ Г±Г·ВёГІ ГЁГІГ®ГЈГ®ГўГ®Г© Г±ГЄГ®Г°Г®Г±ГІГЁ
   fild [fallTime]
   fld [ct_jump_distancePerSecond] ;ct_jump_distancePerSecond
   fmulp               
-  fstp [curFallSpeed] 
-    
-  ;Ускорение
+  fstp [curFallSpeed]
+  
+  ;Г“Г±ГЄГ®Г°ГҐГ­ГЁГҐ
   fld  [ct_jump_distancePerSecond]
-  fadd [ct_velocity]
+  fadd [tempVelocity]
   fstp [ct_jump_distancePerSecond]
   
-.changeCoord:  
-
   mov esi, [playerPos]
-
-  ;Изменение координаты
+  ;Г€Г§Г¬ГҐГ­ГҐГ­ГЁГҐ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ»
   fld  dword[esi + 4]
-  fsub [curFallSpeed]    
-  fstp dword[esi + 4]  
+  fsub [curFallSpeed]
+  fstp dword[esi + 4]
   
   jmp .Skip
   
@@ -79,6 +75,8 @@ proc ct_fall_check, playerPos, Field, X, Y
   ret
 endp
 
+
+
 proc ct_check_Jump, playerPos 
 
   cmp [ct_isJump], 0
@@ -86,7 +84,7 @@ proc ct_check_Jump, playerPos
     invoke  GetAsyncKeyState, VK_SPACE
     cmp eax, 0
     jz @F
-      ;Колизии
+      ;ГЉГ®Г«ГЁГ§ГЁГЁ
       mov [onGround], 0
       mov [toSkip], 0
       
@@ -94,7 +92,6 @@ proc ct_check_Jump, playerPos
       
       fld [ct_start_jump_speed]
       fstp [ct_jump_distancePerSecond]
-
   @@:
 
   ret

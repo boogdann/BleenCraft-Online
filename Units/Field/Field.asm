@@ -13,6 +13,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
         startChancBaseMatrix dd ?
         base    dd    ?
         numTree dd  ?
+        numChanc dd ?
+        sizeChanc dd ?
+        tmp       dd ?
     endl 
     
     mov   dword[base], 60
@@ -40,21 +43,6 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     
     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
     mov   [Field.Blocks], eax
-
-;   alloc memory for Field.Seed    
-;    mov    eax, [Field.Length]
-;    mov    edi, [Field.Width]
-;    mul    edi
-;    
-;    mov    edi, 4
-;    mul    edi 
-;    
-;    mov    ebx, eax
-;    
-;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
-;    mov    [Field.Seed], eax
-;    
-;    stdcall Field.GenerateSeed
     
     xor    edx, edx
     mov    eax, [Size_]
@@ -135,36 +123,73 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     cmp   eax, dword[Field.Length]    
     jl    .Iterate_X
    
-;   stdcall ProcGen.GenerateTree, 500, 500, 100
-    mov    dword[numTree], 200000
+    stdcall Random.Initialize
+    
+    mov   eax, [power]
+    mov   dword[numChanc], eax
+    xor   edx, edx
+    mov   eax, [Field.Length]
+    div   dword[power]
+    mov   dword[sizeChanc], eax
+    
+    stdcall ProcGen.GenerateTree, 500, 500, 100
     mov    ecx, 0
+.IterateChancs:
+    push   ecx
+    
+    mov    ecx, [sizeChanc]
+    shr    ecx, 2
+    cmp    ecx, 2
+    jnl    .Skip123
+    mov    ecx, 2
+.Skip123:
+    stdcall Random.GetInt, 1, ecx
+    mov    ecx, eax
+    
 .GenerateTrees:
     push   ecx
-    mov    ebx, [Field.Length]
+    mov    ebx, [sizeChanc]
     sub    ebx, 30
-    xor    eax, eax
-    stdcall Random.GetInt, 399, 501
+    stdcall Random.GetInt, 0, ebx
     add    eax, 6
     mov    [x], eax
-
-    mov    ebx, [Field.Length]
+  
+    mov    ebx, [sizeChanc]
     sub    ebx, 30    
-    stdcall Random.GetInt, 401, 501
+    stdcall Random.GetInt, 0, ebx
     add    eax, 6
     mov    [y], eax   
-    
+
     xor    edx, edx
-    mov    eax, [x]
-    mul    [Field.Length]
-    add    eax, [y]
+    mov    eax, ecx
+    div    dword[power]
+    inc    eax
+    inc    edx
+    
+    mov    ecx, eax
+    mov    dword[tmp], edx
+        
+    xor    edx, edx
+    mov    eax, [y]
+    mul    [sizeChanc]
+    mul    dword[tmp]
+    add    eax, [x]
+    mul    ecx
     mov    ebx, 4
     mul    ebx
     add    eax, [Field.Matrix]
     
     mov    edi, [eax]
     mov    [z], edi
-;    sub    dword[z], 1
- ;   add    dword[z], 1
+    
+    mov    eax, dword[x]
+    mul    dword[tmp]
+    mov    dword[x], eax
+    
+    mov    eax, dword[y]
+    mul    ecx
+    mov    dword[y], eax
+    
     stdcall Field.GetBlockIndex, [x], [y], [z]
     cmp    eax, Block.Air
     jnz    .Continue
@@ -183,16 +208,61 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
 
     
     stdcall ProcGen.GenerateTree, [x], [y], [z]
-    ;stdcall ProcGen.GenerateTree, [x], [y], [z]
     
 .Continue:
+    pop    ecx
+    dec    ecx
+    cmp    ecx, 1
+    ja    .GenerateTrees
     
     pop    ecx
     inc    ecx
-    cmp    ecx, [numTree]
-    jl     .GenerateTrees   
+    cmp    ecx, [numChanc]
+    jl     .IterateChancs   
    
 .Finish:
+
+
+;   save spawn point
+    mov    ecx, 1000
+.GenerateSpawnPoint:
+    mov    ebx, [Field.Length]
+    sub    ebx, 2
+    stdcall Random.GetInt, 0, ebx  
+    mov    dword[x], ebx
+
+    mov    ebx, [Field.Length]
+    sub    ebx, 2    
+    stdcall Random.GetInt, 0, ebx
+    mov    dword[y], ebx
+    
+    xor    edx, edx
+    mov    eax, [x]
+    mul    [Field.Length]
+    add    eax, [y]
+    mov    ebx, 4
+    mul    ebx
+    add    eax, [Field.Matrix]
+    
+    mov    edi, [eax]
+    inc    edi
+    mov    [z], edi
+    stdcall Field.GetBlockIndex, [x], [y], [z]
+    cmp    eax, Block.Air
+    jz     ._Break  
+    loop   .GenerateSpawnPoint  
+     
+._Break:
+
+    fild   dword[x]
+    fstp   dword[Field.SpawnPoint]
+    
+    fild   dword[z]
+    fstp   dword[Field.SpawnPoint+4]
+    
+    fild   dword[y]
+    fstp   dword[Field.SpawnPoint+8]
+    
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     ret
 endp
@@ -211,6 +281,11 @@ proc Field.GenerateSeed uses edi ecx eax
     add     edi, 4
     loop   .Iterate
     
+    ret
+endp
+
+proc Field.GenerateSpawnPoint
+    mov    eax, Field.SpawnPoint
     ret
 endp
 

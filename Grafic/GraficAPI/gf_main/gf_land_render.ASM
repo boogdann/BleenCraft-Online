@@ -15,7 +15,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     jz @F
        invoke glUniform1f, [gf_aChanel], [gf_WaterAChanel]
        
-       lea esi, [gf_MAIN_CubeHandle] ;Water
+       lea esi, [gf_MAIN_WaterHandle] ;Water
        invoke glBindVertexArray, [esi]
        
        mov eax, dword[esi + 4]
@@ -207,10 +207,13 @@ proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
   stdcall gf_frastrum_check, gf_tmp_objPos 
   cmp eax, 0
   jz .SkipRender 
-          
-  stdcall gf_checkBlockVisible, [X], [Y], [Z] 
-  cmp eax, 0
-  jz .SkipRender 
+      
+  cmp [isOnlyWater], 0
+  jz @F    
+    stdcall gf_checkBlockVisible, [X], [Y], [Z] 
+    cmp eax, 0
+    jz .SkipRender 
+  @@:
   
   ;Проверка на существование блока:                    
   cmp [isOnlyWater], 0
@@ -223,11 +226,24 @@ proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
   jnz .SkipRender
   .skip_2:
   
+  ;TextureHandles
   ;Расчёт текстуры по byte[esi] в eax:
-  mov eax, [tx_BOGDANHandle] ;tx_BOGDANHandle
+  movzx eax, byte[esi]
+  dec eax
+  imul eax, 4
+  add eax, TextureHandles
+  cmp eax, tx_EOF
+  jl @F
+    mov eax, TextureHandles
+    add eax, 4
+  @@:
+  cmp byte[esi], 255
+  jnz @F
+    mov eax, tx_Water_Handle
+  @@:
   
   ;Рендер:
-  stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], eax
+  stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], [eax]
                        
   .SkipRender:
   ret
@@ -257,12 +273,16 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     add esi, eax
     cmp byte[esi], 0
     jz .SkipCheck
+    cmp byte[esi], 255  
+    jz .SkipCheck
     sub esi, eax
   @@:
   cmp ecx, 0
   jz @F
     sub esi, eax
     cmp byte[esi], 0
+    jz .SkipCheck
+    cmp byte[esi], 255  
     jz .SkipCheck
     add esi, eax
   @@:
@@ -272,12 +292,16 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     inc esi        
     cmp byte[esi], 0  
     jz .SkipCheck
+    cmp byte[esi], 255  
+    jz .SkipCheck
     dec esi
   @@: 
   cmp ebx, 0
   jz @F
     dec esi       
     cmp byte[esi], 0  
+    jz .SkipCheck
+    cmp byte[esi], 255  
     jz .SkipCheck
     inc esi 
   @@:
@@ -287,6 +311,8 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     add esi, [X]       
     cmp byte[esi], 0  
     jz .SkipCheck
+    cmp byte[esi], 255  
+    jz .SkipCheck
     sub esi, [X]   
   @@: 
   
@@ -294,6 +320,8 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
   jz @F
     sub esi, [X]
     cmp byte[esi], 0  
+    jz .SkipCheck
+    cmp byte[esi], 255  
     jz .SkipCheck
     add esi, [X]
   @@:
