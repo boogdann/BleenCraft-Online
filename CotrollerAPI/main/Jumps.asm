@@ -1,15 +1,16 @@
-proc ct_fall_check, playerPos
+proc ct_fall_check, playerPos, Field, X, Y
   
   locals
      fallTime      dd     ?
      curFallSpeed  dd     ?
-     tempVelocity  dd     0.0005
+     fallingVelocity  dd     0.0005
      tempHeight    dd     0.01
-     tmp dd 100.0
-     
+     maxSpeed      dd     0.0
+             
      ;Ограничения
      MAX_TICKS_COUNT  dd  100
      MIN_TICKS_COUNT  dd  5
+    
   endl
   
   cmp [isFalling], 1
@@ -22,7 +23,7 @@ proc ct_fall_check, playerPos
   je .Skip
   
   cmp [ct_isStartOfJump], 1
-  jz .startOfJump
+  jz .startOfJump 
   
   ;Расчитываем сколько прошло тактов
   invoke GetTickCount
@@ -46,18 +47,21 @@ proc ct_fall_check, playerPos
   fild [fallTime]
   fld [ct_jump_distancePerSecond] ;ct_jump_distancePerSecond
   fmulp               
-  fstp [curFallSpeed]
-  
+  fstp [curFallSpeed] 
+    
   ;Ускорение
   fld  [ct_jump_distancePerSecond]
-  fadd [tempVelocity]
+  fadd [ct_velocity]
   fstp [ct_jump_distancePerSecond]
   
+.changeCoord:  
+
   mov esi, [playerPos]
+
   ;Изменение координаты
   fld  dword[esi + 4]
-  fsub [curFallSpeed]
-  fstp dword[esi + 4]
+  fsub [curFallSpeed]    
+  fstp dword[esi + 4]  
   
   jmp .Skip
   
@@ -75,8 +79,6 @@ proc ct_fall_check, playerPos
   ret
 endp
 
-
-
 proc ct_check_Jump, playerPos 
 
   cmp [ct_isJump], 0
@@ -92,6 +94,7 @@ proc ct_check_Jump, playerPos
       
       fld [ct_start_jump_speed]
       fstp [ct_jump_distancePerSecond]
+
   @@:
 
   ret

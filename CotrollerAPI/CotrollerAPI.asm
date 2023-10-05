@@ -2,6 +2,7 @@ include "CotrollerAPI\main\Collisions.asm"
 include "CotrollerAPI\main\Keyboard.asm"
 include "CotrollerAPI\main\Mouse.asm"
 include "CotrollerAPI\main\Jumps.asm"
+include "CotrollerAPI\main\Swimming.asm"
 
 frameCount  dd  0
 
@@ -14,7 +15,8 @@ proc ct_move_check, playerPos, playerTurn,\
     stdcall ct_check_turns, [playerTurn]
     stdcall ct_check_moves, [playerPos], [playerTurn]    
   @@:
-  stdcall ct_fall_check, [playerPos] ;;;;
+  stdcall ct_fall_check, [playerPos], [Field], [X], [Y] ;;;;
   stdcall ct_collisionsCheck, [playerPos], [Field], [X], [Y], [Z]
+  stdcall ct_watter, [playerPos], [Field], [X], [Y], [Z]
   ret
 endp
