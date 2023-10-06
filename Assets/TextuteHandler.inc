@@ -4,9 +4,9 @@ TextureNames:
         db      0
         
 TextureHandles:
-        gf_Grass            dd      ?
-        gf_Brick            dd      ?
-        tx_EOF:
+              gf_Grass     dd      ?
+ WithDiskard: gf_Brick     dd      ?
+              tx_EOF:
 
 
 
