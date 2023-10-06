@@ -23,13 +23,13 @@ Start:
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
   
-  stdcall Field.GenerateSpawnPoint
-  mov     ebx, [eax]
-  mov     [cameraPos], ebx
-  mov     ebx, [eax+4]
-  mov     [cameraPos+4], ebx
-  mov     ebx, [eax+8]
-  mov     [cameraPos+8], ebx
+;  stdcall Field.GenerateSpawnPoint
+;  mov     ebx, [eax]
+;  mov     [cameraPos], ebx
+;  mov     ebx, [eax+4]
+;  mov     [cameraPos+4], ebx
+;  mov     ebx, [eax+8]
+;  mov     [cameraPos+8], ebx
       
   stdcall gf_grafic_init 
   ;Флаг = 1 - показать мышку
