@@ -22,14 +22,9 @@ Start:
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
+  stdcall ProcGen.GenerateTree, 50, 50, 100 
   
-;  stdcall Field.GenerateSpawnPoint
-;  mov     ebx, [eax]
-;  mov     [cameraPos], ebx
-;  mov     ebx, [eax+4]
-;  mov     [cameraPos+4], ebx
-;  mov     ebx, [eax+8]
-;  mov     [cameraPos+8], ebx
+  stdcall Field.GenerateSpawnPoint, cameraPos
       
   stdcall gf_grafic_init 
   ;Флаг = 1 - показать мышку
@@ -161,7 +156,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         cameraPos       dd    50.0, 110.0, 50.0
+         cameraPos       dd    50.0, 200.0, 50.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          

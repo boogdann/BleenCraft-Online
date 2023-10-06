@@ -4,14 +4,9 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=5
-  countInc=1
+  countAsm=1
+  countInc=0
 [asm]
   asm1="Main.asm"
-  asm2="gf_land_render.ASM"
-  asm3="TextuteHandler.ASM"
-  asm4="GraficAPI.ASM"
-  asm5="gf_render.ASM"
 [inc]
-  inc1="TextuteHandler.inc"
 end if
