@@ -55,7 +55,7 @@ void main() {
     //Textures
     vec4 texColor = texture( Tex1, TexCoord );
     if (discardMode) {
-        if (texColor == vec4(1.0)) { discard; }
+        if (texColor.x > 0.5) { discard; }
     }
     if (ColorMode) {
         texColor = vec4(ObjColor, 1.0);
