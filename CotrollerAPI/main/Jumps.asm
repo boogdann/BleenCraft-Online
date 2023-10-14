@@ -8,7 +8,7 @@ proc ct_fall_check, playerPos
      tmp dd 100.0
      
      ;Îãðàíè÷åíèÿ
-     MAX_TICKS_COUNT  dd  100
+     MAX_TICKS_COUNT  dd  500
      MIN_TICKS_COUNT  dd  10
   endl
   

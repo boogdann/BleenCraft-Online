@@ -55,6 +55,7 @@ proc ct_check_moves, CameraPos, CameraTurn
     jmp .water  
     
   .notWater:
+  
   invoke  GetAsyncKeyState, VK_SHIFT
   cmp eax, 0
   jz @F

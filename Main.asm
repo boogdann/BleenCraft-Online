@@ -22,14 +22,9 @@ Start:
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
+  stdcall ProcGen.GenerateTree, 50, 50, 100 
   
-  stdcall Field.GenerateSpawnPoint
-  mov     ebx, [eax]
-  mov     [cameraPos], ebx
-  mov     ebx, [eax+4]
-  mov     [cameraPos+4], ebx
-  mov     ebx, [eax+8]
-  mov     [cameraPos+8], ebx
+  stdcall Field.GenerateSpawnPoint, cameraPos
       
   stdcall gf_grafic_init 
   ;Флаг = 1 - показать мышку
@@ -37,8 +32,8 @@ Start:
   ;===================================================  
   
   ;=============Project data initialize=========================
-  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle 
-
+  stdcall gf_UploadObj3D, obj_cube_name, obj_CubeHandle
+   
   stdcall gf_LoadTextures
   stdcall gf_UploadTexture, tx_BOGDAN_Name, tx_BOGDANHandle 
   ;=============================================================
@@ -138,7 +133,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;Оптимизационное ограничение на видимлсть блоков:
-         GF_BLOCKS_RADIUS   dd     25, 25, 40 ;(По x, y, z)
+         GF_BLOCKS_RADIUS   dd     40, 40, 40 ;(По x, y, z)
          ;===================================================
                   
                   
@@ -161,7 +156,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         cameraPos       dd    50.0, 110.0, 50.0
+         cameraPos       dd    50.0, 200.0, 50.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          

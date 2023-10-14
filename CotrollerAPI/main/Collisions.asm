@@ -6,14 +6,14 @@ proc ct_collisionsCheck, playerPos, Field, X, Y, Z
   locals
     Pl_pos    dd    ?, ?, ? 
     Pl_feets  dd    1.7
-    Pl_ass  dd  1.0
-    Pl_step dd  0.4
+    Pl_ass    dd  1.0
+    Pl_step   dd  0.4
     Pl_chest  dd  -1.0
-    temp    dd  4.0
+    temp      dd  4.0
     
-    X_Next  dd  ?
-    Y_Next  dd  ?
-    Z_Next  dd  ?
+    X_Next    dd  ?
+    Y_Next    dd  ?
+    Z_Next    dd  ?
     
     Pl_temp_pos dd ?, ?, ?
     
@@ -32,7 +32,7 @@ proc ct_collisionsCheck, playerPos, Field, X, Y, Z
   fld dword[esi]
   fistp [Pl_pos]
   fld dword[esi + 4]
-  fsub dword[Pl_feets]  
+  fsub [Pl_feets]  
   fistp [Pl_pos + 8]
   fld dword[esi + 8]
   fistp [Pl_pos + 4]

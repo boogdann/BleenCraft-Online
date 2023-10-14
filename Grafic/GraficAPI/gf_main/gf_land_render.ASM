@@ -210,7 +210,7 @@ proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
       
   cmp [isOnlyWater], 0
   jz @F    
-    stdcall gf_checkBlockVisible, [X], [Y], [Z] 
+    stdcall gf_checkBlockVisible, [X], [Y], [Z], [isOnlyWater] 
     cmp eax, 0
     jz .SkipRender 
   @@:
@@ -235,12 +235,21 @@ proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
   cmp eax, tx_EOF
   jl @F
     mov eax, TextureHandles
-    add eax, 4
   @@:
   cmp byte[esi], 255
   jnz @F
     mov eax, tx_Water_Handle
   @@:
+  
+  push eax ebx ecx edx
+  push eax
+  invoke glUniform1i, [gf_discardMode], 0
+  pop eax
+  cmp eax, WithDiskard
+  jl @F
+      invoke glUniform1i, [gf_discardMode], 1
+  @@:
+  pop edx ecx ebx eax
   
   ;Πενδεπ:
   stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], [eax]
@@ -250,7 +259,7 @@ proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
 endp
 
 
-proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
+proc gf_checkBlockVisible uses esi edi edx, X, Y, Z, isOnlyWater
   
   locals
     sw    dd  ?, ?, ?   
@@ -273,8 +282,11 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     add esi, eax
     cmp byte[esi], 0
     jz .SkipCheck
-    cmp byte[esi], 255  
-    jz .SkipCheck
+    cmp [isOnlyWater], 1
+    jz .sk1 
+      cmp byte[esi], 255  
+      jz .SkipCheck
+    .sk1:
     sub esi, eax
   @@:
   cmp ecx, 0
@@ -282,11 +294,15 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     sub esi, eax
     cmp byte[esi], 0
     jz .SkipCheck
-    cmp byte[esi], 255  
-    jz .SkipCheck
+    cmp [isOnlyWater], 1
+    jz .sk2 
+      cmp byte[esi], 255  
+      jz .SkipCheck
+    .sk2:
     add esi, eax
   @@:
-  
+  cmp [isOnlyWater], 1
+  jz .frFalse 
   cmp ebx, [X]
   jz @F
     inc esi        
@@ -295,7 +311,7 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     cmp byte[esi], 255  
     jz .SkipCheck
     dec esi
-  @@: 
+  @@:  
   cmp ebx, 0
   jz @F
     dec esi       
@@ -305,7 +321,7 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     jz .SkipCheck
     inc esi 
   @@:
-  
+    
   cmp edx, [Y]
   jz @F
     add esi, [X]       
@@ -315,7 +331,7 @@ proc gf_checkBlockVisible uses esi edi edx, X, Y, Z
     jz .SkipCheck
     sub esi, [X]   
   @@: 
-  
+   
   cmp edx, 0
   jz @F
     sub esi, [X]

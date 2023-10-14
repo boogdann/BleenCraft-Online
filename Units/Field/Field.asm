@@ -93,7 +93,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     
     mov    dword[z], 0
 .Iterate_Z:
-    mov    byte[edi], Block.Dirt
+    mov    byte[edi], Block.Stone
     add    edi, [Size]
     
     inc    dword[z]
@@ -104,6 +104,13 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     cmp    ebx, [base]
     jnl    .Skip
 
+.SetDirt:
+    mov    byte[edi], Block.Dirt
+    add    edi, [Size]
+    inc    ebx
+    cmp    ebx, [base]
+    jnl     .Skip
+    
 .SetWater:  
     mov    byte[edi], Block.Water
     add    edi, [Size]
@@ -112,7 +119,6 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     jl     .SetWater
         
 .Skip:
-
     inc   dword[y]
     mov   eax, dword[y]
     cmp   eax, dword[Field.Width]
@@ -199,14 +205,10 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     mov    ebx, [y]
     sub    ebx, 4
     
-;    mov    eax, 500
-;    mov    ebx, 500
-
 ;    stdcall Field.IsEmptyArea, eax, ebx, [z], 7, 7, 8
 ;    cmp    eax, FALSE
 ;    jz    .Continue 
 
-    
     stdcall ProcGen.GenerateTree, [x], [y], [z]
     
 .Continue:
@@ -219,53 +221,70 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     inc    ecx
     cmp    ecx, [numChanc]
     jl     .IterateChancs   
-   
-.Finish:
-
-
-;   save spawn point
-    mov    ecx, 1000
-.GenerateSpawnPoint:
-    mov    ebx, [Field.Length]
-    sub    ebx, 2
-    stdcall Random.GetInt, 0, ebx  
-    mov    dword[x], ebx
-
-    mov    ebx, [Field.Length]
-    sub    ebx, 2    
-    stdcall Random.GetInt, 0, ebx
-    mov    dword[y], ebx
     
+    mov    ecx, 1000
+._SetSpawnPoint:
+    push   ecx
+    
+    stdcall Random.Initialize
+    mov    ebx, [Field.Length]
+    dec    ebx
+    stdcall Random.GetInt, 1, ebx 
+    mov    dword[x], eax
+    
+    stdcall Random.GetInt, 1, ebx
+    mov    dword[y], eax
+ 
     xor    edx, edx
-    mov    eax, [x]
+    mov    eax, [y]
     mul    [Field.Length]
-    add    eax, [y]
+    add    eax, [x]
     mov    ebx, 4
     mul    ebx
     add    eax, [Field.Matrix]
     
     mov    edi, [eax]
-    inc    edi
     mov    [z], edi
+    add    dword[z], 2
+    
     stdcall Field.GetBlockIndex, [x], [y], [z]
     cmp    eax, Block.Air
     jz     ._Break  
-    loop   .GenerateSpawnPoint  
-     
-._Break:
+         
+    pop    ecx
+    loop   ._SetSpawnPoint
 
+._Break:
     fild   dword[x]
-    fstp   dword[Field.SpawnPoint]
+    fstp  dword[Field.SpawnPoint]
     
     fild   dword[z]
-    fstp   dword[Field.SpawnPoint+4]
+    fstp  dword[Field.SpawnPoint+4]
     
     fild   dword[y]
-    fstp   dword[Field.SpawnPoint+8]
-    
+    fstp  dword[Field.SpawnPoint+8]      
+   
+.Finish:
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     ret
 endp
+
+proc Field.GenerateSpawnPoint uses edi, resAddr
+    mov    eax, [Field.SpawnPoint]
+    mov    edi, [resAddr]
+    mov    [edi], eax
+    
+    mov    eax, [Field.SpawnPoint+4]
+    mov    edi, [resAddr]
+    mov    [edi+4], eax
+    
+    mov    eax, [Field.SpawnPoint+8]
+    mov    edi, [resAddr]
+    mov    [edi+8], eax   
+    ret
+endp
+
+
 
 proc Field.GenerateSeed uses edi ecx eax
     mov    eax, [Field.Length]
@@ -281,11 +300,6 @@ proc Field.GenerateSeed uses edi ecx eax
     add     edi, 4
     loop   .Iterate
     
-    ret
-endp
-
-proc Field.GenerateSpawnPoint
-    mov    eax, Field.SpawnPoint
     ret
 endp
 
