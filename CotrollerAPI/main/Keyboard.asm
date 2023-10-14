@@ -31,6 +31,8 @@ proc ct_check_moves, CameraPos, CameraTurn
     curTime  dd  ?
     distancePerSecond  dd 130.0
     shiftConst         dd 100.0
+    waterSpeed         dd 300.0
+    
     
   endl
   
@@ -46,11 +48,21 @@ proc ct_check_moves, CameraPos, CameraTurn
     
   fild dword[curTime]
   fld dword[distancePerSecond]
+  cmp [isWatter], 0
+  jz .notWater
+    
+    fadd [waterSpeed]
+    jmp .water  
+    
+  .notWater:
   invoke  GetAsyncKeyState, VK_SHIFT
   cmp eax, 0
   jz @F
       fsub  [shiftConst] 
   @@:
+  
+  .water:
+  
   fdivp
   fstp dword[Speed]
 
@@ -163,7 +175,6 @@ proc ct_moves, CameraPos, CameraTurn, Speed, Direction
         fstp dword [edi]
                         
       @@:                         
-      
       
       ;CameraPos[3] = CameraPos[3] + cos(a) * cos(b) * WalkingSpeed 
       fld dword [edi + 8] 

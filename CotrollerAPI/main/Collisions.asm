@@ -6,7 +6,7 @@ proc ct_collisionsCheck, playerPos, Field, X, Y, Z
   locals
     Pl_pos    dd    ?, ?, ? 
     Pl_feets  dd    1.7
-    Pl_ass  dd  0.3
+    Pl_ass  dd  1.0
     Pl_step dd  0.4
     Pl_chest  dd  -1.0
     temp    dd  4.0
@@ -42,17 +42,30 @@ proc ct_collisionsCheck, playerPos, Field, X, Y, Z
                       
   cmp [onGround], 1
   jne @F
+    
     fld [Pl_temp_pos + 4]
     fadd [temp]
     fstp [playerPos + 4]
-    
+
     fldz
     fstp [ct_jump_distancePerSecond]
     
     mov [ct_isJump], 1
     mov [toSkip], 1
-  @@:
   
+    fld dword[esi]
+    fistp [Pl_pos]
+    fld dword[esi + 4]
+    fsub dword[Pl_ass]  
+    fistp [Pl_pos + 8]
+    fld dword[esi + 8]
+    fistp [Pl_pos + 4]
+    
+    stdcall ct_isBlock, [Field], [X], [Y],\
+                      [Pl_pos], [Pl_pos + 4], [Pl_pos + 8]
+    
+  @@:
+
  .finish:
  
     
@@ -63,6 +76,7 @@ endp
 proc ct_isBlock uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
   
   mov [onGround], 0
+  mov [isWatter], 0
   
   locals
   

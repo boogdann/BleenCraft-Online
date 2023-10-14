@@ -96,7 +96,7 @@ proc RenderScene
   
     ;Проиницелизтровать источники света
     ;Последний флаг отвечает за 0 - норма | 1 - под водой
-    stdcall gf_CreateLightning, LightsCount, LightsPositions, 0
+    stdcall gf_CreateLightning, LightsCount, LightsPositions, [UnderWater]
     ;P.S. Функция в начале обязательна даже с флагом ноль для
     ;регистрации твоей переменной в модуле
     
@@ -189,6 +189,8 @@ section '.data' data readable writeable
          WorldLength dd ? ;x НЕ ТРОГАТЬ
          WorldWidth  dd ? ;y
          WorldHeight dd 150  ;z
+         
+         UnderWater  dd 0
          
          ;Богдан вынеси это себе куданибудь
          SkyLength   dd   10
