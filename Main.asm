@@ -17,7 +17,7 @@ Start:
   mov    [hHeap], eax   
   
   ;================Modules initialize=================
-  stdcall Field.Initialize, [WorldPower] ,[WorldHeight] 
+  stdcall Field.Initialize, [WorldPower] ,[WorldHeight], [WaterLvl] 
   mov     eax, [Field.Length]
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
@@ -184,6 +184,8 @@ section '.data' data readable writeable
          WorldLength dd ? ;x Õ≈ “–Œ√¿“‹
          WorldWidth  dd ? ;y
          WorldHeight dd 150  ;z
+         
+         WaterLvl    dd 60 
          
          UnderWater  dd 0
          

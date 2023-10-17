@@ -1,6 +1,6 @@
 ;               
 ;              proc Field.Initialize
-proc Field.Initialize uses eax edi ecx ebx, power, Height
+proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     locals
         x      dd  ?
         y      dd  ?
@@ -19,8 +19,8 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
         _mod      dd ?
         _div      dd ?
     endl 
-    
-    mov   dword[base], 40
+    mov   eax, [baseLvl]   
+    mov   dword[base], eax
     
     stdcall Random.Initialize
     
@@ -230,7 +230,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     cmp    ecx, [numChanc]
     jl     .IterateChancs   
     
-    mov    ecx, 1000
+    mov    ecx, 10000
     
 ._SetSpawnPoint:
     push   ecx
