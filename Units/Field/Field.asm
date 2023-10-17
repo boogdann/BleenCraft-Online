@@ -14,11 +14,13 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
         base    dd    ?
         numTree dd  ?
         numChanc dd ?
+        currChanc dd ?
         sizeChanc dd ?
-        tmp       dd ?
+        _mod      dd ?
+        _div      dd ?
     endl 
     
-    mov   dword[base], 60
+    mov   dword[base], 40
     
     stdcall Random.Initialize
     
@@ -129,20 +131,27 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     cmp   eax, dword[Field.Length]    
     jl    .Iterate_X
    
-    stdcall Random.Initialize
-    
+    push eax
+    pop  eax
+    push eax
+    pop eax
+;   trees
+    stdcall Random.Initialize 
     mov   eax, [power]
+    mul   dword[power]
     mov   dword[numChanc], eax
+    
     xor   edx, edx
     mov   eax, [Field.Length]
     div   dword[power]
     mov   dword[sizeChanc], eax
     
-    stdcall ProcGen.GenerateTree, 500, 500, 100
     mov    ecx, 0
 .IterateChancs:
+    stdcall Random.Initialize
     push   ecx
     
+    mov    [currChanc], ecx
     mov    ecx, [sizeChanc]
     shr    ecx, 2
     cmp    ecx, 2
@@ -155,47 +164,46 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
 .GenerateTrees:
     push   ecx
     mov    ebx, [sizeChanc]
-    sub    ebx, 30
+    sub    ebx, 10
     stdcall Random.GetInt, 0, ebx
     add    eax, 6
     mov    [x], eax
   
     mov    ebx, [sizeChanc]
-    sub    ebx, 30    
+    sub    ebx, 7    
     stdcall Random.GetInt, 0, ebx
-    add    eax, 6
+    add    eax, 10
     mov    [y], eax   
-
-    xor    edx, edx
-    mov    eax, ecx
-    div    dword[power]
-    inc    eax
-    inc    edx
     
-    mov    ecx, eax
-    mov    dword[tmp], edx
+    xor    edx, edx
+    mov    eax, [currChanc]
+    div    dword[power]
+    mov    [_div], eax
+    mov    [_mod], edx
+   
+    xor    edx, edx
+    mov    eax, [sizeChanc]
+    mul    dword[_div]
+    add    eax, [x]
+    mov    [x], eax
+    
+    xor    edx, edx
+    mov    eax, [sizeChanc]
+    mul    dword[_mod]
+    add    eax, [y]
+    mov    [y], eax    
         
     xor    edx, edx
     mov    eax, [y]
-    mul    [sizeChanc]
-    mul    dword[tmp]
+    mul    dword[Field.Width]
     add    eax, [x]
-    mul    ecx
     mov    ebx, 4
     mul    ebx
     add    eax, [Field.Matrix]
     
     mov    edi, [eax]
     mov    [z], edi
-    
-    mov    eax, dword[x]
-    mul    dword[tmp]
-    mov    dword[x], eax
-    
-    mov    eax, dword[y]
-    mul    ecx
-    mov    dword[y], eax
-    
+        
     stdcall Field.GetBlockIndex, [x], [y], [z]
     cmp    eax, Block.Air
     jnz    .Continue
@@ -205,9 +213,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     mov    ebx, [y]
     sub    ebx, 4
     
-;    stdcall Field.IsEmptyArea, eax, ebx, [z], 7, 7, 8
-;    cmp    eax, FALSE
-;    jz    .Continue 
+    stdcall Field.IsEmptyArea, eax, ebx, [z], 8, 8, 9
+    cmp    eax, FALSE
+    jz    .Continue 
 
     stdcall ProcGen.GenerateTree, [x], [y], [z]
     
@@ -223,6 +231,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height
     jl     .IterateChancs   
     
     mov    ecx, 1000
+    
 ._SetSpawnPoint:
     push   ecx
     
@@ -312,43 +321,37 @@ proc Field.IsEmptyArea uses edx edi esi ecx, x, y, z, lenX, lenY, lenZ
         j         dd    ?; y
         k         dd    ?; z
     endl
-  
-.Iterate_z:
-    xor    edx, edx
-    mov    eax, [Field.Length]
-    mul    dword[Field.Width]
-    mul    dword[k]
-    mov    edi, [Field.Blocks]
-    add    edi, eax
+
+    mov    eax, [z]
+    mov    dword[localZ], eax
+    mov    ecx, [lenZ]
+.Iterate_Z:
+    push   ecx
+    mov    eax, [x]
+    mov    dword[localX], eax
     
-    mov    esi, edi
-    
-.Iterate_x:
-    mov    eax, [i]
-    mul    dword[lenY]
-    add    esi, eax
-    
-    mov    edi, esi
     mov    ecx, [lenX]
-    mov    eax, Block.Air
-    repe   scasb
-    jcxz   .Skip
+.Iterate_X:
+    push   ecx
+    mov    eax, [y]
+    mov    dword[localY], eax
+    
+    mov    ecx, [lenY]
+.Iterate_Y:
+    push   ecx
+    stdcall Field.GetBlockIndex, [localX], [localY], [localZ]
+    cmp    eax, Block.Air
+    jz     .Skip
     mov    eax, FALSE
     jmp    .Finish
-
 .Skip:
-
-    inc    dword[i]
-    mov    eax, dword[i]
-    cmp    eax, [lenX]
-    jl     .Iterate_x
-
-
-    inc    dword[k]
-    mov    eax, [k]
-    cmp    eax, [lenZ]
-    jl     .Iterate_z
-
+    
+    pop    ecx
+    loop   .Iterate_Y
+    pop    ecx
+    loop   .Iterate_X
+    pop    ecx
+    loop   .Iterate_Z
     mov    eax, TRUE
 .Finish:
     ret
