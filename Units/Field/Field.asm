@@ -741,165 +741,55 @@ proc Field.TestBounds uses ebx, X: dword, Y: dword, Z: dword
      ret
 endp
 
-;    xor    edx, edx
-;    mov    eax, [SizeMatrix]
-;    mul    eax
-;    mov    ebx, 4
-;    mul    ebx
-;    xchg   ecx, eax
-;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, ecx
-;    mov    [Field.TmpMatrix], eax 
-;
-;    xor    edx, edx
-;    mov    eax, [SizeMatrix]
-;    mul    eax
-;    mov    ebx, 4
-;    mul    ebx
-;    xchg   ecx, eax    
-;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, ecx
-;    mov    [Field.TmpSeed], eax       
-    
-;    stdcall Field.PalinNoise2D, [Field.Matrix],\
-;            [], [Field.Width], 2, [Field.Seed], 2.0, 10
-            
-;    xor    edx, edx
-;    mov    eax, [Field.Length]
-;    div    dword[SizeMatrix]
-;    
-;    mov    dword[numChanc], eax
-;    
-;    
-;    mov    dword[chancX], 0
-;    mov    ebx, 4
-;    
-;.Iterate_Chanc:  
-;  mov    eax, [SizeMatrix]
-;  mul    dword[chancX]
-;  mul    ebx
-;  mov    edi, [Field.Seed]
-;  add    edi, eax
-;  mov    [startChanc], edi
-;
-;  mov    edi, [Field.TmpSeed]
-;  mov    dword[y], 0
-;  .Iterate_Y:
-;  xor    edx, edx
-;  mov    eax, [y]
-;  mul    [Field.Length]
-;  mul    ebx
-;  mov    esi, [startChanc]
-;  add    esi, eax
-;  
-;  mov    ecx, [SizeMatrix]
-;  rep    movsd
-;  
-;  inc    dword[y]
-;  mov    eax, [y]
-;  cmp    eax, [SizeMatrix]
-;  jl     .Iterate_Y
-;  
-;  stdcall Field.PalinNoise2D, [Field.TmpMatrix],\
-;      [SizeMatrix], [SizeMatrix], 2, [Field.TmpSeed], 2.0, 10 
-;      
-;
-;  mov    eax, [SizeMatrix]
-;  mul    dword[chancX]
-;  mul    ebx
-;  add    eax, [Field.Matrix]
-;  mov    [startChancBaseMatrix], eax
-;    
-;  mov    esi, [Field.TmpMatrix]      
-;  mov    dword[y], 0
-;  .Iterate_Y1:
-;  xor    edx, edx
-;  mov    eax, [y]
-;  mul    [Field.Length]
-;  mul    ebx
-;  mov    edi, [startChancBaseMatrix]
-;  add    edi, eax
-;  
-;  mov    ecx, [SizeMatrix]
-;  rep    movsd
-;  
-;  inc    dword[y]
-;  mov    eax, [y]
-;  cmp    eax, [SizeMatrix]
-;  jl     .Iterate_Y1    
-;  
-;  
-;  inc    dword[chancX]
-;  mov    eax, [chancX]
-;  cmp    eax, [numChanc]
-;  jl     .Iterate_Chanc
-;    
-;    
-;    xor    edx, edx
-;    mov    eax, [Field.Length]
-;    mul    dword[Field.Width]
-;    mov    dword[Size], eax
-;    
-;    mov    word[x], 0        
-;.Iterate_X:
-;    xor    edx, edx
-;    movzx  eax, word[x]
-;    mul    dword[Field.Width]
-;    mov    ecx, eax
-;    
-;    mov    word[y], 0
-;.Iterate_Y2:
-;    mov    eax, ecx
-;    movzx  edi, word[y]
-;    add    eax, edi
-;    add    eax, [Field.Blocks]
-;    xchg   eax, edi
-;    
-;    xor    edx, edx
-;    movzx  eax, word[x]
-;    mul    dword[Field.Length]
-;    movzx  ebx, word[y]
-;    add    eax, ebx
-;    mov    ebx, 4
-;    xor    edx, edx
-;    mul    ebx
-;    add    eax, [Field.Matrix]
-;    xchg   eax, esi
-;    
-;    mov    eax, [esi]    
-;    
-;    mov    word[z], 0
-;.Iterate_Z:
-;    mov    byte[edi], Block.Dirt
-;    add    edi, [Size]
-;    
-;    inc    word[z]
-;    movzx  ebx, word[z]
-;    cmp    ebx, eax
-;    jl     .Iterate_Z
-;
-;    inc   word[y]
-;    movzx eax, word[y]
-;    cmp   eax, dword[Field.Width]
-;    jl    .Iterate_Y2
-;    
-;    inc   word[x]
-;    movzx eax, word[x]
-;    cmp   eax, dword[Field.Length]    
-;    jl    .Iterate_X
-    
-;    stdcall Field.SetBlockIndex, 12, 12, 5, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 5, Blocks.STONE 
-;    stdcall Field.SetBlockIndex, 14, 12, 5, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 6, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 7, Blocks.STONE
-;    
-;    stdcall Field.SetBlockIndex, 12, 12, 12, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 12, Blocks.STONE 
-;    stdcall Field.SetBlockIndex, 14, 12, 12, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 13, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 13, 12, 14, Blocks.STONE
-;    
-;    stdcall Field.SetBlockIndex, 10, 10, 2, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 11, 10, 2, Blocks.STONE 
-;    stdcall Field.SetBlockIndex, 12, 10, 2, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 11, 10, 3, Blocks.STONE
-;    stdcall Field.SetBlockIndex, 11, 10, 4, Blocks.STONE 
+proc Field.GenerateBigMines uses edi esi, x, y, z,  depth, size 
+     locals
+        newX      dd ?
+        newY      dd ?
+        newZ      dd ?
+        toChange  dd ?
+        hasBranch dd ?
+     endl
+     
+     
+     cmp    dword[depth], 0
+     jz     .Finish
+     cmp    dword[size], 0
+     jz     .Finish
+
+     mov    edi, [x]
+     sub    edi, 1
+     mov    esi, [x]
+     add    esi, 1
+     stdcall Random.GetInt, edi, esi
+     mov    [newX], eax
+     
+     mov    edi, [y]
+     sub    edi, 1
+     mov    esi, [y]
+     add    esi, 1
+     stdcall Random.GetInt, edi, esi
+     mov    [newY], eax
+     
+     mov    edi, [z]
+     sub    edi, 1
+     mov    esi, [z]
+     add    esi, 0
+     stdcall Random.GetInt, edi, esi
+     mov    [newZ], eax    
+     
+     dec    dword[depth]
+     stdcall Random.GetInt, 4, 5
+     cmp    eax, 4
+     jz     .Skip
+     stdcall Field.GenerateBigMines, [newX], [newY], [newZ], [depth], [size]
+     
+.Skip:
+     dec    dword[size]
+     stdcall Field.GenerateBigMines, [newX], [newY], [newZ], [depth], [size]  
+
+     stdcall Field.SetBlockIndex, [newX], [newY], [newZ], Block.Air
+.Finish:
+     ret
+endp
+
+proc Field.GenerateSmallMines uses edi esi, 
