@@ -3,7 +3,7 @@ proc Random.Initialize uses eax edx
       Time SYSTEMTIME ?, ?, ?, ?, ?, ?, ?, ?
     endl
     
-     invoke GetTickCount
+     invoke GetTickCount   
      mov        [Random.wPrevNumber], eax
      ret
 endp
@@ -14,7 +14,7 @@ proc Random.GetInt uses ecx edx,\
      xor        eax, eax
      mov        eax, [Random.wPrevNumber]
      rol        eax, 7
-     adc        eax, 23
+     adc        eax, 21
      mov        [Random.wPrevNumber], eax
 
      mov        ecx, [Max]

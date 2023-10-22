@@ -153,7 +153,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     
     mov    [currChanc], ecx
     mov    ecx, [sizeChanc]
-    shr    ecx, 2
+    shr    ecx, 1
     cmp    ecx, 2
     jnl    .Skip123
     mov    ecx, 2
@@ -741,6 +741,146 @@ proc Field.TestBounds uses ebx, X: dword, Y: dword, Z: dword
      ret
 endp
 
+proc Field.GenerateSmallMines uses edi esi ebx edx, x, y, z, size, depth
+     locals
+        newX dd ?
+        newY dd ?
+        newZ dd ?
+        dir  dd ?
+        curr dd ?
+        len  dd ?
+     endl
+     
+     dec     dword[depth]
+     
+     cmp     dword[size], 0
+     jl      .Finish
+     cmp     dword[depth], 0
+     jl      .Finish
+     
+     stdcall Random.Initialize
+     
+     mov     dword[curr], 6
+     mov     ecx, [size]
+     
+.GenerateMine:
+     push    ecx
+     stdcall Random.GetInt, 0, 123457
+     xor     edx, edx
+     div     dword[curr]
+     inc     eax
+     xchg    edx, eax
+     
+     cmp     eax, 1
+     jnz     .Skip1
+     dec     dword[x]
+     jmp     .Continue
+
+.Skip1:
+     cmp     eax, 2
+     jnz     .Skip2
+     inc     dword[x]
+     jmp     .Continue  
+     
+.Skip2:
+     cmp     eax, 3
+     jnz     .Skip3
+     dec     dword[y]
+     jmp     .Continue 
+     
+.Skip3:
+     cmp     eax, 4
+     jnz     .Skip4
+     inc     dword[y]
+     jmp     .Continue
+     
+.Skip4:
+     cmp     eax, 5
+     jnz     .Skip5
+     dec     dword[z]
+     jmp     .Continue
+     
+.Skip5:
+     cmp     eax, 6
+     jnz     .Skip6
+     inc     dword[z]
+     jmp     .Continue
+
+.Skip6:
+;     cmp     eax, 7
+;     jnz     .Skip7
+;     dec     dword[z]
+;     jmp     .Continue
+;     
+;.Skip7:
+;     cmp     eax, 8
+;     jnz     .Skip8
+;     dec     dword[z]
+;     jmp     .Continue
+;     
+;.Skip8:
+.Continue:
+
+     stdcall Random.GetInt, 0, 100
+     cmp     eax, 50
+     jl      .SkipBranch
+     
+     stdcall Field.GenerateSmallMines, [x], [y], [z], ecx, [depth]
+
+.SkipBranch:
+     stdcall Random.GetInt, 2, 4
+     
+     stdcall Field.GenerateSphere, [x], [y], [z], eax
+      
+     pop     ecx
+     dec     ecx
+     cmp     ecx, 0 
+     jnz     .GenerateMine
+     
+.Finish:
+     ret
+endp
+
+proc Field.GenerateSphere uses eax ebx edx ecx, x, y, z, len
+     locals
+        newX dd ?
+        newY dd ?
+        newZ dd ?
+        dir  dd ?
+        curr dd ?
+     endl
+     dec     dword[z]
+
+     mov     ecx, dword[len]  
+.SetAirX: 
+     mov     eax, [x]
+     add     eax, ecx
+      
+     push    ecx
+     mov     ecx, dword[len]
+
+.SetAirY:      
+     mov     ebx, [y]
+     add     ebx, ecx
+     
+     push    ecx
+     mov     ecx, dword[len]
+.SetAirZ:
+     mov     edx, [z]
+     add     edx, ecx
+                         
+     stdcall Field.SetBlockIndex, eax, ebx, edx, Block.Air
+     
+     loop    .SetAirZ
+     pop     ecx
+     loop    .SetAirY
+     pop     ecx
+     loop    .SetAirX     
+     
+.Finish:
+    ret
+endp
+
 proc Field.GenerateBigMines uses edi esi, x, y, z,  depth, size 
      locals
         newX      dd ?
@@ -791,5 +931,3 @@ proc Field.GenerateBigMines uses edi esi, x, y, z,  depth, size
 .Finish:
      ret
 endp
-
-proc Field.GenerateSmallMines uses edi esi, 
