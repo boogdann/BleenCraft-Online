@@ -136,7 +136,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     push eax
     pop eax
 ;   trees
-    stdcall Random.Initialize 
+   ; stdcall Random.Initialize 
     mov   eax, [power]
     mul   dword[power]
     mov   dword[numChanc], eax
@@ -148,7 +148,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     
     mov    ecx, 0
 .IterateChancs:
-    stdcall Random.Initialize
+  ;  stdcall Random.Initialize
     push   ecx
     
     mov    [currChanc], ecx
@@ -235,7 +235,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
 ._SetSpawnPoint:
     push   ecx
     
-    stdcall Random.Initialize
+ ;   stdcall Random.Initialize
     mov    ebx, [Field.Length]
     dec    ebx
     stdcall Random.GetInt, 1, ebx 
@@ -758,7 +758,10 @@ proc Field.GenerateSmallMines uses edi esi ebx edx, x, y, z, size, depth
      cmp     dword[depth], 0
      jl      .Finish
      
-     stdcall Random.Initialize
+     ; stdcall GetTickCount
+    ; xor     edx, edx
+    ; add     eax, 12
+     ;stdcall Random.InitializeWith, eax 
      
      mov     dword[curr], 6
      mov     ecx, [size]
