@@ -1,3 +1,4 @@
+Field.SpawnPoint   dd       0.0, 0.0, 0.0
 Field.Blocks       dd       ?  
 Field.hHeap        dd       ?
 Field.Length       dd       ?

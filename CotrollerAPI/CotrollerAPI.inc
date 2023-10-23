@@ -21,11 +21,13 @@ isFalling     dd      0
 ct_isJump     dd      1
 
 ct_start_jump_speed        dd     -0.006
+ct_water_jump_speed        dd     -0.001
 ct_jump_distancePerSecond  dd     0.005
 ct_isStartOfJump           dd     0    
 
 ct_velocity                dd     0.0005
-ct_watter_velocity         dd     0.0001
+ct_watter_velocity         dd     0.00005
 ct_falling_velocity        dd     0.0005
 
 isWatter                   dd     0
+waterUnderFeets            dd     0

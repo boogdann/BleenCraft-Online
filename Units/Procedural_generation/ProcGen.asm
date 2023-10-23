@@ -941,5 +941,4 @@ proc ProcGen.RebuildCrown uses eax ebx ecx esi edi, x, y, z, height, heightCrown
 
 .Finish:
     ret
-endp
-    
+endp 

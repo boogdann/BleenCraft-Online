@@ -17,19 +17,14 @@ Start:
   mov    [hHeap], eax   
   
   ;================Modules initialize=================
-  stdcall Field.Initialize, [WorldPower] ,[WorldHeight] 
+  stdcall Field.Initialize, [WorldPower] ,[WorldHeight], [WaterLvl] 
   mov     eax, [Field.Length]
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
+  stdcall ProcGen.GenerateTree, 50, 50, 100 
   
-;  stdcall Field.GenerateSpawnPoint
-;  mov     ebx, [eax]
-;  mov     [cameraPos], ebx
-;  mov     ebx, [eax+4]
-;  mov     [cameraPos+4], ebx
-;  mov     ebx, [eax+8]
-;  mov     [cameraPos+8], ebx
+  stdcall Field.GenerateSpawnPoint, cameraPos
       
   stdcall gf_grafic_init 
   ;Флаг = 1 - показать мышку
@@ -96,7 +91,7 @@ proc RenderScene
   
     ;Проиницелизтровать источники света
     ;Последний флаг отвечает за 0 - норма | 1 - под водой
-    stdcall gf_CreateLightning, LightsCount, LightsPositions, 0
+    stdcall gf_CreateLightning, LightsCount, LightsPositions, [UnderWater]
     ;P.S. Функция в начале обязательна даже с флагом ноль для
     ;регистрации твоей переменной в модуле
     
@@ -161,7 +156,7 @@ section '.data' data readable writeable
          cubeScale       dd   1.0
 
          ;Позиция головы
-         cameraPos       dd    50.0, 110.0, 50.0
+         cameraPos       dd    50.0, 200.0, 50.0
          ;Поворот головы
          сameraTurn      dd    0.0, 0.0, 0.0
          
@@ -189,6 +184,10 @@ section '.data' data readable writeable
          WorldLength dd ? ;x НЕ ТРОГАТЬ
          WorldWidth  dd ? ;y
          WorldHeight dd 150  ;z
+         
+         WaterLvl    dd 60 
+         
+         UnderWater  dd 0
          
          ;Богдан вынеси это себе куданибудь
          SkyLength   dd   10
