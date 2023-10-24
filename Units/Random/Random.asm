@@ -2,7 +2,10 @@ proc Random.Initialize uses eax edx
     
      invoke GetTickCount   
      mov    [Random.wPrevNumber], eax
-     mov    [Random.ToInc], 0     
+     mov    [Random.ToInc], 13
+     
+     mov    dword[Random.NumRandom], 0
+     mov    dword[Random.MaxNumRandom], 200000     
 .Finish:
      ret
 endp
@@ -13,10 +16,17 @@ proc Random.InitializeWith uses eax, val
      ret
 endp
 
-proc Random.GetInt uses ecx edx, Min, Max 
+proc Random.GetInt uses ecx edx edi, Min, Max 
+;     mov ecx, [Random.NumRandom]
+;     cmp [Random.MaxNumRandom], ecx
+;     jl  .ResetNumber
+
      cmp [Random.wPrevNumber], 0
      jnz .Skip
+     
+.ResetNumber:
      stdcall GetTickCount
+     inc dword[Random.ToInc]
      add eax, [Random.ToInc]
      mov [Random.wPrevNumber], eax
      
@@ -47,6 +57,7 @@ proc Random.GetInt uses ecx edx, Min, Max
      xchg       eax, edx
 
 .Finish:
+     inc dword[Random.NumRandom]
      ret
 endp
 

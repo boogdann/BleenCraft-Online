@@ -9,3 +9,4 @@ Field.Matrix       dd       ?
 Field.TmpMatrix    dd       ?
 Field.TmpSeed      dd       ?
 Tmp                dd       ?
+Field.MaxNumMinesOnChank dd ?

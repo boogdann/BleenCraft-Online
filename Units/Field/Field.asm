@@ -130,13 +130,8 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     mov   eax, dword[x]
     cmp   eax, dword[Field.Length]    
     jl    .Iterate_X
-   
-    push eax
-    pop  eax
-    push eax
-    pop eax
+
 ;   trees
-   ; stdcall Random.Initialize 
     mov   eax, [power]
     mul   dword[power]
     mov   dword[numChanc], eax
@@ -146,9 +141,10 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     div   dword[power]
     mov   dword[sizeChanc], eax
     
+    stdcall Field.GenerateMines, [sizeChanc], 5, [power]
+    
     mov    ecx, 0
 .IterateChancs:
-  ;  stdcall Random.Initialize
     push   ecx
     
     mov    [currChanc], ecx
@@ -160,7 +156,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
 .Skip123:
     stdcall Random.GetInt, 1, ecx
     mov    ecx, eax
-    
+
 .GenerateTrees:
     push   ecx
     mov    ebx, [sizeChanc]
@@ -274,7 +270,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
    
 .Finish:
      stdcall Random.Initialize
-     stdcall Field.GenerateSmallMines, [x], [y], [z], 120, 1
+     ; stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
      
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     ret
@@ -401,6 +397,10 @@ endp
 proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X: dword, Y: dword, Z: dword, BlockIndex: byte     
      xor    eax, eax
 
+     stdcall Field.TestBounds, [X], [Y], [Z]
+     cmp     eax, ERROR_OUT_OF_BOUND
+     jz      .Finish
+     
      mov    eax, dword[Y]  
       
      mov    edi, [Field.Length]
@@ -717,23 +717,26 @@ endp
 ;    Input:  Word X, Word Y, Word Z
 ;    Output: eax <- Zero or ErrorCode
 ;
-proc Field.TestBounds uses ebx, X: dword, Y: dword, Z: dword
+proc Field.TestBounds uses ebx, X, Y, Z
      xor    eax, eax
 
-     cmp    word[X], Field.LENGTH
+     mov    eax, [Field.Length]
+     cmp    [X], eax
      jge    .Error
 
-     cmp    word[Y], Field.WIDTH
+     mov    eax, [Field.Width]
+     cmp    [Y], eax
      jge    .Error
 
-     cmp    word[Z], Field.HEIGHT
+     mov    eax, [Field.Height]
+     cmp    [Z], Field.Height
      jge    .Error
 
-     cmp    word[X], 0
+     cmp    [X], 0
      jl     .Error 
-     cmp    word[Y], 0
+     cmp    [Y], 0
      jl     .Error
-     cmp    word[Z], 0
+     cmp    [Z], 0
      jl     .Error
      jmp    .Finish
 
@@ -743,99 +746,181 @@ proc Field.TestBounds uses ebx, X: dword, Y: dword, Z: dword
      ret
 endp
 
+proc Field.GenerateMines uses eax ebx edx esi edi, sizeChanc, numChanc, power
+    locals
+        x             dd ?
+        y             dd ?
+        z             dd ?
+        currChanc     dd ?
+        _div          dd ?
+        _mod          dd ?
+    endl
+    
+    mov     ecx, 0
+.IterateChancs:
+    push   ecx
+    mov    [currChanc], ecx
+    mov    ecx, [sizeChanc]
+    shr    ecx, 4
+    cmp    ecx, 2
+    jnl    .Skip123
+    mov    ecx, 2
+.Skip123:
+    stdcall Random.GetInt, 1, ecx
+    mov    ecx, eax
+.GenerateMine:
+    push   ecx
+    mov    ebx, [sizeChanc]
+    sub    ebx, 10
+    stdcall Random.GetInt, 0, ebx
+    add    eax, 6
+    mov    [x], eax
+  
+    mov    ebx, [sizeChanc]
+    sub    ebx, 7    
+    stdcall Random.GetInt, 0, ebx
+    add    eax, 10
+    mov    [y], eax 
+    
+    mov     eax, [Field.Height]
+    shr     eax, 1
+    stdcall Random.GetInt, 0, eax 
+    mov     [z], eax 
+    
+    xor    edx, edx
+    mov    eax, [currChanc]
+    div    dword[power]
+    mov    [_div], eax
+    mov    [_mod], edx
+   
+    xor    edx, edx
+    mov    eax, [sizeChanc]
+    mul    dword[_div]
+    add    eax, [x]
+    mov    [x], eax
+    
+    xor    edx, edx
+    mov    eax, [sizeChanc]
+    mul    dword[_mod]
+    add    eax, [y]
+    mov    [y], eax  
+    
+    stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 1  
+            
+.Continue:
+    pop    ecx
+    dec    ecx
+    cmp    ecx, 1
+    ja    .GenerateMine
+    
+    pop    ecx
+    inc    ecx
+    
+    ;
+    cmp     ecx, 90
+    ;
+    
+    ; !!!! ;cmp    ecx, [numChanc]
+    jl     .IterateChancs     
+
+
+.Finish:
+     ret
+endp
+
 proc Field.GenerateSmallMines uses edi esi ebx edx, x, y, z, size, depth
      locals
-        newX dd ?
-        newY dd ?
-        newZ dd ?
-        dir  dd ?
-        curr dd ?
-        len  dd ?
+        newX       dd ?
+        newY       dd ?
+        newZ       dd ?
+        dir        dd ?
+        curr       dd ?
+        len        dd ?
+        NUM_100    dd ?
+        sphereSize dd ?
      endl
+     mov     dword[NUM_100], 100
      
      dec     dword[depth]
-     
      cmp     dword[size], 0
      jl      .Finish
      cmp     dword[depth], 0
      jl      .Finish
-     
-     ; stdcall GetTickCount
-    ; xor     edx, edx
-    ; add     eax, 12
-     ;stdcall Random.InitializeWith, eax 
-     
+          
      mov     dword[curr], 6
      mov     ecx, [size]
      
-.GenerateMine:
+.GenerateMine: 
+     stdcall Random.GetInt, 1, 400
+     xor     edx, edx
+     div     dword[NUM_100]
+     inc     eax
+     mov     [sphereSize], eax
+     mov     edi, eax
+     shr     edi, 1
+     cmp     edi, 0
+     jl      .SkipSetEbx
+     mov     edi, 1
+
+.SkipSetEbx:     
      push    ecx
-     stdcall Random.GetInt, 0, 550
-;     xor     edx, edx
-;     div     dword[curr]
-      inc     eax
-;     xchg    edx, eax
+     stdcall Random.GetInt, 1, 1100
+     inc     eax
      
      cmp     eax, 100
      jnl     .Skip1
-     dec     dword[x]
+     stdcall Random.GetInt, 1, edi 
+     sub     dword[x], edi
      jmp     .Continue
 
 .Skip1:
-     cmp     eax, 200
+     cmp     eax, 300
      jnl     .Skip2
-     inc     dword[x]
+     stdcall Random.GetInt, 1, edi 
+     add     dword[x], edi
      jmp     .Continue  
      
 .Skip2:
-     cmp     eax, 300
+     cmp     eax, 500
      jnl     .Skip3
-     dec     dword[y]
+     stdcall Random.GetInt, 1, edi 
+     sub     dword[y], edi
      jmp     .Continue 
      
 .Skip3:
-     cmp     eax, 400
+     cmp     eax, 700
      jnl     .Skip4
-     inc     dword[y]
+     stdcall Random.GetInt, 1, edi 
+     add     dword[x], edi
      jmp     .Continue
      
 .Skip4:
-     cmp     eax, 500
+     cmp     eax, 900
      jnl     .Skip5
-     dec     dword[z]
+     stdcall Random.GetInt, 1, edi 
+     add     dword[z], edi
      jmp     .Continue
      
 .Skip5:
-     ; cmp     eax, 6
-     ; jnl     .Skip6
-     inc     dword[z]
+     stdcall Random.GetInt, 1, edi 
+     sub     dword[z], edi
      jmp     .Continue
 
 .Skip6:
-;     cmp     eax, 7
-;     jnz     .Skip7
-;     dec     dword[z]
-;     jmp     .Continue
-;     
-;.Skip7:
-;     cmp     eax, 8
-;     jnz     .Skip8
-;     dec     dword[z]
-;     jmp     .Continue
-;     
-;.Skip8:
 .Continue:
 
      stdcall Random.GetInt, 0, 100
      cmp     eax, 50
      jl      .SkipBranch
      
-     stdcall Field.GenerateSmallMines, [x], [y], [z], ecx, [depth]
+     cmp     dword[size], 20
+     jl      .SkipBranch
+     
+     ; stdcall Field.GenerateSmallMines, [x], [y], [z], [size], [depth]
 
 .SkipBranch:
-     stdcall Random.GetInt, 1, 4
      
-     stdcall Field.GenerateSphere, [x], [y], [z], eax
+     stdcall Field.GenerateSphere, [x], [y], [z], [sphereSize]
       
      pop     ecx
      dec     ecx

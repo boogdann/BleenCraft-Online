@@ -1,5 +1,7 @@
 Random.wPrevNumber      dd      ?, ?
-Random.ToInc            dd      0
+Random.ToInc            dd      ?
+Random.NumRandom        dd      ?
+Random.MaxNumRandom     dd      ?
 
 MT dd 0 
 index dd 0 
