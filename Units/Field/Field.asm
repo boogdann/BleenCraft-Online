@@ -1021,3 +1021,124 @@ proc Field.GenerateBigMines uses edi esi, x, y, z,  depth, size
 .Finish:
      ret
 endp
+
+proc Field.GenerateClouds uses ebx edi esi edx, sizeX, sizeY
+     locals
+         resAddr dd ?
+     endl
+     invoke  GetProcessHeap
+     mov    [Field.hHeap], eax
+    
+     xor    edx, edx
+     mov    eax, [sizeX]
+     mul    dword[sizeY]
+     
+     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
+     mov    [resAddr], eax
+     
+     mov    eax, 0 
+.IterateX:
+     mov    ebx, 0
+.IterateY:
+     stdcall Field.GenerateCloudJulia, [resAddr], eax, ebx, [sizeX], [sizeY]
+     inc    ebx
+     cmp    ebx, [sizeY]
+     jl     .IterateY  
+
+     inc    eax
+     cmp    eax, [sizeX]
+     jl     .IterateX
+
+.Finish:
+     mov    eax, [resAddr]
+     ret
+endp
+
+proc Field.GenerateCloudJulia uses eax edi esi edx ebx, resAddr, x, y, sizeX, sizeY
+     locals
+         zReal dd 0.0
+         zImg  dd 0.0
+         iter  dd 0
+         newZ  dd ?
+         tmp   dd ?
+         TWO   dd ?  
+     endl
+     mov     dword[TWO], 2
+
+.Julia:
+     mov     eax, [iter]
+     mov     ebx, [Field.MaxNumIter]
+     cmp     eax, [Field.MaxNumIter]
+     jge     .SetPoint
+     
+     fld     dword[zReal]
+     fld     dword[zReal]
+     fmulp   
+     
+     fld     dword[zImg]
+     fld     dword[zImg]
+     fmulp       
+
+     faddp   
+     fistp   dword[tmp]
+     
+     mov     eax, [tmp]
+     cmp     eax, [Field.Treshold]
+     jge     .SetPoint
+     
+     fld     dword[zReal]
+     fld     dword[zReal]
+     fmulp   
+     
+     fld     dword[zImg]
+     fld     dword[zImg]
+     fmulp   
+     
+     fsubp 
+     
+     fld     dword[Field.ConstX]  
+     faddp   
+     fstp    dword[newZ]
+     
+     fld     dword[zReal]
+     fld     dword[zImg]
+     fmulp   
+     fld     dword[TWO]
+     fmulp   
+     fld     dword[Field.ConstY]
+     faddp   
+     fstp    dword[zImg]
+     
+     mov     eax, [newZ]
+     mov     [zReal], eax
+     
+     inc     dword[iter]
+     jmp     .Julia
+     
+.SetPoint:
+     mov     eax, [iter]
+     cmp     eax, [Field.MaxNumIter]
+     jnz     .Finish
+     
+     xor     edx, edx
+     mov     eax, [x]
+     mul     dword[sizeX]
+     add     eax, [y]
+     mov     edi, [resAddr]
+     add     edi, eax
+     mov     byte[edi], 1
+     
+.Finish:
+     ret
+endp
+
+
+
+
+
+
+
+
+
+
+

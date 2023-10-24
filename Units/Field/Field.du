@@ -10,3 +10,10 @@ Field.TmpMatrix    dd       ?
 Field.TmpSeed      dd       ?
 Tmp                dd       ?
 Field.MaxNumMinesOnChank dd ?
+
+Field.Sky          dd       ?
+Field.MaxNumIter   dd       18
+Field.ConstX       dd       0.285
+Field.ConstY       dd       0.01
+
+Field.Treshold    dd        100
