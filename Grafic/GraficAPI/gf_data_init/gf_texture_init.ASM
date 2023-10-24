@@ -63,10 +63,10 @@ proc gf_GetTextureData, tx_Name
     mov eax, [Permission]
     imul eax, [rowBytesCount]
     imul eax, [rowsCount]
-    invoke  HeapAlloc, [hHeap], 0, eax
+    invoke  HeapAlloc, [gf_memHeap], 0, eax
     mov [gf_texture_adress], eax
     
-    invoke  HeapAlloc, [hHeap], 0, [rowBytesCount]
+    invoke  HeapAlloc, [gf_memHeap], 0, [rowBytesCount]
     mov [tmpRowAdress], eax
     
     ;загружаем данные текструры (tx_Name) по адрессу [gf_texture_adress]

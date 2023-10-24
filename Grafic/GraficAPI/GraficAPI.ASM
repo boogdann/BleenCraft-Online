@@ -20,13 +20,17 @@ include "api\gdi32.inc"
 include "..\..\Assets\TextuteHandler.ASM"
 include "..\..\Assets\TextuteHandler.inc"
 
-proc gf_grafic_init uses esi edi  
+proc gf_grafic_init uses esi edi
+    invoke  GetProcessHeap
+    mov    [gf_memHeap], eax            
+
     stdcall gf_window_init         
     stdcall gf_opengl_init
     stdcall gf_LoadFunctions
     stdcall gf_InitShaders
     stdcall gf_InitShadersData
     stdcall gf_InitRenderParams
+    stdcall gf_LoadTextures
   ret
 endp
 

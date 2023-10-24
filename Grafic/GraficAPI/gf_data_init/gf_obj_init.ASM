@@ -109,7 +109,7 @@ proc gf_GetObj3D_data uses edi, obj_name
   mov eax, 12
   imul dword [len]
   mov [byteCount], eax
-  invoke  HeapAlloc, [hHeap], 0, [byteCount]
+  invoke  HeapAlloc, [gf_memHeap], 0, [byteCount]
   mov [vertexes], eax
   ;Read vertexes
   invoke  ReadFile, [hFile], [vertexes], [byteCount], 0, 0 
@@ -121,7 +121,7 @@ proc gf_GetObj3D_data uses edi, obj_name
   mov eax, 12
   imul dword [len]
   mov [byteCount], eax
-  invoke  HeapAlloc, [hHeap], 0, [byteCount]
+  invoke  HeapAlloc, [gf_memHeap], 0, [byteCount]
   mov [normals], eax
   ;Read mormals
   invoke  ReadFile, [hFile], [normals], [byteCount], 0, 0 
@@ -133,7 +133,7 @@ proc gf_GetObj3D_data uses edi, obj_name
   mov eax, 8
   imul dword [len]
   mov [byteCount], eax
-  invoke  HeapAlloc, [hHeap], 0, [byteCount]
+  invoke  HeapAlloc, [gf_memHeap], 0, [byteCount]
   mov [textureCoords], eax
   ;Read textureCords
   invoke  ReadFile, [hFile], [textureCoords], [byteCount], 0, 0 
@@ -150,7 +150,7 @@ proc gf_GetObj3D_data uses edi, obj_name
   lea     edi, [fragmentCount]
   invoke  ReadFile, [hFile], edi, 4, 0, 0
   ;Create fragments buffer 
-  invoke  HeapAlloc, [hHeap], 0, [fragmentBytesCount]
+  invoke  HeapAlloc, [gf_memHeap], 0, [fragmentBytesCount]
   mov [fragments], eax          
   ;Read fragments
   invoke  ReadFile, [hFile], [fragments], [fragmentBytesCount], 0, 0
@@ -159,16 +159,16 @@ proc gf_GetObj3D_data uses edi, obj_name
   imul dword [gf_VertexCount] 
   mov  [len], eax  
   ;Буффер вершин
-  invoke  HeapAlloc, [hHeap], 0, [len]
+  invoke  HeapAlloc, [gf_memHeap], 0, [len]
   mov [gf_VertexArrayAdress], eax
   ;Буффер нормалей
-  invoke  HeapAlloc, [hHeap], 0, [len]
+  invoke  HeapAlloc, [gf_memHeap], 0, [len]
   mov [gf_NormalArrayAdress], eax
   ;Буффер текстурных координат
   mov eax, 8
   imul dword [gf_VertexCount] 
   mov  [len], eax  
-  invoke  HeapAlloc, [hHeap], 0, [len]
+  invoke  HeapAlloc, [gf_memHeap], 0, [len]
   mov [gf_TextCordArrayAdress], eax
   
   ;Считывание индексов и преобразование под это всё

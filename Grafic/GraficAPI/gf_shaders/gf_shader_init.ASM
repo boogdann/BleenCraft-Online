@@ -70,7 +70,7 @@ proc Glext.LoadShader,\
         invoke  glShaderSource, [shader], 1, eax, 0
         invoke  glCompileShader, [shader]
 
-        invoke  HeapFree, [hHeap], 0, [buffer]
+        invoke  HeapFree, [gf_memHeap], 0, [buffer]
 
         lea     eax, [compiled]
         invoke  glGetShaderiv, [shader], GL_COMPILE_STATUS, eax
@@ -105,7 +105,7 @@ proc LoadCodeFromFile uses edi,\
         invoke  GetFileSize, [hFile], 0
         inc     eax
         mov     [length], eax
-        invoke  HeapAlloc, [hHeap], 8, [length]
+        invoke  HeapAlloc, [gf_memHeap], 8, [length]
         mov     [pBuffer], eax
 
         ;lea     edi, [read]

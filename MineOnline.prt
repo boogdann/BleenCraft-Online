@@ -4,16 +4,15 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=7
-  countInc=1
+  countAsm=5
+  countInc=2
 [asm]
   asm1="Main.asm"
-  asm2="Collisions.asm"
-  asm3="CollisionsConst.asm"
-  asm4="Jumps.asm"
-  asm5="Keyboard.asm"
-  asm6="Swimming.asm"
-  asm7="CotrollerAPI.asm"
+  asm2="GameInit.asm"
+  asm3="GraficAPI.ASM"
+  asm4="gf_api_init.ASM"
+  asm5="Interface.asm"
 [inc]
-  inc1="CotrollerAPI.inc"
+  inc1="GameInitData.inc"
+  inc2="gf_api_init.inc"
 end if

@@ -1,6 +1,5 @@
  proc gf_window_init
     locals
-        hMainWindow     dd          ?
         center          POINT
     endl
     
@@ -14,7 +13,7 @@
     invoke  GetDC, [hMainWindow]
     mov     [hdc], eax
     
-    invoke  LoadCursor, 0, IDC_ARROW 
+    invoke LoadCursor, 0, IDC_ARROW 
     invoke SetCursor, eax
     
     
