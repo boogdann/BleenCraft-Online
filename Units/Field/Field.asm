@@ -235,7 +235,6 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
 ._SetSpawnPoint:
     push   ecx
     
- ;   stdcall Random.Initialize
     mov    ebx, [Field.Length]
     dec    ebx
     stdcall Random.GetInt, 1, ebx 
@@ -274,6 +273,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     fstp  dword[Field.SpawnPoint+8]      
    
 .Finish:
+     stdcall Random.Initialize
+     stdcall Field.GenerateSmallMines, [x], [y], [z], 120, 1
+     
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     ret
 endp
@@ -768,44 +770,44 @@ proc Field.GenerateSmallMines uses edi esi ebx edx, x, y, z, size, depth
      
 .GenerateMine:
      push    ecx
-     stdcall Random.GetInt, 0, 123457
-     xor     edx, edx
-     div     dword[curr]
-     inc     eax
-     xchg    edx, eax
+     stdcall Random.GetInt, 0, 550
+;     xor     edx, edx
+;     div     dword[curr]
+      inc     eax
+;     xchg    edx, eax
      
-     cmp     eax, 1
-     jnz     .Skip1
+     cmp     eax, 100
+     jnl     .Skip1
      dec     dword[x]
      jmp     .Continue
 
 .Skip1:
-     cmp     eax, 2
-     jnz     .Skip2
+     cmp     eax, 200
+     jnl     .Skip2
      inc     dword[x]
      jmp     .Continue  
      
 .Skip2:
-     cmp     eax, 3
-     jnz     .Skip3
+     cmp     eax, 300
+     jnl     .Skip3
      dec     dword[y]
      jmp     .Continue 
      
 .Skip3:
-     cmp     eax, 4
-     jnz     .Skip4
+     cmp     eax, 400
+     jnl     .Skip4
      inc     dword[y]
      jmp     .Continue
      
 .Skip4:
-     cmp     eax, 5
-     jnz     .Skip5
+     cmp     eax, 500
+     jnl     .Skip5
      dec     dword[z]
      jmp     .Continue
      
 .Skip5:
-     cmp     eax, 6
-     jnz     .Skip6
+     ; cmp     eax, 6
+     ; jnl     .Skip6
      inc     dword[z]
      jmp     .Continue
 
@@ -831,7 +833,7 @@ proc Field.GenerateSmallMines uses edi esi ebx edx, x, y, z, size, depth
      stdcall Field.GenerateSmallMines, [x], [y], [z], ecx, [depth]
 
 .SkipBranch:
-     stdcall Random.GetInt, 2, 4
+     stdcall Random.GetInt, 1, 4
      
      stdcall Field.GenerateSphere, [x], [y], [z], eax
       
