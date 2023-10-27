@@ -17,15 +17,15 @@ proc Random.InitializeWith uses eax, val
 endp
 
 proc Random.GetInt uses ecx edx edi, Min, Max 
-;     mov ecx, [Random.NumRandom]
-;     cmp [Random.MaxNumRandom], ecx
-;     jl  .ResetNumber
+     mov ecx, [Random.NumRandom]
+     cmp [Random.MaxNumRandom], ecx
+     jl  .ResetNumber
 
      cmp [Random.wPrevNumber], 0
      jnz .Skip
      
 .ResetNumber:
-     stdcall GetTickCount
+     invoke GetTickCount
      inc dword[Random.ToInc]
      add eax, [Random.ToInc]
      mov [Random.wPrevNumber], eax
