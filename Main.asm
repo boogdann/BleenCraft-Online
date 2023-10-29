@@ -13,16 +13,7 @@ include "GameInit.asm"
 
 section '.text' code readable executable     
 
-Start:  
-  mov     ecx, [WorldPower]
-  sub     ecx, 2
-  stdcall Field.GenerateClouds, ecx
-  mov     dword[SkyLand], eax
-  mov     eax, [Field.SkyLength]
-  mov     [SkyLength], eax
-  mov     eax, [Field.SkyWidth]
-  mov     [SkyWidth], eax 
-        
+Start:          
   stdcall gf_grafic_init  
   
   ;stdcall ct_change_mouse, 1
