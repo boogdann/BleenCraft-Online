@@ -1,3 +1,9 @@
+MAX_Z_COAL              = 100
+MAX_Z_IRON              = 80
+MAX_Z_GOLD             = 60
+MAX_Z_DIAMOND           = 40          
+
+
 ;                   
 Block.Air                =      0
 Block.Water              =      255
@@ -35,5 +41,5 @@ Block.Bedrock            =      19
 Block.IronOre            =      20
 Block.GoldOre            =      21
 Block.CoalOre            =      22
-Block.DiamodnOre         =      23
+Block.DiamondOre         =      23
 

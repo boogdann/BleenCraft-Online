@@ -94,7 +94,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     
     mov    dword[z], 0
 .Iterate_Z:
-    mov    byte[edi], Block.Stone
+   mov    byte[edi], Block.Stone
     add    edi, [Size]
     
     inc    dword[z]
@@ -141,6 +141,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     mov   dword[sizeChanc], eax
     
     stdcall Field.GenerateMines, [sizeChanc], 5, [power]
+    stdcall Field.GenerateOre, [sizeChanc], [numChanc], [power]
     
     mov    ecx, 0
 .IterateChancs:
@@ -290,25 +291,6 @@ proc Field.GenerateSpawnPoint uses edi, resAddr
     ret
 endp
 
-
-
-proc Field.GenerateSeed uses edi ecx eax
-    mov    eax, [Field.Length]
-    mov    edi, [Field.Width]
-    mul    edi
-    xchg   eax, ecx
-    
-    mov    edi, [Field.Seed]
-    
-.Iterate:
-    stdcall Random.GetFloat32
-    mov     [edi], eax
-    add     edi, 4
-    loop   .Iterate
-    
-    ret
-endp
-
 proc Field.IsEmptyArea uses edx edi esi ecx, x, y, z, lenX, lenY, lenZ
     locals
         localX    dd    ?
@@ -429,289 +411,6 @@ proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X: dword, Y: dword, Z: dw
      ret
 endp
 
-proc Field.PalinNoise2D uses esi edi ecx ebx edx, resAddr, width, height,\
-                        octaves, seedAddr, fBias, Leo 
-    locals
-        x           dw    ?
-        y           dw    ?
-        o           dw    ?
-        fNoise      dd    ?
-        fScaleAcc   dd    ?
-        fScale_     dd    ?
-        pitch       dd    ?
-        sampleX1    dd    ?
-        sampleY1    dd    ?
-        sampleX2    dd    ?
-        sampleY2    dd    ?
-        fBlendX     dd    ?
-        fBlendY     dd    ?
-        fSampleT    dd    ?
-        fSampleB    dd    ?
-        toPushFloat dd    ?
-        Tmp         dd    ?
-    endl
-    
-    xor    ebx, ebx
-    mov    word[x], 0    ; TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-.Iterate_x:
-    mov    word[y], 0    ; TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-.Iterate_y:
-    mov    dword[fNoise], 0.0
-    mov    dword[fScaleAcc], 0.0
-    mov    dword[fScale_], 1.0
-   
-    mov    word[o], 0    ; TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-.Iterate_o:
-    ; pitch = ecx = width >> o
-    movzx  edi, word[width]
-    mov    cx, word[o] 
-    shr    edi, cl
-    xchg   edi, ecx
-    
-    ; sampleX1 = (x / pitch) * pitch    
-    mov    edx, 0
-    movzx  eax, [x]
-    div    ecx
-    xor    edx, edx
-    mul    ecx
-    mov    [sampleX1], eax
-    
-    ; sampleY1 = (y / pitch) * pitch    
-    xor    edx, edx
-    movzx  eax, [y]
-    div    ecx
-    xor    edx, edx
-    mul    ecx
-    mov    [sampleY1], eax 
-    
-    ; sampleX2 = (sampleX1 + pitch) % width
-    mov    eax, [sampleX1]
-    add    eax, ecx
-    xor    edx, edx
-    div    [width]
-    mov    [sampleX2], edx
-    
-    ; sampleY2 = (sampleY1 + pitch) % width
-    mov    eax, [sampleY1]
-    add    eax, ecx
-    xor    edx, edx
-    div    [width]
-    mov    [sampleY2], edx
-    
-    ; fBlendX = float(x-sampleX1) / float(pitch)
-    movzx  eax, word[x]
-    sub    eax, [sampleX1]
-    
-    mov    [toPushFloat], eax
-    fild    dword[toPushFloat]  ; (x-sampleX1) -->
-       
-    mov    [toPushFloat], ecx
-    fild   dword[toPushFloat]  ; pitch --> (x-sampleX1)
-    
-    fdivp   
-    fstp   dword[fBlendX]
-;
-    mov    eax, dword[fBlendX]
-    
-    ; fBlendY = float(y-sampleY1) / float(pitch)
-    movzx  eax, word[y]
-    sub    eax, [sampleY1]
-    
-    mov    [toPushFloat], eax
-    fild    dword[toPushFloat]  ; (x-sampleX1) -->
-    
-    mov    [toPushFloat], ecx
-    fild   dword[toPushFloat]  ; pitch --> (x-sampleX1)
-    
-    fdivp   
-    fstp   dword[fBlendY] 
-    
-    ; sampleT = (1.0-fBlendX)*seedAddr[sampleY1*width+sampleX1]
-    ;           +fBlendX*seedAddr[SampleY1*width+sampleX2]
-    ;   1. sampleY1*width+sampleX1
-    
-    xor    edx, edx
-    mov    eax, [sampleY1]
-    mul    dword[width]
-    mov    esi, eax     ; esi = sampleY1*width
-    add    eax, [sampleX1]
-    mov    edi, 4
-    xor    edx, edx
-    mul    edi
-    mov    edi, eax
-    add    edi, [seedAddr]
-    
-    ;   2. 1.0-fBlendX
-    mov    dword[toPushFloat], 1.0
-    fld    dword[toPushFloat];  1.0 -->
-    fld    dword[fBlendX]    ; fBlendX --> 1.0
-    
-    fsubp
-    mov    eax, [edi]
-    mov    [toPushFloat], eax
-    fld    dword[toPushFloat]
-    
-    fmulp
-    fstp   dword[Tmp] ; Tmp = (1.0-fBlendX)*seed[sampleY1....
-    
-    ;   3. sampleY1*width+sampleX2
-    xor   edx, edx
-    mov   edi, esi
-    add   edi, [sampleX2]
-    mov   eax, edi
-    mov   edi, 4
-    mul   edi
-    add   eax, [seedAddr]
-    xchg  eax, edi
-    
-    fld   dword[fBlendX]
-    
-;    mov   eax, [edi]
-;    mov   [toPushFloat], eax
-;    fld   dword[toPushFloat]
-    fld   dword[edi]
-    
-    fmulp 
-    
-    fld   dword[Tmp]
-    faddp
-    
-    fstp dword[fSampleT]
-    
-        ; sampleB = (1.0-fBlendX)*seedAddr[sampleY2*width+sampleX1]
-    ;           +fBlendX*seedAddr[sampleY2*width+sampleX2]
-    ;   1. sampley1*width+sampleX1 
-    
-    xor    edx, edx
-    mov    eax, [sampleY2]
-    mul    dword[width]
-    mov    esi, eax     ; esi = sampleY2*width
-    add    eax, [sampleX1]
-    mov    edi, 4
-    xor    edx, edx
-    mul    edi
-    mov    edi, eax
-    add    edi, [seedAddr]
-    
-    ;   2. 1.0-fBlendX
-    mov    dword[toPushFloat], 1.0
-    fld    dword[toPushFloat];  1.0 -->
-    fld    dword[fBlendX]    ; fBlendX --> 1.0
-    
-    fsubp
-    mov    eax, [edi]
-    mov    [toPushFloat], eax
-    fld    dword[toPushFloat]
-    
-    fmulp
-    fstp   dword[Tmp] ; Tmp = (1.0-fBlendX)*seed[sampleY2....
-    
-    ;   3. sampleY1*width+sampleX2
-    xor   edx, edx
-    mov   edi, esi
-    add   edi, [sampleX2]
-    mov   eax, edi
-    mov   edi, 4
-    mul   edi
-    add   eax, [seedAddr]
-    xchg  eax, edi
-    
-    fld   dword[fBlendX]
-    
-    mov   eax, [edi]
-    mov   [toPushFloat], eax
-    fld   dword[toPushFloat]
-    
-    fmulp 
-    
-    fld   dword[Tmp]
-    faddp
-    
-    fstp  dword[fSampleB]
-    
-    ;fScaleAcc = fScaleAcc + fScale_
-    fld   dword[fScaleAcc] 
-    fld   dword[fScale_]
-    faddp
-    fstp dword[fScaleAcc]
-    
-    ; fNoise = fNoise + (fBlendY*(fSampleB-fSampleT) + 
-    ;          + fSampleT) *fScale_ 
-    
-    fld   dword[fSampleB]
-    fld   dword[fSampleT] ; fSampleT --> fSampleB
-    fsubp
-    
-    fld   dword[fBlendY]
-    fmulp
-    fld   dword[fSampleT]
-    faddp
-    fld   dword[fScale_]
-    fmulp
-    fld   dword[fNoise]
-    faddp
-    fstp  dword[fNoise]
-    
-    ; fScale_ = fScale / fBias
-    fld   dword[fScale_]
-    fld   dword[fBias]  ; fBias --> fScale_
-    fdivp
-    fstp  dword[fScale_]
-    
-    inc   word[o]
-    movzx eax, word[o]
-    cmp   eax, dword[octaves]
-    
-;   end cycle
-    jl   .Iterate_o
-    
-    ; res[y*width+x] = fNoise / fScaleAcc
-    inc   ebx
-    xor   edx, edx
-    movzx eax, word[y]
-    mul   dword[width]
-    movzx edi, word[x]
-    add   eax, edi
-    mov   edi, 4
-    xor   edx, edx
-    mul   edi
-    ;
-    ;mov   esi, eax
-    ;add   esi, [seedAddr]
-    ;
-    
-    add   eax, [resAddr]
-    xchg  eax, edi
-    
-    fld   dword[fNoise] 
-    fld   dword[fScaleAcc] ; fScaleAcc --> fNoise
-    fdivp
-    fild  dword[Leo]
-    fmulp
-    ;
-    ;fstp    dword[esi]
-    ;fld     dword[esi]
-    ;
-    fistp  dword[edi]
-   ; mov    ebx, 80
-   ; sub    dword[edi], ebx
-    
-    ; end loop_y
-    inc   word[y]
-    movzx eax, word[y]
-    cmp   eax, dword[height]
-    jl    .Iterate_y
-
-  ; end loop_x
-    inc   word[x]
-    movzx eax, word[x]
-    cmp   eax, dword[width]
-    jl    .Iterate_x
-    
-.Finish:
-    ret
-endp 
-
 ;              func Field.TestBounds
 ;    Input:  Word X, Word Y, Word Z
 ;    Output: eax <- Zero or ErrorCode
@@ -814,12 +513,8 @@ proc Field.GenerateMines uses eax ebx edx esi edi, sizeChanc, numChanc, power
     
     pop    ecx
     inc    ecx
-    
-    ;
-    cmp     ecx, 90
-    ;
-    
-    ; !!!! ;cmp    ecx, [numChanc]
+        
+    cmp    ecx, [numChanc]
     jl     .IterateChancs     
 
 
@@ -1215,12 +910,169 @@ proc Field.SetCloud uses edi esi ecx ebx, x, y, z, addres, sizeX, sizeY
 endp
 
 
+proc Field.GenerateOre uses eax ebx edx esi edi, sizeChanc, numChanc, power
+    locals
+        x             dd ?
+        y             dd ?
+        z             dd ?
+        currChanc     dd ?
+        _div          dd ?
+        _mod          dd ?
+    endl
+    
+    mov     ecx, 0
+.IterateChancs:
+    push   ecx
+    mov    [currChanc], ecx
+    mov    ecx, [sizeChanc]
+    shl    ecx, 1
+.Skip123:
+    stdcall Random.GetInt, 1, ecx
+    mov    ecx, eax
+.GenerateOre:
+    push   ecx
+    mov    ebx, [sizeChanc]
+    sub    ebx, 10
+    stdcall Random.GetInt, 0, ebx
+    add    eax, 6
+    mov    [x], eax
+  
+    mov    ebx, [sizeChanc]
+    sub    ebx, 7    
+    stdcall Random.GetInt, 0, ebx
+    add    eax, 10
+    mov    [y], eax 
+    
+    mov     eax, [Field.Height]
+    shr     eax, 1
+    stdcall Random.GetInt, 0, eax 
+    mov     [z], eax 
+    
+    xor    edx, edx
+    mov    eax, [currChanc]
+    div    dword[power]
+    mov    [_div], eax
+    mov    [_mod], edx
+   
+    xor    edx, edx
+    mov    eax, [sizeChanc]
+    mul    dword[_div]
+    add    eax, [x]
+    mov    [x], eax
+    
+    xor    edx, edx
+    mov    eax, [sizeChanc]
+    mul    dword[_mod]
+    add    eax, [y]
+    mov    [y], eax  
+    
+    stdcall Random.GetInt, 0, 4
+    inc     eax
+    
+    cmp     eax, 1
+    jnz     .Skip1
+    stdcall Field.Ore, [x], [y], MAX_Z_COAL, Block.CoalOre 
+.Skip1:
 
+    cmp     eax, 2
+    jnz     .Skip2
+    stdcall Field.Ore, [x], [y], MAX_Z_IRON, Block.IronOre 
+.Skip2:    
 
+    cmp     eax, 3
+    jnz     .Skip3
+    stdcall Field.Ore, [x], [y], MAX_Z_GOLD, Block.GoldOre 
+.Skip3:    
 
+    cmp     eax, 4
+    jnz     .Skip4
+    stdcall Field.Ore, [x], [y], MAX_Z_DIAMOND, Block.DiamondOre 
+.Skip4:      
+          
+.Continue:
+    pop    ecx
+    dec    ecx
+    cmp    ecx, 1
+    jz     .GenerateOre
+    
+    pop    ecx
+    inc    ecx
+        
+    cmp    ecx, [numChanc]
+    jl     .IterateChancs  
 
+.Finish:
+     ret
+endp
 
+proc Field.Ore uses eax ebx ecx edx, x, y, maxPosZ, typeOre
+     locals
+         nX   dd ?
+         nY   dd ?
+         nZ   dd ?
+         z    dd ?
+         size dd 3
+     endl
+     
+     mov     ecx, 200
+.GenZ:
+     stdcall Random.GetInt, 0, [maxPosZ]
+     inc     eax
+     mov     dword[z], eax
+     
+;     stdcall Field.GetBlockIndex, [x], [y], [z]
+;     cmp     eax, Block.Air
+;     jnz      .Skip
+;.Skip:
+;     cmp     eax, Block.Water
+;     jz      .Continue
+;     jmp     .SetOre
+;
+;.Continue:
+;     loop     .GenZ
+    
+;.SetOre:
+;     stdcall Field.GetBlockIndex, [x], [y], [z]
+;     cmp     eax, Block.Air
+;     jnz      .Skip1
+;.Skip1:
+;     cmp     eax, Block.Water
+;     jz      .Finish
 
+     mov     ebx, [typeOre]
+     mov     ecx, [size]
+.IterateX:
+     mov     eax, [x]
+     add     eax, ecx
+     mov     [nX], eax
+     
+     push    ecx
+     mov     ecx, [size]
+.IterateY:
+     mov     eax, [y]
+     add     eax, ecx
+     mov     [nY], eax
+     
+     push    ecx
+     mov     ecx, [size]
+.IterateZ:
+     mov     eax, [z]
+     add     eax, ecx
+     mov     [nZ], eax
 
+     stdcall Random.GetInt, 0, 100
+     cmp     eax, 25
+     jl      .SkipSet
 
-
+     stdcall Field.SetBlockIndex, [nX], [nY], [nZ], ebx
+     
+.SkipSet:
+     loop    .IterateZ
+     pop     ecx
+     loop    .IterateY
+     pop     ecx
+     loop    .IterateX
+           
+.Finish:
+     ret
+endp 
