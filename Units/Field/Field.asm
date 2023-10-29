@@ -1022,12 +1022,33 @@ proc Field.GenerateBigMines uses edi esi, x, y, z,  depth, size
      ret
 endp
 
-proc Field.GenerateClouds uses ebx edi esi edx, sizeX, sizeY
-     locals
-         resAddr dd ?
-     endl
-     invoke  GetProcessHeap
+proc Field.GenerateClouds uses ebx edi esi edx, power
+    locals
+        x             dd ?
+        y             dd ?
+        z             dd ?
+        currChanc     dd ?
+        _div          dd ?
+        _mod          dd ?
+        resAddr       dd ?
+        sizeX         dd ?
+        sizeY         dd ?
+        sizeChanc     dd ?
+    endl
+     
+    ; stdcall Field.SetBlockIndex, 100, 100, 100, Blocks.DiamondOre
+     
+     stdcall Random.Initialize
+     
+     invoke GetProcessHeap
      mov    [Field.hHeap], eax
+     xor    edx, edx
+     mov    eax, 1
+     mov    cl, byte[power]
+     shl    eax, cl
+     inc    eax
+     mov    dword[sizeX], eax
+     mov    dword[sizeY], eax
     
      xor    edx, edx
      mov    eax, [sizeX]
@@ -1035,102 +1056,255 @@ proc Field.GenerateClouds uses ebx edi esi edx, sizeX, sizeY
      
      invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
      mov    [resAddr], eax
+     mov    [Field.Sky], eax
      
-     mov    eax, 0 
-.IterateX:
-     mov    ebx, 0
-.IterateY:
-     stdcall Field.GenerateCloudJulia, [resAddr], eax, ebx, [sizeX], [sizeY]
-     inc    ebx
-     cmp    ebx, [sizeY]
-     jl     .IterateY  
-
-     inc    eax
-     cmp    eax, [sizeX]
-     jl     .IterateX
+     mov   eax, [power]
+     mul   dword[power]
+     mov   dword[numChanc], eax
+     
+     xor   edx, edx
+     mov   eax, [sizeX]
+     div   dword[power]
+     mov   dword[sizeChanc], eax
+        
+     mov     ecx, 0
+.IterateChancs:
+     push   ecx
+     mov    [currChanc], ecx
+     mov    ecx, [sizeChanc]
+.Skip123:
+     ;stdcall Random.GetInt, 10, 100
+     mov    eax, 1
+     mov    ecx, eax
+.GenerateClouds:
+     push   ecx
+     mov    ebx, [sizeChanc]
+     sub    ebx, 10
+     stdcall Random.GetInt, 0, ebx
+     add    eax, 6
+     mov    [x], eax
+  
+     mov    ebx, [sizeChanc]
+     sub    ebx, 7    
+     stdcall Random.GetInt, 0, ebx
+     add    eax, 10
+     mov    [y], eax 
+     
+     xor    edx, edx
+     mov    eax, [currChanc]
+     div    dword[power]
+     mov    [_div], eax
+     mov    [_mod], edx
+   
+     xor    edx, edx
+     mov    eax, [sizeChanc]
+     mul    dword[_div]
+     add    eax, [x]
+     mov    [x], eax
+     
+     xor    edx, edx
+     mov    eax, [sizeChanc]
+     mul    dword[_mod]
+     add    eax, [y]
+     mov    [y], eax  
+     
+     stdcall Random.GetInt, 0, 7
+     add    eax, 1
+          
+     cmp    eax, 1
+     jnz    .Skip1
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud1, [sizeChanc], [sizeChanc]
+     
+.Skip1:
+     cmp    eax, 2
+     jnz    .Skip2
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud2, [sizeChanc], [sizeChanc]
+     
+.Skip2:
+     cmp    eax, 3
+     jnz    .Skip3
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud3, [sizeChanc], [sizeChanc]
+     
+.Skip3:
+     cmp    eax, 4
+     jnz    .Skip4
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud4, [sizeChanc], [sizeChanc]
+     
+.Skip4:
+     cmp    eax, 5
+     jnz    .Skip5
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud5, [sizeChanc], [sizeChanc]
+     
+.Skip5:
+     cmp    eax, 6
+     jnz    .Skip6
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud6, [sizeChanc], [sizeChanc]
+     
+.Skip6:
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud7, [sizeChanc], [sizeChanc]
+        
+.Continue:
+    pop    ecx
+    dec    ecx
+    cmp    ecx, 1
+    ja    .GenerateClouds
+    
+    pop    ecx
+    inc    ecx
+    
+    ;
+    cmp     ecx, 100
+    ;
+    
+    ; !!!! ;cmp    ecx, [numChanc]
+    jl     .IterateChancs    
 
 .Finish:
      mov    eax, [resAddr]
      ret
 endp
 
-proc Field.GenerateCloudJulia uses eax edi esi edx ebx, resAddr, x, y, sizeX, sizeY
+proc Field.SetCloud uses edi esi ecx ebx, x, y, z, addres, sizeX, sizeY
      locals
-         zReal dd 0.0
-         zImg  dd 0.0
-         iter  dd 0
-         newZ  dd ?
-         tmp   dd ?
-         TWO   dd ?  
+         newX  dd ?
+         newY  dd ?
      endl
-     mov     dword[TWO], 2
-
-.Julia:
-     mov     eax, [iter]
-     mov     ebx, [Field.MaxNumIter]
-     cmp     eax, [Field.MaxNumIter]
-     jge     .SetPoint
-     
-     fld     dword[zReal]
-     fld     dword[zReal]
-     fmulp   
-     
-     fld     dword[zImg]
-     fld     dword[zImg]
-     fmulp       
-
-     faddp   
-     fistp   dword[tmp]
-     
-     mov     eax, [tmp]
-     cmp     eax, [Field.Treshold]
-     jge     .SetPoint
-     
-     fld     dword[zReal]
-     fld     dword[zReal]
-     fmulp   
-     
-     fld     dword[zImg]
-     fld     dword[zImg]
-     fmulp   
-     
-     fsubp 
-     
-     fld     dword[Field.ConstX]  
-     faddp   
-     fstp    dword[newZ]
-     
-     fld     dword[zReal]
-     fld     dword[zImg]
-     fmulp   
-     fld     dword[TWO]
-     fmulp   
-     fld     dword[Field.ConstY]
-     faddp   
-     fstp    dword[zImg]
-     
-     mov     eax, [newZ]
-     mov     [zReal], eax
-     
-     inc     dword[iter]
-     jmp     .Julia
-     
-.SetPoint:
-     mov     eax, [iter]
-     cmp     eax, [Field.MaxNumIter]
-     jnz     .Finish
-     
+     mov     dword[newX], 0
+.IterateX:
+     mov     dword[newY], 0
+.IterateY:
      xor     edx, edx
-     mov     eax, [x]
+     mov     eax, [newX]
+     add     eax, [x]
      mul     dword[sizeX]
-     add     eax, [y]
-     mov     edi, [resAddr]
+     mov     edi, dword[newY]
+     add     edi, [y]
      add     edi, eax
+     add     edi, [Field.Sky]
+     
      mov     byte[edi], 1
+     
+     inc     dword[newY]
+     cmp     dword[newY], 10
+     jl      .IterateY
+     
+     inc     dword[newX]
+     cmp     dword[newX], 10
+     jl      .IterateX
      
 .Finish:
      ret
 endp
+
+;proc Field.GenerateClouds uses ebx edi esi edx, sizeX, sizeY
+;     locals
+;         resAddr dd ?
+;     endl
+;     invoke  GetProcessHeap
+;     mov    [Field.hHeap], eax
+;    
+;     xor    edx, edx
+;     mov    eax, [sizeX]
+;     mul    dword[sizeY]
+;     
+;     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
+;     mov    [resAddr], eax
+;     
+;     mov    eax, 0 
+;.IterateX:
+;     mov    ebx, 0
+;.IterateY:
+;     stdcall Field.GenerateCloudJulia, [resAddr], eax, ebx, [sizeX], [sizeY]
+;     inc    ebx
+;     cmp    ebx, [sizeY]
+;     jl     .IterateY  
+;
+;     inc    eax
+;     cmp    eax, [sizeX]
+;     jl     .IterateX
+;
+;.Finish:
+;     mov    eax, [resAddr]
+;     ret
+;endp
+;
+;proc Field.GenerateCloudJulia uses eax edi esi edx ebx, resAddr, x, y, sizeX, sizeY
+;     locals
+;         zReal dd 0.0
+;         zImg  dd 0.0
+;         iter  dd 0
+;         newZ  dd ?
+;         tmp   dd ?
+;         TWO   dd ?  
+;     endl
+;     mov     dword[TWO], 2
+;
+;.Julia:
+;     mov     eax, [iter]
+;     mov     ebx, [Field.MaxNumIter]
+;     cmp     eax, [Field.MaxNumIter]
+;     jge     .SetPoint
+;     
+;     fld     dword[zReal]
+;     fld     dword[zReal]
+;     fmulp   
+;     
+;     fld     dword[zImg]
+;     fld     dword[zImg]
+;     fmulp       
+;
+;     faddp   
+;     fistp   dword[tmp]
+;     
+;     mov     eax, [tmp]
+;     cmp     eax, [Field.Treshold]
+;     jge     .SetPoint
+;     
+;     fld     dword[zReal]
+;     fld     dword[zReal]
+;     fmulp   
+;     
+;     fld     dword[zImg]
+;     fld     dword[zImg]
+;     fmulp   
+;     
+;     fsubp 
+;     
+;     fld     dword[Field.ConstX]  
+;     faddp   
+;     fstp    dword[newZ]
+;     
+;     fld     dword[zReal]
+;     fld     dword[zImg]
+;     fmulp   
+;     fld     dword[TWO]
+;     fmulp   
+;     fld     dword[Field.ConstY]
+;     faddp   
+;     fstp    dword[zImg]
+;     
+;     mov     eax, [newZ]
+;     mov     [zReal], eax
+;     
+;     inc     dword[iter]
+;     jmp     .Julia
+;     
+;.SetPoint:
+;     mov     eax, [iter]
+;     cmp     eax, [Field.MaxNumIter]
+;     jnz     .Finish
+;     
+;     xor     edx, edx
+;     mov     eax, [x]
+;     mul     dword[sizeX]
+;     add     eax, [y]
+;     mov     edi, [resAddr]
+;     add     edi, eax
+;     mov     byte[edi], 1
+;     
+;.Finish:
+;     ret
+;endp
 
 
 

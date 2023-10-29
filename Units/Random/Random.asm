@@ -5,7 +5,7 @@ proc Random.Initialize uses eax edx
      mov    [Random.ToInc], 13
      
      mov    dword[Random.NumRandom], 0
-     mov    dword[Random.MaxNumRandom], 200000     
+     mov    dword[Random.MaxNumRandom], 1000     
 .Finish:
      ret
 endp
@@ -16,7 +16,7 @@ proc Random.InitializeWith uses eax, val
      ret
 endp
 
-proc Random.GetInt uses ecx edx edi, Min, Max 
+proc Random.GetInt uses ecx edx edi esi ebp esp ebx, Min, Max 
      mov ecx, [Random.NumRandom]
      cmp [Random.MaxNumRandom], ecx
      jl  .ResetNumber
@@ -29,6 +29,7 @@ proc Random.GetInt uses ecx edx edi, Min, Max
      inc dword[Random.ToInc]
      add eax, [Random.ToInc]
      mov [Random.wPrevNumber], eax
+     mov dword[Random.NumRandom], 0
      
 .Skip:
      xor eax, eax    

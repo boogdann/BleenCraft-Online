@@ -8,9 +8,15 @@ proc GameStart
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
-  stdcall ProcGen.GenerateTree, 50, 50, 100 
   
   stdcall Field.GenerateSpawnPoint, cameraPos
+  
+  stdcall Field.GenerateClouds, [WorldPower]
+  mov     dword[SkyLand], eax
+  mov     eax, [WorldLength]
+  mov     [SkyLength], eax
+  mov     eax, [WorldWidth]
+  mov     [SkyWidth], eax  
   
   ;================Params initialize=====================
   ;????????? ????????????? ???????? ?????????? ????-????
@@ -54,7 +60,7 @@ proc RenderScene
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
                                                [WorldHeight], cameraPos, cameraTurn, 1
     ;?????? ???????
-    stdcall gf_renderSkyObjs, SkyLand, [SkyLength], [SkyWidth], [SkyHieght]
+    stdcall gf_renderSkyObjs, [SkyLand], [SkyLength], [SkyWidth], [SkyHieght]
     
     ;????????? ??????? ?????
     stdcall gf_RenderEnd
