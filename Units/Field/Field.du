@@ -16,10 +16,13 @@ Field.Sky          dd       ?
 Field.MaxNumIter   dd       18
 Field.ConstX       dd       0.285
 Field.ConstY       dd       0.01
+Field.SkyLength    dd       ?
+Field.SkyWidth     dd       ?
 
 Field.Treshold    dd        100
 
 Field.CloudSize   dd        100
+Field.CloudLength dd        10
 Field.Cloud1      db        1,0,0,0,0,0,0,0,0,0,\ 
                             0,1,1,0,1,0,0,0,1,1,\
                             0,0,0,0,0,1,0,0,1,0,\
