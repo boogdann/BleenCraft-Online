@@ -65,6 +65,9 @@ proc WindowProc uses ebx,\
         stdcall ct_on_keyDown, [wParam] 
         jmp     .ReturnZero
   .Destroy:
+        ;stdcall Field.SaveInFileWorld, [Field.Blocks], [SizeWorld], filename       
+        ;stdcall Field.SaveInFileWorld, [SkyLand], [SizeSky], filenameSky
+        
         invoke ExitProcess, 1
   .ReturnZero:
         xor     eax, eax
@@ -83,7 +86,7 @@ section '.data' data readable writeable
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
          ;??????????????? ??????????? ?? ????????? ??????:
-         GF_BLOCKS_RADIUS   dd     300, 300, 300 ;(?? x, y, z)
+         GF_BLOCKS_RADIUS   dd     30, 30, 30 ;(?? x, y, z)
          
          hMainWindow        dd          ?
          ;=================================================== 

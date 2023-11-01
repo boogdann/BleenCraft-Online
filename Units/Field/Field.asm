@@ -1,4 +1,3 @@
-;               
 ;              proc Field.Initialize
 proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     locals
@@ -271,7 +270,8 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
 .Finish:
      stdcall Random.Initialize
      ; stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
-     
+    
+    mov    dword[isGenerated], 1 
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     ret
 endp

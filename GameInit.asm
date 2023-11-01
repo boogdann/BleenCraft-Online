@@ -9,6 +9,16 @@ proc GameStart
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
   
+  mov     edi, [Field.Blocks]
+  add     edi, 10
+  mov     byte[edi], 1
+  
+  xor     edx, edx
+  mov     eax, [WorldLength]
+  mul     dword[WorldWidth]
+  mul     dword[WorldHeight]
+  mov     [SizeWorld], eax
+  
   mov     ecx, [WorldPower]
   sub     ecx, 2
   stdcall Field.GenerateClouds, ecx
@@ -18,9 +28,12 @@ proc GameStart
   mov     eax, [Field.SkyWidth]
   mov     [SkyWidth], eax 
   
-  stdcall Field.GenerateSpawnPoint, cameraPos
+  xor     edx, edx
+  mov     eax, [SkyLength]
+  mul     dword[SkyWidth]
+  mov     [SizeSky], eax
   
- 
+  stdcall Field.GenerateSpawnPoint, cameraPos
   
   ;================Params initialize=====================
   ;????????? ????????????? ???????? ?????????? ????-????

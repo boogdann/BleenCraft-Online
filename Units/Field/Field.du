@@ -11,6 +11,10 @@ Field.TmpSeed      dd       ?
 Tmp                dd       ?
 Field.MaxNumMinesOnChank dd ?
 
+Field.FileBuffer   dd       ?, ?, ?, ?
+Field.SizeBuffer   dd       8
+Field.WrittenBytes dd       ?
+
 
 Field.Sky          dd       ?
 Field.MaxNumIter   dd       18
