@@ -12,7 +12,7 @@ Tmp                dd       ?
 Field.MaxNumMinesOnChank dd ?
 
 Field.FileBuffer   dd       ?, ?, ?, ?
-Field.SizeBuffer   dd       8
+Field.SizeBuffer   dd       5
 Field.WrittenBytes dd       ?
 
 

@@ -1,5 +1,5 @@
 ;              proc Field.Initialize
-proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
+proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     locals
         x      dd  ?
         y      dd  ?
@@ -22,6 +22,11 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     
     stdcall Random.Initialize
     
+    ;stdcall Field.ReadFromFile, Field.Length, Field.Width, Field.Height, [filename]
+    stdcall Field.ReadFromFiles, [filename]
+    cmp     eax, -1
+    jnz     .EndSetWorld
+
     invoke  GetProcessHeap
     mov    [Field.hHeap], eax
     
@@ -273,19 +278,23 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl
     
     mov    dword[isGenerated], 1 
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
+.EndSetWorld:
     ret
 endp
 
 proc Field.GenerateSpawnPoint uses edi, resAddr
-    mov    eax, [Field.SpawnPoint]
+    mov    eax, 100.0
+    ; mov    eax, [Field.SpawnPoint]
     mov    edi, [resAddr]
     mov    [edi], eax
     
-    mov    eax, [Field.SpawnPoint+4]
+    mov    eax, 100.0
+    ; mov    eax, [Field.SpawnPoint+4]
     mov    edi, [resAddr]
     mov    [edi+4], eax
     
-    mov    eax, [Field.SpawnPoint+8]
+    mov    eax, 100.0
+    ; mov    eax, [Field.SpawnPoint+8]
     mov    edi, [resAddr]
     mov    [edi+8], eax   
     ret
