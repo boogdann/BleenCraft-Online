@@ -1,0 +1,20 @@
+;                   Difficulty breaking blocks
+
+;       0 - ломаются всегда моментально
+;       1 - ломаются лолатой быстрее
+;       2 - ломаются киркой быстрее
+;       3 - ломаются топором быстрее
+;       4 - ломаются за константное время(не зависит от инструмента)
+;
+
+Blocks.START_DESTROY_TIME =       1000
+
+Blocks.IS_DESTRUCTIBLE     =      1
+Blocks.IS_NOT_DESTRUCTIBLE =      0
+
+Blocks.INDERSTRUCTIBLE     =     -1
+Blocks.MIN_TIME            =      0
+Blocks.FASTER_SHOVEL       =      1
+Blocks.FASTER_PICKAXE      =      2
+Blocks.FASTER_AXE          =      3
+Blocks.CONST_TIME          =      4

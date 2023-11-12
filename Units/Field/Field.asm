@@ -22,10 +22,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
     stdcall Random.Initialize
     
-    ;stdcall Field.ReadFromFile, Field.Length, Field.Width, Field.Height, [filename]
-    stdcall Field.ReadFromFiles, [filename]
-    cmp     eax, -1
-    jnz     .EndSetWorld
+    ; stdcall Field.ReadFromFiles, [filename]
+    ; cmp     eax, -1
+    ; jnz     .EndSetWorld
 
     invoke  GetProcessHeap
     mov    [Field.hHeap], eax
@@ -274,7 +273,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
    
 .Finish:
      stdcall Random.Initialize
-     ; stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
+      stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
     
     mov    dword[isGenerated], 1 
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
@@ -283,18 +282,18 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
 endp
 
 proc Field.GenerateSpawnPoint uses edi, resAddr
-    mov    eax, 100.0
-    ; mov    eax, [Field.SpawnPoint]
+    ;mov    eax, 100.0
+    mov    eax, [Field.SpawnPoint]
     mov    edi, [resAddr]
     mov    [edi], eax
     
-    mov    eax, 100.0
-    ; mov    eax, [Field.SpawnPoint+4]
+    ;mov    eax, 100.0
+    mov    eax, [Field.SpawnPoint+4]
     mov    edi, [resAddr]
     mov    [edi+4], eax
     
-    mov    eax, 100.0
-    ; mov    eax, [Field.SpawnPoint+8]
+    ;mov    eax, 100.0
+    mov    eax, [Field.SpawnPoint+8]
     mov    edi, [resAddr]
     mov    [edi+8], eax   
     ret
@@ -725,7 +724,7 @@ proc Field.GenerateBigMines uses edi esi, x, y, z,  depth, size
      ret
 endp
 
-proc Field.GenerateClouds uses ebx edi esi edx, power
+proc Field.GenerateClouds uses ebx edi esi edx, power, filename
     locals
         x             dd ?
         y             dd ?
@@ -741,6 +740,10 @@ proc Field.GenerateClouds uses ebx edi esi edx, power
     endl
           
      stdcall Random.Initialize
+     
+     ;stdcall Field.ReadCloudsFromFile, [filename]
+     ;cmp     eax, -1
+     ;jnz     .Finish
      
      invoke GetProcessHeap
      mov    [Field.hHeap], eax

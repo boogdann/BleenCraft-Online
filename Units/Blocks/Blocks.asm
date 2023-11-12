@@ -1,81 +1,104 @@
-proc Blocks.GetDestroyTime uses edi edx, IndexBlock: word, IndexTool: word
-    mov    eax, Blocks.START_DESTROY_TIME
+proc Blocks.GetDestroyTime uses edi ecx, IndexBlock, IndexTool
+    locals
+        indexDestr        dd ?
+        multiplyDestr     dd ?
+        multiplyPriorTool dd ?
+    endl
+    
+    stdcall Blocks.IndexDestr, [IndexBlock], [IndexTool]
+    mov     [indexDestr], eax
+    
+    stdcall Blocks.MultDestr, [IndexBlock]
+    mov     [multiplyDestr], eax
+    
+    stdcall Blocks.PriorTool, [IndexBlock]
+    mov     [multiplyPriorTool], eax
+    
+    xor     edx, edx
+    mov     eax, Blocks.START_DESTROY_TIME
+    mul     dword[multiplyDestr]
+    
+    cmp     dword[multiplyPriorTool], 0
+    jz      .SkipDiv
+    div     dword[multiplyPriorTool]
+.SkipDiv: 
+    
+    cmp     dword[indexDestr], 0
+    jnle    .SkipSet
+    mov     edx, Blocks.IS_DESTRUCTIBLE
+    jmp     .SkipNotSet    
+.SkipSet:
+    mov     edx, Blocks.IS_NOT_DESTRUCTIBLE
+.SkipNotSet:
+  
+.Finish:
+    ret
+endp
 
-;   edi    -   destroyIndex of block with IndexBlock
-;   ebx    -   tool index
-    movzx  edi, word[IndexBlock]
-    movzx  edx, word[IndexTool]
-
-    cmp    word[Blocks.DestoyIndex + edi], Blocks.MIN_TIME
-    jz     .MinTime
-
-    cmp    word[Blocks.DestoyIndex + edi], Blocks.INDERSTRUCTIBLE
-    jz     .Indestructible
-
-    cmp    edx, Tools.PICKAXE
-    jnz    .Skip1
-    cmp    word[Blocks.DestoyIndex + edi], Blocks.FASTER_PICKAXE
-    jz     .Faster 
-
-.Skip1:         
-    cmp    edx, Tools.AXE
-    jnz    .Skip2
-    cmp    word[Blocks.DestoyIndex + edi], Blocks.FASTER_AXE
-    jz     .Faster
-
+proc Blocks.IndexDestr uses edi edx, IndexBlock, IndexTool
+     locals
+         idxMaterialTool dd ?
+         NUM_5           dd 5
+     endl
+     
+     cmp    [IndexTool], Tools.MinValueTool
+     jl     .SetZeroMaterial
+     
+     xor    edx, edx
+     mov    eax, [IndexTool]
+     div    dword[NUM_5]
+     
+     cmp    edx, 0
+     jnz    .Skip1
+     mov    [idxMaterialTool], Blocks.MaterialWood
+          
+.Skip1:
+     cmp    edx, 1
+     jnz    .Skip2
+     mov    [idxMaterialTool], Blocks.MaterialStone
+          
 .Skip2:
-    cmp    edx, Tools.SHOVEL
-    jnz    .Skip3
-    cmp    word[Blocks.DestoyIndex + edi], Blocks.FASTER_SHOVEL
-    jz     .Faster
-
+     cmp    edx, 2
+     jnz    .Skip3
+     mov    [idxMaterialTool], Blocks.MaterialIron
+          
 .Skip3:
-    jmp     .Finish
+     cmp    edx, 3
+     jnz    .Skip4
+     mov    [idxMaterialTool], Blocks.MaterialGold
+          
+.Skip4:
+     cmp    edx, 4
+     jnz    .Skip5
+     mov    [idxMaterialTool], Blocks.MaterialDiamond
+          
+.Skip5:
+     
+.SetZeroMaterial:
+     mov    [idxMaterialTool], Blocks.MaterialEmpty
+      
+     mov    edi, Blocks.IndexDestruction
+     add    edi, [IndexBlock]
+     movzx  eax, byte[edi] 
 
-.Faster: 
-    shr     eax, 1
-    jmp     .Finish
+.Finish:
+     sub    eax, dword[idxMaterialTool]
+     ret
+endp
 
-.MinTime:    
-    mov     eax, 0
-    jmp     .Finish
-
-.Indestructible:
-    mov    eax, 429496700 
+proc Blocks.MultDestr uses edi, IndexTool
+     mov    edi, Blocks.MultiplyDestruction
+     add    edi, [IndexTool]
+     movzx  eax, byte[edi]
+      
 .Finish:
     ret
 endp
 
-proc Blocks.GetTextureHandle Index: word
-    movzx  eax, word[Index]
-    cmp    word[Index], 256
-    jl     .GetTextureHandleObject 
-    stdcall Blocks.GetTextureHandleBlock, eax
-    jmp    .Finish
-
-.GetTextureHandleObject:
-    stdcall Blocks.GetTextureHandleObject, eax
-
+proc Blocks.PriorTool uses edi, IndexTool 
+     mov    edi, Blocks.PriorirityTool
+     add    edi, [IndexTool]
+     movzx  eax, byte[edi] 
 .Finish:
-    ret
+     ret
 endp
-
-proc Blocks.GetTextureHandleBlock uses edi, Index: word
-    movzx  edi, word[Index] 
-    add    edi, Blocks.TextureAdresses 
-    mov    eax, [edi]
-
-.Finish:
-    ret
-endp
-
-proc Blocks.GetTextureHandleObject uses edi, Index: word
-    movzx  edi, word[Index]
-    sub    edi, 256
-    add    edi, Tools.TextureAdresses 
-    mov    eax, [edi]
-
-.Finish:
-    ret
-endp
-   

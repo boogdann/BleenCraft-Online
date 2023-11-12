@@ -3,7 +3,7 @@ include "Units\Asm_Includes\Code.asm"
 
 proc GameStart
   ;================Modules initialize=================
-  stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl] 
+  stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], filename 
   mov     eax, [Field.Length]
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
@@ -21,7 +21,7 @@ proc GameStart
   
   mov     ecx, [WorldPower]
   sub     ecx, 2
-  stdcall Field.GenerateClouds, ecx
+  stdcall Field.GenerateClouds, ecx, filenameSky
   mov     dword[SkyLand], eax
   mov     eax, [Field.SkyLength]
   mov     [SkyLength], eax

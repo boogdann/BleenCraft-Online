@@ -65,8 +65,8 @@ proc WindowProc uses ebx,\
         stdcall ct_on_keyDown, [wParam] 
         jmp     .ReturnZero
   .Destroy:
-        ;stdcall Field.SaveInFileWorld, [Field.Blocks], [SizeWorld], filename       
-        ;stdcall Field.SaveInFileWorld, [SkyLand], [SizeSky], filenameSky
+        ; stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], filename       
+        ; stdcall Field.SaveInFileWorld, [SkyLand],[SkyLength] ,[SkyWidth], 1 ,[SizeSky], filenameSky
         
         invoke ExitProcess, 1
   .ReturnZero:

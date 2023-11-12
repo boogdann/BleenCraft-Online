@@ -1,6 +1,5 @@
 proc Field.ReadFromFiles uses ebx edi esi ecx, filename
 
-     ; добавить размеры
      stdcall Field.ReadFromFile, Field.Length, Field.Width, Field.Height, [filename]
      cmp     eax, -1
      jz      .Error
@@ -11,6 +10,19 @@ proc Field.ReadFromFiles uses ebx edi esi ecx, filename
 .Error:
      ret
 endp   
+
+proc Field.ReadCloudsFromFile uses ebx, esi, ecx, filename
+
+     stdcall Field.ReadFromFile, Field.SkyLength, Field.SkyWidth, Field.FileBuffer, [filename]
+     cmp     eax, -1
+     jz      .Error
+     mov     [Field.Blocks], edx
+     
+.Finish:
+     xor     eax, eax
+.Error:
+     ret
+endp
 
 proc Field.SaveInFileWorld uses ebx edi esi ecx eax edx, addres, sizeX, sizeY, sizeZ, size, filename
      locals

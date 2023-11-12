@@ -1,30 +1,64 @@
-Blocks.DestoyIndex      db      -1, -1, 3, 3, 0, 3, 3, 1, 1, 0, 1, 1, 4, 1, 2, 2, 2, 4, 4, -1, 2, 2, 2, 2           
-;                                0   1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18  19 20 21 22 23
-; PATH - Assets/TexturesPack/
+Blocks.MaterialEmpty           = 0
+Blocks.MaterialWood            = 1
+Blocks.MaterialStone           = 2
+Blocks.MaterialIron            = 3
+Blocks.MaterialGold            = 4
+Blocks.MaterialDiamond         = 5
 
-Blocks.TexturesNames:
-    db  "Assets/TexturesPack/Water.png", 0
-    db  "Assets/TexturesPack/Air.png", 0
-    db  "Assets/TexturesPack/Log.png", 0
-    db  "Assets/TexturesPack/Planks.png", 0
-    db  "Assets/TexturesPack/Leaves.png", 0 
-    db  "Assets/TexturesPack/Chest.png", 0 
-    db  "Assets/TexturesPack/CraftingTable.png", 0
-    db  "Assets/TexturesPack/Dirt.png", 0
-    db  "Assets/TexturesPack/Turf.png", 0
-    db  "Assets/TexturesPack/Tallgrass.png", 0
-    db  "Assets/TexturesPack/Sand.png", 0
-    db  "Assets/TexturesPack/Sandstone.png", 0
-    db  "Assets/TexturesPack/Glass.png", 0
-    db  "Assets/TexturesPack/Gravel.png", 0
-    db  "Assets/TexturesPack/Cobblestone.png", 0
-    db  "Assets/TexturesPack/Stone.png", 0
-    db  "Assets/TexturesPack/Furnace.png", 0
-    db  "Assets/TexturesPack/Wool.png", 0
-    db  "Assets/TexturesPack/Bed.png", 0
-    db  "Assets/TexturesPack/Planks.Bedrock", 0
-    db  "Assets/TexturesPack/IronOre.png", 0
-    db  "Assets/TexturesPack/GoldOre.png", 0
-    db  "Assets/TexturesPack/CoalOre.png", 0
-    db  "Assets/TexturesPack/DiamondOre.png", 0
-    db  0
+;                               0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  
+Blocks.IndexDestruction db      9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,\ ; 0
+                                1, 0, 0, 255, 2, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 2  
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 3 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 4 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 5 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 6 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 7 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 8 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 9 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; A 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; B 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; C 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; D
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; E 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9 \ ; F  
+
+;                               0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  
+Blocks.MultiplyDestruction db   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 0
+                                1, 1, 1, 255, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 2  
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 3 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 4 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 5 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 6 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 7 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 8 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; 9 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; A 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; B 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; C 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; D
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\ ; E 
+                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 \ ; F
+
+
+Tools.PriorityAll            = 0
+Tools.PrioriryPickaxe        = 1
+Tools.PrioriryAxe            = 2
+Tools.PrioriryShowel         = 3
+
+;                               0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  
+Blocks.PriorirityTool      db   0, 0, 2, 2, 0, 2, 2, 3, 3, 0, 3, 3, 0, 3, 1, 1,\ ; 0
+                                1, 0, 2, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 2  
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 3 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 4 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 5 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 6 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 7 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 8 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; 9 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; A 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; B 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; C 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; D
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\ ; E 
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 \ ; F 
+ 
