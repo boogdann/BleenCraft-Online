@@ -22,9 +22,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
     stdcall Random.Initialize
     
-    ; stdcall Field.ReadFromFiles, [filename]
-    ; cmp     eax, -1
-    ; jnz     .EndSetWorld
+   ; stdcall Field.ReadFromFiles, [filename]
+   ; cmp     eax, -1
+   ;   jnz     .EndSetWorld
 
     invoke  GetProcessHeap
     mov    [Field.hHeap], eax
@@ -815,7 +815,7 @@ proc Field.GenerateClouds uses ebx edi esi edx, power, filename
      add    eax, [y]
      mov    [y], eax  
      
-     stdcall Random.GetInt, 0, 8
+     stdcall Random.GetInt, 0, 13
      add    eax, 1
           
      cmp    eax, 1
@@ -848,7 +848,41 @@ proc Field.GenerateClouds uses ebx edi esi edx, power, filename
      stdcall Field.SetCloud, [x], [y], [z], Field.Cloud6, [sizeChanc], [sizeChanc]
      
 .Skip6:
+     cmp    eax, 7
+     jnz    .Skip7
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud7, [sizeChanc], [sizeChanc]
 
+.Skip7:
+     cmp    eax, 8
+     jnz    .Skip8
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud8, [sizeChanc], [sizeChanc]
+     
+.Skip8:
+     cmp    eax, 9
+     jnz    .Skip9
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud9, [sizeChanc], [sizeChanc]
+     
+.Skip9:
+     cmp    eax, 10
+     jnz    .Skip10
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud10, [sizeChanc], [sizeChanc]
+     
+.Skip10:
+     cmp    eax, 11
+     jnz    .Skip11
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud11, [sizeChanc], [sizeChanc]
+     
+.Skip11:
+     cmp    eax, 12
+     jnz    .Skip12
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud12, [sizeChanc], [sizeChanc]
+     
+.Skip12:
+     cmp    eax, 13
+     jnz    .Skip13
+     stdcall Field.SetCloud, [x], [y], [z], Field.Cloud6, [sizeChanc], [sizeChanc]
+     
+.Skip13:
 
 .Continue:
     pop    ecx
