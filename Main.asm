@@ -94,6 +94,8 @@ section '.data' data readable writeable
          App_Mode           dd     0
          MENU_MODE = 1
          GAME_MODE = 2
+         
+         ;Use gf_MAIN_CubeHandle for rendering cube!!!
 
 section '.idata' import data readable writeable
 

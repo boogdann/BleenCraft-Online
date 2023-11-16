@@ -251,6 +251,10 @@ proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
   @@:
   pop edx ecx ebx eax
   
+
+    
+
+  
   ;Πενδεπ:
   stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], [eax]
                        

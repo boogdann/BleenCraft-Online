@@ -159,24 +159,29 @@ func GetData(f *os.File, pixelWH int, data *mbmwData) {
 			cube++
 		}
 		data.rows = append(data.rows, row)
-
+		if i < len(data.rows) {
+			data.rowBytesCount = (uint32)(data.rows[i].pixelsCount+data.rows[i].space_r+data.rows[i].space_l) * 3 * Premission
+		}
 	}
 }
 
 func saveData(file *os.File, data *mbmwData) {
-	c := 0
+	rows := 0
+	columns := 0
 	_ = binary.Write(file, binary.LittleEndian, data.rowBytesCount)
 	_ = binary.Write(file, binary.LittleEndian, data.rowsCount)
 	for _, v := range data.rows {
-		c++
+		rows++
 		_ = binary.Write(file, binary.LittleEndian, v.space_l)
 		_ = binary.Write(file, binary.LittleEndian, v.pixelsCount)
+		columns = 0
 		for _, p := range v.pixels {
+			columns++
 			_ = binary.Write(file, binary.LittleEndian, p.r)
 			_ = binary.Write(file, binary.LittleEndian, p.g)
 			_ = binary.Write(file, binary.LittleEndian, p.b)
 		}
 		_ = binary.Write(file, binary.LittleEndian, v.space_r)
 	}
-	println(c)
+	println("rows:", rows, "columns:", columns)
 }

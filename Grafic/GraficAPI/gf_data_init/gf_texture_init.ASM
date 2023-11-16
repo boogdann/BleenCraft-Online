@@ -6,7 +6,7 @@ proc gf_UploadTexture uses esi edi, tx_Name, Handle
     stdcall gf_GetTextureData, [tx_Name]
     
     invoke glTexImage2D, GL_TEXTURE_2D, 0, GL_RGB, eax, ecx, 0, GL_RGB, GL_UNSIGNED_BYTE, [gf_texture_adress]
-    invoke glGenerateMipmap, GL_TEXTURE_2D
+    invoke glGenerateMipmap, GL_TEXTURE_2D                                 
     
     mov eax, [gf_tx_handle]
     mov esi, [Handle]
@@ -183,6 +183,8 @@ proc gf_GetTextureData, tx_Name
     jnz .RowWriteLoop
     
   
+    invoke CloseHandle, [hFile]
+  
     ;return:
     mov eax, [rowBytesCount]   
     xor edx, edx     
@@ -191,6 +193,6 @@ proc gf_GetTextureData, tx_Name
     mov ecx, eax
     mov eax, [rowsCount]
     imul eax, [Permission]
-    
+
     ret
 endp

@@ -618,7 +618,7 @@ proc Field.GenerateSmallMines uses edi esi ebx edx, x, y, z, size, depth
      cmp     dword[size], 20
      jl      .SkipBranch
      
-     ; stdcall Field.GenerateSmallMines, [x], [y], [z], [size], [depth]
+     ;stdcall Field.GenerateSmallMines, [x], [y], [z], [size], [depth]
 
 .SkipBranch:
      

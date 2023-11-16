@@ -53,7 +53,7 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
 void main() {
 
     //Textures
-    vec4 texColor = texture( Tex1, TexCoord );
+    vec4 texColor = texture( Tex1, clamp(TexCoord, 0.0, 1.0) );
     if (discardMode) {
         if (texColor.x > 0.5) { discard; }
     }
