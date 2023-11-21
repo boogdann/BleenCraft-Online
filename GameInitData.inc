@@ -30,6 +30,18 @@ WorldHeight dd 150  ;z
 SizeWorld   dd ?
 SizeSky     dd ?
 
+;Data for destroying blocks
+selectCubeData  dd   0.0, 0.0, 0.0
+
+flag            dd    0
+
+prevCubePos     dd   0, 0, 0
+
+cubeTurn        dd   0.0, 0.0, 0.0
+
+obj_cube_name   db   "LCube.mobj", 0 ;(GF_OBJ_PATH)
+obj_CubeHandle  dd   ?, ? ;Да, тут именно 8 байт
+
 WaterLvl    dd 60 
 
 UnderWater  dd 0

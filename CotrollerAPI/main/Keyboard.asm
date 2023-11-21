@@ -11,10 +11,11 @@ proc ct_on_keyDown, wParam
        stdcall ct_change_mouse, 0
      .skip:
      jmp .final
-  @@:     
+  @@:
+      
   
   ;... Другие клавиши
-             
+  
   cmp [wParam], VK_F2
   jnz @F
     neg [isDebug]
@@ -48,6 +49,8 @@ proc ct_check_moves, CameraPos, CameraTurn
     
   fild dword[curTime]
   fld dword[distancePerSecond]
+  cmp [ct_isJump], 0
+  je .water
   cmp [isWatter], 0
   jz .notWater
     
@@ -67,6 +70,33 @@ proc ct_check_moves, CameraPos, CameraTurn
   fdivp
   fstp dword[Speed]
 
+  ;ЛЕВАЯ КНОПКА МЫШИ
+  invoke GetAsyncKeyState, $01
+  cmp eax, 0
+  jz @F
+     cmp [flag], 1
+     jne .skipDestroy
+        mov [flag], 0
+        stdcall ct_destroy_block, selectCubeData   
+     .skipDestroy:
+     
+  @@:
+  
+  ;ПРАВАЯ КНОПКА МЫШИ
+  invoke GetAsyncKeyState, $02
+  cmp eax, 0
+  jz @F
+     cmp [flag], 1
+     jne .skipBuild
+        mov [flag], 0
+        cmp [is_readyToBuild], 1
+        jne .skipBuild
+          stdcall ct_build_block, prevCubePos
+          mov [is_readyToBuild], 0   
+     .skipBuild:
+     
+  @@: 
+  
   ;Хождения:
   invoke  GetAsyncKeyState, $57 
   cmp eax, 0

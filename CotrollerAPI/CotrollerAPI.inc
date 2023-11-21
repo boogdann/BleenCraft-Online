@@ -31,3 +31,6 @@ ct_falling_velocity        dd     0.0005
 
 isWatter                   dd     0
 waterUnderFeets            dd     0
+
+block_detected             dd     0
+is_readyToBuild            dd     0

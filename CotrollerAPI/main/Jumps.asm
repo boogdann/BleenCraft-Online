@@ -11,7 +11,7 @@ proc ct_fall_check, playerPos, Field, X, Y
      tempCamera dd  0, 0, 0
      tempPlayerPos dd 0.0, 0.0, 0.0
      
-     MAX_TICKS_COUNT  dd  500
+     MAX_TICKS_COUNT  dd  100
      MIN_TICKS_COUNT  dd  10
   endl
   
@@ -121,7 +121,7 @@ proc ct_check_Jump, playerPos
       
       cmp [isWatter], 1
       jne .notWater
-      
+        
         fld [ct_water_jump_speed]
         fstp [ct_jump_distancePerSecond]
         jmp .finish
