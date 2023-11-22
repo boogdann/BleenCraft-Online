@@ -77,7 +77,7 @@ proc RenderScene
     cmp [flag], 0
     jz @F
     stdcall gf_RenderSelectObj3D, obj_CubeHandle,\ 
-                            selectCubeData, cubeTurn, 1.3
+                            selectCubeData, cubeTurn, 1.0
     
     @@: 
 

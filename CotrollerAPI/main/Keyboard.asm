@@ -74,13 +74,42 @@ proc ct_check_moves, CameraPos, CameraTurn
   invoke GetAsyncKeyState, $01
   cmp eax, 0
   jz @F
+     
+     mov [skip_destroying], 0
+     
      cmp [flag], 1
      jne .skipDestroy
-        mov [flag], 0
-        stdcall ct_destroy_block, selectCubeData   
+        
+        invoke GetTickCount
+        mov edx, eax
+        sub eax, [prev_destr_time]
+        
+        mov [prev_destr_time], edx
+        
+        cmp eax, 1000
+        jg .time
+     
+          
+          add [destruction_time], eax      
+          
+          cmp [destruction_time], 1000
+          jl .time
+          
+            mov [flag], 0
+            mov [destruction_time], 0
+            stdcall ct_destroy_block, selectCubeData   
+     
+        .time:
+     
      .skipDestroy:
      
+     jmp .lmb_pressed
+     
   @@:
+  
+  mov [skip_destroying], 1
+  
+  .lmb_pressed:
   
   ;œ–¿¬¿ﬂ  ÕŒœ ¿ Ã€ÿ»
   invoke GetAsyncKeyState, $02

@@ -101,12 +101,42 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
     
     mov [is_readyToBuild], 1
   
+    cmp [skip_destroying], 1
+    jne .destroy_flag
+      mov [destruction_time], 0
+    .destroy_flag:
+    
+    mov edx, [tempVector]
+    cmp edx, [prev_block_pos]
+    je .firstCheck 
+      mov [destruction_time], 0
+    .firstCheck:
+    
+    mov edx, [tempVector + 4]
+    cmp edx, [prev_block_pos + 8]
+    je .secondCheck 
+      mov [destruction_time], 0
+    .secondCheck:
+    
+    mov edx, [tempVector + 8]
+    cmp edx, [prev_block_pos + 4]
+    je .thirdCheck 
+      mov [destruction_time], 0
+    .thirdCheck:
+    
     fild [tempVector]
     fstp [selectCubeData]
     fild [tempVector + 4]
     fstp [selectCubeData + 8]
     fild [tempVector + 8]
     fstp [selectCubeData + 4]
+    
+    fild [tempVector]
+    fistp [prev_block_pos]
+    fild [tempVector + 4]
+    fistp [prev_block_pos + 8]
+    fild [tempVector + 8]
+    fistp [prev_block_pos + 4]
     
     jmp .finish
     
@@ -130,10 +160,18 @@ proc ct_destroy_block, cubePos
 
   locals
     tempPos dd 0, 0, 0
+    
+    dTime dd 0
+    
+    destrTimeConst  dd 10
+    
+    MAX_TICKS_COUNT dd 100
+    
   endl
 
   mov edi, [cubePos]
   
+  ;Получение координат блока
   fld dword[edi]
   fistp [tempPos]
   fld dword[edi + 4]
@@ -141,7 +179,17 @@ proc ct_destroy_block, cubePos
   fld dword[edi + 8]
   fistp [tempPos + 8]
 
+  mov eax, 0
+
+  invoke GetTickCount
+ 
+  
+  stdcall Blocks.GetDestroyTime, [ct_block_index], 1
+     
+
   stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 0
+
+.finish:
 
   ret
 endp
@@ -162,6 +210,8 @@ proc ct_build_block, prevCubePos
   fistp [tempPos + 8]
 
   stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 1
+
+
 
   ret
 endp
@@ -195,6 +245,7 @@ proc ct_detect_block uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
      @@:
      
      mov [block_detected], 1
+     mov [ct_block_index], esi
             
   .finish:
          

@@ -34,3 +34,9 @@ waterUnderFeets            dd     0
 
 block_detected             dd     0
 is_readyToBuild            dd     0
+ct_block_index             dd     ?
+prev_destr_time            dd     0
+destruction_time           dd     0
+prev_block_pos             dd     0, 0, 0
+
+skip_destroying            dd     0
