@@ -17,6 +17,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
        
        lea esi, [gf_MAIN_WaterHandle] ;Water
        invoke glBindVertexArray, [esi]
+       invoke glUniform1i, [gf_discardMode], 0
        
        mov eax, dword[esi + 4]
        mov [VertexCount], eax
@@ -247,6 +248,8 @@ proc gf_render_chank, isOnlyWater, VertexCount, X, Y, Z
   pop eax
   cmp eax, WithDiskard
   jl @F
+      cmp byte[esi], 255
+      jz @F
       invoke glUniform1i, [gf_discardMode], 1
   @@:
   pop edx ecx ebx eax

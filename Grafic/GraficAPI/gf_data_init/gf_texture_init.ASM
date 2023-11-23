@@ -4,8 +4,8 @@ proc gf_UploadTexture uses esi edi, tx_Name, Handle
     invoke glBindTexture, GL_TEXTURE_2D, [gf_tx_handle] 
     
     stdcall gf_GetTextureData, [tx_Name]
-    
-    invoke glTexImage2D, GL_TEXTURE_2D, 0, GL_RGB, eax, ecx, 0, GL_RGB, GL_UNSIGNED_BYTE, [gf_texture_adress]
+         ;1340 ;1000
+    invoke glTexImage2D, GL_TEXTURE_2D, 0, GL_RGB, ecx, eax, 0, GL_RGB, GL_UNSIGNED_BYTE, [gf_texture_adress]
     invoke glGenerateMipmap, GL_TEXTURE_2D                                 
     
     mov eax, [gf_tx_handle]
@@ -78,6 +78,7 @@ proc gf_GetTextureData, tx_Name
          ;2. Write x50 row in texture
          mov esi, [tmpRowAdress]
         
+         mov [spaceCount], 0
          lea     edi, [spaceCount]
          invoke  ReadFile, [hFile], edi, 2, 0, 0
          ;write space [spaceCount] * 50 (3)
@@ -95,6 +96,7 @@ proc gf_GetTextureData, tx_Name
          dec edx
          jmp .WriteLoopSpace_1
          @@:
+         
          
          lea     edi, [pixelsCount]
          invoke  ReadFile, [hFile], edi, 2, 0, 0
@@ -123,7 +125,7 @@ proc gf_GetTextureData, tx_Name
          
          lea     edi, [spaceCount]
          invoke  ReadFile, [hFile], edi, 2, 0, 0
-         ;write space [spaceCount] * 50 (3)
+         ;write space [spaceCount] * [Permission] (3)
          mov eax, [Permission] 
          movzx edi, [spaceCount]
          imul eax, edi
@@ -185,6 +187,7 @@ proc gf_GetTextureData, tx_Name
   
     invoke CloseHandle, [hFile]
   
+    mov eax, [gf_texture_adress]
     ;return:
     mov eax, [rowBytesCount]   
     xor edx, edx     
@@ -193,6 +196,7 @@ proc gf_GetTextureData, tx_Name
     mov ecx, eax
     mov eax, [rowsCount]
     imul eax, [Permission]
+    mov edx, [gf_texture_adress]
 
     ret
 endp

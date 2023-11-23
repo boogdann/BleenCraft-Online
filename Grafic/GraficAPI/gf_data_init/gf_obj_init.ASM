@@ -285,6 +285,7 @@ proc CopyNormals, normals, mod
       mov esi, [normals]
       add esi, eax  
       mov ebx, [gf_NormalArrayAdress]
+      
       mov eax, dword[esi]
       mov dword[ebx + ecx], eax
       mov eax, dword[esi + 4]
@@ -309,12 +310,16 @@ proc CopyTextursCoords, textureCoords, texturePointer, mod
    mov esi, [textureCoords]
    add esi, eax  
    mov ebx, [gf_TextCordArrayAdress]
+   
    push ecx
+   
      mov ecx, [texturePointer]
+     
      mov eax, dword[esi]
      mov dword[ebx + ecx], eax
      mov eax, dword[esi + 4]
      mov dword[ebx + ecx + 4], eax
+     
    pop ecx
   ret
 endp

@@ -17,7 +17,7 @@ import (
 // _ = binary.Write(file, binary.LittleEndian, data.vertexes[i][j])
 // Задаёт значение для минимума значений rgb с которых пиксель считается пустым
 var minForPixel byte = 253
-var isBug = false
+var isBug = true
 var Premission uint32 = 10
 
 type pixel struct {
@@ -172,6 +172,13 @@ func saveData(file *os.File, data *mbmwData) {
 	_ = binary.Write(file, binary.LittleEndian, data.rowsCount)
 	for _, v := range data.rows {
 		rows++
+		print(
+			"row: ", rows,
+			" sl: ", v.space_l,
+			" pc: ", v.pixelsCount,
+			" pixels_len: ", len(v.pixels),
+			" sl: ", v.space_r, "\n",
+		)
 		_ = binary.Write(file, binary.LittleEndian, v.space_l)
 		_ = binary.Write(file, binary.LittleEndian, v.pixelsCount)
 		columns = 0

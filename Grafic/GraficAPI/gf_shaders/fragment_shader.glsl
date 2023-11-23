@@ -55,7 +55,7 @@ void main() {
     //Textures
     vec4 texColor = texture( Tex1, clamp(TexCoord, 0.0, 1.0) );
     if (discardMode) {
-        if (texColor.x > 0.5) { discard; }
+        if (texColor.x < 0.15) { discard; }
     }
     if (ColorMode) {
         texColor = vec4(ObjColor, 1.0);
@@ -80,7 +80,7 @@ void main() {
     //Fog
     float dist = abs(distance(CameraPos, FPosition));
     if (SkyMode) {
-        dist /= 10;
+        dist /= 30;
         resColor = 0.9 * texColor + vec4(spec, 1.0);
     }
     float fogFactor = (MaxFogDist - dist) / (15); //MinFogDist
