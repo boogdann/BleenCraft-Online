@@ -181,11 +181,7 @@ proc ct_destroy_block, cubePos
 
   mov eax, 0
 
-  invoke GetTickCount
- 
-  
-  stdcall Blocks.GetDestroyTime, [ct_block_index], 1
-     
+  invoke GetTickCount   
 
   stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 0
 
