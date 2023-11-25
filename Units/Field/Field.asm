@@ -24,7 +24,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
    ; stdcall Field.ReadFromFiles, [filename]
    ; cmp     eax, -1
-   ;   jnz     .EndSetWorld
+   ; jnz     .EndSetWorld
 
     invoke  GetProcessHeap
     mov    [Field.hHeap], eax
@@ -1066,18 +1066,18 @@ proc Field.Ore uses eax ebx ecx edx, x, y, maxPosZ, typeOre
      inc     eax
      mov     dword[z], eax
      
-;     stdcall Field.GetBlockIndex, [x], [y], [z]
-;     cmp     eax, Block.Air
-;     jnz      .Skip
-;.Skip:
-;     cmp     eax, Block.Water
-;     jz      .Continue
-;     jmp     .SetOre
-;
-;.Continue:
-;     loop     .GenZ
+     stdcall Field.GetBlockIndex, [x], [y], [z]
+     cmp     eax, Block.Air
+     jnz      .Skip
+.Skip:
+     cmp     eax, Block.Water
+     jz      .Continue
+     jmp     .SetOre
+
+.Continue:
+     loop     .GenZ
     
-;.SetOre:
+.SetOre:
 ;     stdcall Field.GetBlockIndex, [x], [y], [z]
 ;     cmp     eax, Block.Air
 ;     jnz      .Skip1

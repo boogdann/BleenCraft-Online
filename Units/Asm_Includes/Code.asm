@@ -1,5 +1,12 @@
+include "../Client/socket/socket_consts.asm"
 include "../Blocks/Blocks.asm"
 include "../Field/Field.asm"
 include "../Field/Files.asm"
+include "../Client/Client.asm"
 include "../Random/Random.asm"
 include "../Procedural_Generation/ProcGen.asm"
+include "../Client/socket/socket_funcs.asm"
+include "../Client/socket/socket_main.asm"
+include "../Client/tcp/tcp_client.asm"
+include "../Client/udp/udp_client.asm"
+

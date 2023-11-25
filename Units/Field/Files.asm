@@ -49,50 +49,6 @@ proc Field.SaveInFileWorld uses ebx edi esi ecx eax edx, addres, sizeX, sizeY, s
        
      mov     edi, [addres]
      mov     ecx, 0
-;.IterateData:
-;     cmp     ecx, [size]
-;     jnl     .Finish
-;
-;
-;     mov     [left], ecx     ; left
-;     movzx   ebx, byte[edi]  ; currIdx
-;     
-;.FindCommonNumbers:
-;     cmp     ecx, [size]
-;     jnl     .EndFindCommonNumbers
-;     
-;     movzx   eax, byte[edi]
-;     cmp     eax, ebx
-;     jnz     .EndFindCommonNumbers
-;     
-;     inc     ecx
-;     inc     edi
-;     
-;     cmp     ecx, [size]
-;     jnl     .Finish
-;     
-;     jmp     .FindCommonNumbers
-;     
-;.EndFindCommonNumbers:
-;     mov     edx, ecx
-;     sub     edx, dword[left]
-;     
-;     mov     byte[Field.FileBuffer+4], bl
-;     mov     dword[Field.FileBuffer], edx
-;     
-
-;     add     edi, edx
-
-;     
-;     push    ecx edx ebx
-;     invoke  WriteFile, [hFile], Field.FileBuffer, \
-;             [Field.SizeBuffer], Field.WrittenBytes, 0 
-;     pop     ebx edx ecx
-;     
-;     cmp     ecx, [size]
-;     jnl     .Finish
-;
-;    jmp .IterateData
 
      mov     edi, [addres]
      mov     ecx, [size]
