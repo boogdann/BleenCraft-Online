@@ -13,7 +13,7 @@ TextureNames:
         db      "Brick_64.mbmw", 0 ;none 
         db      "Gravel_16.mbmw", 0 
         db      "Cobblestone_16.mbmw", 0   
-        db      "Stone_16.mbmw", 0 ;Turf_16.mbmw
+        db      "Stone_16.mbmw", 0 
         db      "Furance_16.mbmw", 0   
         db      "Wool_16.mbmw", 0 
         db      "Brick_64.mbmw", 0 ;none  

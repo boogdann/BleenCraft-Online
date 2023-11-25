@@ -16,9 +16,12 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
         sizeChanc dd ?
         _mod      dd ?
         _div      dd ?
+        tmpBase   dd 0
     endl 
     mov   eax, [baseLvl]   
     mov   dword[base], eax
+    mov   dword[tmpBase], eax
+    sub   dword[tmpBase], 5
     
     stdcall Random.Initialize
     
@@ -97,23 +100,31 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
     mov    dword[z], 0
 .Iterate_Z:
-   mov    byte[edi], Block.Stone
+    mov    byte[edi], Block.Stone
     add    edi, [Size]
     
     inc    dword[z]
     mov    ebx, [z]
     cmp    ebx, eax
     jl     .Iterate_Z
-    
+        
     cmp    ebx, [base]
-    jnl    .Skip
+    jnl    .SetDirt
+    
+;.SetTurf:
+;    mov    byte[edi], Block.Turf
+;    add    edi, [Size]
+;    
+;    inc    ebx
+;    mov    ebx, [base]
+;    jl     .SetTurf   
 
 .SetDirt:
     mov    byte[edi], Block.Dirt
     add    edi, [Size]
     inc    ebx
     cmp    ebx, [base]
-    jnl     .Skip
+    jnl    .Skip
     
 .SetWater:  
     mov    byte[edi], Block.Water
@@ -121,7 +132,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     inc    ebx
     cmp    ebx, [base]
     jl     .SetWater
-        
+            
 .Skip:
     inc   dword[y]
     mov   eax, dword[y]
@@ -201,6 +212,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     add    eax, [Field.Matrix]
     
     mov    edi, [eax]
+    add    edi, 1
     mov    [z], edi
         
     stdcall Field.GetBlockIndex, [x], [y], [z]
@@ -276,9 +288,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
     
     mov    dword[isGenerated], 1 
-    invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
+    invoke HeapFree, [Field.hHeap], 0, [Field.Matrix] 
 .EndSetWorld:
-
+    
     stdcall Field.GenerateBedrock
     ret
 endp
@@ -294,6 +306,7 @@ proc Field.GenerateBedrock uses ecx eax edx edi
      mov     edi, [Field.Blocks] 
      
      rep stosb
+     
 .Finish:
      ret
 endp
@@ -406,7 +419,7 @@ endp
 ;    Input:  Word X, Word Y, Word Z, byte BlockIndex
 ;    Output: eax <- BlockIndex or ErrorCode
 ;
-proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X: dword, Y: dword, Z: dword, BlockIndex: byte     
+proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X, Y, Z, BlockIndex
      xor    eax, eax
 
      stdcall Field.TestBounds, [X], [Y], [Z]
@@ -667,7 +680,65 @@ proc Field.GenerateSphere uses eax ebx edx ecx esi, x, y, z, len
         curr dd ?
      endl
      dec     dword[z]
-
+     
+     push    dword[x] dword[y] dword[z]
+;     cmp     dword[len], 3
+;     jl      .SkipSetOres
+;     
+;     stdcall Random.GetInt, 0, 1000
+;     cmp     eax, 950
+;     jl      .SkipSetOres
+;     
+;     stdcall Random.GetInt, 0, 6
+;     add     eax, 1
+;     
+;     mov     ecx, [len]
+;     cmp     eax, 1
+;     jnz     .Skip1
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip1:
+;     
+;     cmp     eax, 2
+;     jnz     .Skip2
+;     add     dword[x], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip2:
+;
+;     cmp     eax, 3
+;     jnz     .Skip3
+;     add     dword[x], ecx 
+;     add     dword[y], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip3:
+;
+;     cmp     eax, 4
+;     jnz     .Skip4
+;     add     dword[x], ecx 
+;     add     dword[y], ecx
+;     add     dword[z], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip4:
+;
+;     cmp     eax, 5
+;     jnz     .Skip5
+;     add     dword[x], ecx 
+;     add     dword[z], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip5:
+;
+;     cmp     eax, 6
+;     jnz     .Skip6
+;     add     dword[y], ecx 
+;     add     dword[z], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip6:
+;     cmp     eax, 7
+;     jl      .SkipSetOres
+;     add     dword[z], ecx
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;
+;.SkipSetOres:
+    pop     dword[z] dword[y] dword[x]
      mov     ecx, dword[len]  
 .SetAirX: 
      mov     eax, [x]
@@ -695,8 +766,8 @@ proc Field.GenerateSphere uses eax ebx edx ecx esi, x, y, z, len
      jz     .SkipSetBlock
      
      cmp     esi, Block.Water
-     jz     .SkipSetBlock     
-      
+     jz     .SkipSetBlock 
+               
      stdcall Field.SetBlockIndex, eax, ebx, edx, Block.Air
      
 .SkipSetBlock:
@@ -705,108 +776,75 @@ proc Field.GenerateSphere uses eax ebx edx ecx esi, x, y, z, len
      loop    .SetAirY
      pop     ecx
      loop    .SetAirX     
-     
-;     cmp     dword[len], 3
-;     jl      .Finish
-;     
-;     stdcall Random.GetInt, 0, 1000
-;     cmp     eax, 990
-;     jl      .Finish
-;     
-;     stdcall Random.GetInt, 0, 6
-;     add     eax, 1
-;     
-;     mov     ecx, [len]
-;     cmp     eax, 1
-;     jnz     .Skip1
-;     stdcall Field.GenBlocks, [x], [y], [z]
-;.Skip1:
-;
-;     cmp     eax, 2
-;     jnz     .Skip2
-;     add     dword[x], ecx 
-;     stdcall Field.GenBlocks, [x], [y], [z]
-;.Skip2:
-;
-;     cmp     eax, 3
-;     jnz     .Skip3
-;     add     dword[x], ecx 
-;     add     dword[y], ecx 
-;     stdcall Field.GenBlocks, [x], [y], [z]
-;.Skip3:
-;
-;     cmp     eax, 4
-;     jnz     .Skip4
-;     add     dword[x], ecx 
-;     add     dword[y], ecx
-;     add     dword[z], ecx 
-;     stdcall Field.GenBlocks, [x], [y], [z]
-;.Skip4:
-;
-;     cmp     eax, 5
-;     jnz     .Skip3
-;     add     dword[x], ecx 
-;     add     dword[z], ecx 
-;     stdcall Field.GenBlocks, [x], [y], [z]
-;.Skip5:
-;
-;     cmp     eax, 6
-;     jnz     .Skip6
-;     add     dword[y], ecx 
-;     add     dword[z], ecx 
-;     stdcall Field.GenBlocks, [x], [y], [z]
-;.Skip6:
-;     add     dword[z], ecx
-;     stdcall Field.GenBlocks, [x], [y], [z]
+          
 .Finish:
     ret
 endp
 
 proc Field.GenBlocks uses eax ebx ecx edx, x, y, z
-;     locals
-;         nX   dd ?
-;         nY   dd ?
-;         nZ   dd ?
-;         size dd 3
-;     endl
-;         
-;.SetOre:
-;     mov     ebx, Block.CoalOre
-;     mov     ecx, [size]
-;.IterateX:
-;     mov     eax, [x]
-;     add     eax, ecx
-;     mov     [nX], eax
-;     
-;     push    ecx
-;     mov     ecx, [size]
-;.IterateY:
-;     mov     eax, [y]
-;     add     eax, ecx
-;     mov     [nY], eax
-;     
-;     push    ecx
-;     mov     ecx, [size]
-;.IterateZ:
-;     mov     eax, [z]
-;     add     eax, ecx
-;     mov     [nZ], eax
-;
-;     stdcall Random.GetInt, 0, 100
-;     cmp     eax, 25
-;     jl      .SkipSet
-;
-;     stdcall Field.SetBlockIndex, [nX], [nY], [nZ], ebx
-;     
-;.SkipSet:
-;     loop    .IterateZ
-;     pop     ecx
-;     loop    .IterateY
-;     pop     ecx
-;     loop    .IterateX
-;           
-;.Finish:
-;     ret
+     locals
+         nX   dd ?
+         nY   dd ?
+         nZ   dd ?
+         size dd 3
+     endl
+         
+.SetOre:
+     mov     ebx, Block.CoalOre
+     mov     ecx, [size]
+.IterateX:
+     mov     eax, [x]
+     add     eax, ecx
+     mov     [nX], eax
+     
+     push    ecx
+     mov     ecx, [size]
+.IterateY:
+     mov     eax, [y]
+     add     eax, ecx
+     mov     [nY], eax
+     
+     push    ecx
+     mov     ecx, [size]
+.IterateZ:
+     mov     eax, [z]
+     add     eax, ecx
+     mov     [nZ], eax
+
+     stdcall Random.GetInt, 0, 100
+     cmp     eax, 25
+     jl      .SkipSet
+
+     mov     eax, [nX]
+     cmp     eax, [Field.Length]
+     jnl     .SkipSet
+     mov     eax, [nY]
+     cmp     eax, [Field.Length]
+     jnl     .SkipSet
+     mov     eax, [nZ]
+     cmp     eax, [Field.Height]
+     jnl     .SkipSet 
+     
+;     push    eax edx ebx
+;     stdcall Field.GetBlockIndex, eax, ebx, edx  
+;     mov     esi, eax
+;     pop     ebx edx ex  
+;     cmp     eax, Block.Air
+;     jz      .SkipSetBlock
+;     cmp     eax, Block.Water
+;     jz      .SkipSetBlock    
+      
+     stdcall Field.SetBlockIndex, [nX], [nY], [nZ], ebx
+     
+.SkipSet:
+     loop    .IterateZ
+     pop     ecx
+     loop    .IterateY
+     pop     ecx
+     loop    .IterateX
+           
+.Finish:
+     ret
 endp 
 
 proc Field.GenerateBigMines uses edi esi, x, y, z,  depth, size 
