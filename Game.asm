@@ -9,11 +9,7 @@ proc GameStart
   mov     [WorldLength], eax
   mov     eax, [Field.Width]
   mov     [WorldWidth], eax
-  
-  mov     edi, [Field.Blocks]
-  add     edi, 10
-  mov     byte[edi], 1
-  
+    
   xor     edx, edx
   mov     eax, [WorldLength]
   mul     dword[WorldWidth]
@@ -28,11 +24,7 @@ proc GameStart
   mov     [SkyLength], eax
   mov     eax, [Field.SkyWidth]
   mov     [SkyWidth], eax 
-  
-  xor     edx, edx
-  mov     eax, [SkyLength]
-  mul     dword[SkyWidth]
-  mov     [SizeSky], eax          
+           
   ;=================================================
   
   ;Position initialize

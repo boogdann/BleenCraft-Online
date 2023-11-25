@@ -111,21 +111,20 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     cmp    ebx, [base]
     jnl    .SetDirt
     
-;.SetTurf:
-;    mov    byte[edi], Block.Turf
-;    add    edi, [Size]
-;    
-;    inc    ebx
-;    mov    ebx, [base]
-;    jl     .SetTurf   
-
 .SetDirt:
     mov    byte[edi], Block.Dirt
     add    edi, [Size]
     inc    ebx
     cmp    ebx, [base]
     jnl    .Skip
-    
+
+.SetGravel:
+    mov    byte[edi], Block.Gravel
+    add    edi, [Size]
+    inc    ebx
+    cmp    ebx, [base]
+    jnl    .Skip
+
 .SetWater:  
     mov    byte[edi], Block.Water
     add    edi, [Size]
@@ -153,10 +152,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     mov   eax, [Field.Length]
     div   dword[power]
     mov   dword[sizeChanc], eax
-    
-    stdcall Field.GenerateMines, [sizeChanc], 5, [power]
-    stdcall Field.GenerateOre, [sizeChanc], [numChanc], [power]
-    
+        
     mov    ecx, 0
 .IterateChancs:
     push   ecx
@@ -288,7 +284,11 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
     
     mov    dword[isGenerated], 1 
-    invoke HeapFree, [Field.hHeap], 0, [Field.Matrix] 
+    invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
+    
+    stdcall Field.GenerateMines, [sizeChanc], 5, [power]
+    stdcall Field.GenerateOre, [sizeChanc], [numChanc], [power]
+     
 .EndSetWorld:
     
     stdcall Field.GenerateBedrock
