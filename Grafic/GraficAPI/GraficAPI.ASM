@@ -8,6 +8,7 @@ include "gf_main\gf_set_render.ASM"
 ;\gf_data_init
 include "gf_data_init\gf_obj_init.ASM"
 include "gf_data_init\gf_texture_init.ASM"
+include "gf_data_init\gf_assetsLoader.ASM"
 ;\gf_assets
 include "gf_assets\gf_macro.ASM"
 include "gf_assets\gf_struct.ASM"
@@ -16,9 +17,6 @@ include "gf_shaders\gf_shader_init.ASM"
 ;library headers
 include "api\opengl.inc"
 include "api\gdi32.inc"
-;assets scripts
-include "..\..\Assets\TextuteHandler.ASM"
-include "..\..\Assets\TextuteHandler.inc"
 
 proc gf_grafic_init uses esi edi
     invoke  GetProcessHeap
@@ -30,7 +28,6 @@ proc gf_grafic_init uses esi edi
     stdcall gf_InitShaders
     stdcall gf_InitShadersData
     stdcall gf_InitRenderParams
-    stdcall gf_LoadTextures
   ret
 endp
 

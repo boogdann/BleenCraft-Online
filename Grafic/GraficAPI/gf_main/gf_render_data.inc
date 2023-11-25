@@ -49,7 +49,7 @@ UniformNames:
 ;Siple Objs Names:
 gf_MAIN_cloud_name   db  "LCloud.mobj", 0 
 gf_MAIN_cube_name    db  "LCube.mobj", 0
-gf_MAIN_water_name    db  "LWater.mobj", 0
+gf_MAIN_water_name   db  "LWater.mobj", 0
 ;Siple Objs Handles:
 gf_MAIN_CubeHandle   dd   ?, ? 
 gf_MAIN_CloudHandle  dd   ?, ?
@@ -57,12 +57,12 @@ gf_MAIN_WaterHandle  dd   ?, ?
 
 ;Textures
 tx_Water_name         db  "Water_20.mbmw", 0
-  tx_Water_Handle       dd  ?
-tx_Destroy1_Name     db  "Destroy1_64.mbmw", 0
-tx_Destroy2_Name     db  "Destroy2_64.mbmw", 0
-tx_Destroy3_Name     db  "Destroy3_64.mbmw", 0
-tx_Destroy4_Name     db  "Destroy4_64.mbmw", 0
-tx_Destroy5_Name     db  "Destroy5_64.mbmw", 0
+  tx_Water_Handle     dd  ?
+tx_Destroy1_Name      db  "Destroy1_64.mbmw", 0
+tx_Destroy2_Name      db  "Destroy2_64.mbmw", 0
+tx_Destroy3_Name      db  "Destroy3_64.mbmw", 0
+tx_Destroy4_Name      db  "Destroy4_64.mbmw", 0
+tx_Destroy5_Name      db  "Destroy5_64.mbmw", 0
 tx_Destroy_Handles:
   tx_Destroy1_Handle   dd   ?
   tx_Destroy2_Handle   dd   ?

@@ -169,8 +169,25 @@ proc gf_RenderEnd
   stdcall gf_renderObj3D, gf_MAIN_CloudHandle, 0, gf_SunColor,\
                             SunPosition, gf_zeroVec, 2.0, 0
 
+
+
+   invoke glColor3f, 1.0, 1.0, 1.0
+      invoke glLoadIdentity
+   ;invoke glTranslatef, 0.0, 0.0, -1.0; // Сдвигаем систему координат в центр экрана
+    
+   invoke glLineWidth, 2.0
+   
+   invoke glBegin, GL_LINES
+   invoke glVertex2f, -0.5, 0.0
+   invoke glVertex2f, 0.5, 0.0
+   invoke glVertex2f, 0.0, -0.5
+   invoke glVertex2f, 0.0, 0.5
+   invoke glEnd
+    
+
   invoke SwapBuffers, [hdc]
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
+  
   
   ret
 endp

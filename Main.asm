@@ -2,56 +2,67 @@ format PE GUI 4.0
 stack 0x10000
 entry Start
 
-;===============Module incleude================
+;===============Module include================
 include "win32a.inc" 
+include "Game.asm"
+
 include "Grafic\GraficAPI\GraficAPI.asm"
 include "CotrollerAPI\CotrollerAPI.asm"
 include "Interface\Interface.asm"
-include "GameInit.asm"
+
+include "Units\Asm_Includes\Di.asm"
+include "Units\Asm_Includes\Du.asm"
+
+;Attention! Dangerous dependencies with Grafic 
+;1. Name of some files dependence (LCube.mobj, LCloud.mobj, LWater.mobj ...)
+;2. Name of variables dependence (Headers variables)
+;                                Example: (ObjectsNames, ObjectsHandles ...)
+include "Assets\Textures.inc"
+include "Assets\Blocks_textures.inc"
+include "Assets\Objects.inc"
 ;==============================================
 
 
 section '.text' code readable executable     
 
-Start:          
-  stdcall gf_grafic_init  
+Start:   
+  ;=============== Grafic Init ===================      
+  stdcall gf_grafic_init
   
-  ;stdcall ct_change_mouse, 1
-  ;mov [App_Mode], MENU_MODE
-  ;stdcall InterfaceInit
+  ;Attention! Dangerous dependencies with /assets 
+  stdcall gf_LoadTextures
+  stdcall gf_LoadAddictionalTextures
+  stdcall gf_LoadObjs
+  ;================================================  
   
-  ;invoke CreateContext
-  ;invoke StyleColorsDark
-  
-  ;invoke ImGui_ImplWin32_InitForOpenGL, [hMainWindow]
-  ;invoke ImGui_ImplOpenGL3_Init
-  
-  stdcall ct_change_mouse, 0
+  ;==== Start settings ======  
   mov [App_Mode], GAME_MODE
   stdcall GameStart 
+  ;========================== 
   
+  ;================ Main app cycle =====================
   .AppCycle:
-  .MainCycle:
-        invoke  PeekMessage, msg, 0, 0, 0, PM_REMOVE
-        cmp eax, 0
-        jz .ExitMainCycle
-        invoke  TranslateMessage, msg
-        invoke  DispatchMessage, msg
-        jmp     .MainCycle
-   .ExitMainCycle:
-   
+    .MainCycle:
+          invoke  PeekMessage, msg, 0, 0, 0, PM_REMOVE
+          cmp eax, 0
+          jz .ExitMainCycle
+          invoke  TranslateMessage, msg
+          invoke  DispatchMessage, msg
+          jmp     .MainCycle
+     .ExitMainCycle:
    jmp .AppCycle
+   ;====================================================
         
             
-proc WindowProc uses ebx,\
-     hWnd, uMsg, wParam, lParam
-     
+proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
+        ;The physical module only works in game mode (kastil)
         cmp [App_Mode], GAME_MODE
         jnz @F
-          stdcall ct_move_check, cameraPos, cameraTurn,\
+          stdcall ct_move_check, PlayerPos, PlayerTurn,\
                                  [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]  
         @@:
-                            
+                
+        ;Message switch            
         switch  [uMsg]
         case    .Render,        WM_PAINT
         case    .Destroy,       WM_DESTROY
@@ -61,10 +72,7 @@ proc WindowProc uses ebx,\
         jmp     .Return
 
   .Render:
-        ;invoke NewFrame
-        ;invoke ImGui_ImplOpenGL3_NewFrame
-        ;invoke ImGui_ImplWin32_NewFrame
-        ;invoke ShowDemoWindow
+        ;Render cases
         cmp [App_Mode], GAME_MODE
         jnz @F
            stdcall RenderScene
@@ -74,19 +82,14 @@ proc WindowProc uses ebx,\
            stdcall RenderMainMenu
         @@:
         
-        ;invoke ImGuiRender
-        ;ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        
         mov [isFalling], 1
         jmp     .ReturnZero
-        
   .Movement:
         stdcall ct_on_keyDown, [wParam] 
         jmp     .ReturnZero
   .Destroy:
-        ; stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], filename       
-        ; stdcall Field.SaveInFileWorld, [SkyLand],[SkyLength] ,[SkyWidth], 1 ,[SizeSky], filenameSky
-        
+        ;stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], filename       
+        ;stdcall Field.SaveInFileWorld, [SkyLand],[SkyLength] ,[SkyWidth], 1 ,[SizeSky], filenameSky
         invoke ExitProcess, 1
   .ReturnZero:                                                
         xor     eax, eax
@@ -95,26 +98,29 @@ proc WindowProc uses ebx,\
 endp
 
 section '.data' data readable writeable
-         ;??????????? ????? ????????? ?????????? ?????????:
          ;===============Global variables===================
-         ;???? ? ???????? ???????????? ????????????:
          GF_OBJ_PATH        db     "Assets\ObjectsPack\", 0
-         ;???? ? ????????? ???????????? ????????????:
          GF_TEXTURE_PATH    db     "Assets\TexturesPack\", 0
-         ;???? ? ????? ??????? 
          GF_PATH            db     "Grafic\GraficAPI\", 0
          GF_PATH_LEN        db     $ - GF_PATH
-         ;??????????????? ??????????? ?? ????????? ??????:
-         GF_BLOCKS_RADIUS   dd     20, 20, 30 ;(?? x, y, z)
          
+         ;Main window descriptor
          hMainWindow        dd          ?
+         ;Main window params
+         WindowRect         RECT  
          ;=================================================== 
          
-         App_Mode           dd     0
-         MENU_MODE = 1
-         GAME_MODE = 2
+         ;Menu/Game mode
+         MENU_MODE       =     1
+         GAME_MODE       =     2
+         App_Mode        dd    ?
          
-         ;Use gf_MAIN_CubeHandle for rendering cube!!!
+         ;obj.Cube.Handle - CUBE
+         
+         ;===========Data imports============
+         include "Game.inc"
+         include "Grafic\GraficAPI\GraficAPI.inc"
+         include "CotrollerAPI\CotrollerAPI.inc"
 
 section '.idata' import data readable writeable
 
@@ -122,18 +128,7 @@ section '.idata' import data readable writeable
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
           opengl32, 'opengl32.DLL',\   
-          gdi32,    'GDI32.DLL',\
-          imgui32,  'IMGUIDLL.dll'
-          
-  import imgui32,\
-        CreateContext, '?CreateContext@ImGui@@YAPAUImGuiContext@@PAUImFontAtlas@@@Z',\
-        ShowDemoWindow, '?ShowDemoWindow@ImGui@@YAXPA_N@Z',\
-        NewFrame, '?NewFrame@ImGui@@YAXXZ',\  
-        StyleColorsDark, '?StyleColorsDark@ImGui@@YAXPAUImGuiStyle@@@Z',\
-        ImGuiRender, '?Render@ImGui@@YAXXZ',\
-        GetDrawData, '?GetDrawData@ImGui@@YAPAUImDrawData@@XZ'     
+          gdi32,    'GDI32.DLL'  
                                        
   include 'api\kernel32.inc'
   include 'api\user32.inc'
-  ;===========Data imports============
-  include "GameInitData.inc"

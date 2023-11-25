@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="07c55350-4e4e-4eb6-ba2c-97bb8027fe0c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../Assets/ObjectsPack/LCube1.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Assets/ObjectsPack/LCube2.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Assets/TextuteHandler.ASM" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Assets/TextuteHandler.inc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../GameInit.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../GameInitData.inc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Example_Project/Assets/ObjectsPack/LCube.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Example_Project/Main.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Example_Project/Project.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Example_Project/Project.prt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/GenerateMbmw.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Bedrock_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Brick_64.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Chest_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/CoalOre_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Cobblestone_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/CraftBlock_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Destroy1_64.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Destroy2_64.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Destroy3_64.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Destroy4_64.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Destroy5_64.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/DiamondOre_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Furance_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/GoldOre_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Grass_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Grass_64.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Gravel_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/IroneOre_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Leaves_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Log_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Sand_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Stone_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Turf_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Water_20.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/Wool_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureIn/planks_16.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Bedrock_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Chest_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/CoalOre_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Cobblestone_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/CraftBlock_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Destroy1_64.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Destroy2_64.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Destroy3_64.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Destroy4_64.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Destroy5_64.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/DiamondOre_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Furance_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/GoldOre_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Grass_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Grass_64.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Gravel_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/IroneOre_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Leaves_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Log_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Planks_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Sand_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Stone_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Turf_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Water_20.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextureOut/Wool_16.mbmw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/.idea/GenerateMobj.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsIn/Car.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsIn/Cloud.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsIn/Cube.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsIn/Water.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsIn/cube_blender.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsOut/Cloud.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsOut/Water.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsOut/car.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsOut/cube.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/ObjectsOut/cube_blender.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../GenerateMobj/main.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../GraficAPI/GraficAPI.ASM" beforeDir="false" afterPath="$PROJECT_DIR$/../../GraficAPI/GraficAPI.ASM" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../GraficAPI/GraficAPI.inc" beforeDir="false" afterPath="$PROJECT_DIR$/../../GraficAPI/GraficAPI.inc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_api_init.ASM" beforeDir="false" afterPath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_api_init.ASM" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_land_render.ASM" beforeDir="false" afterPath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_land_render.ASM" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_render.ASM" beforeDir="false" afterPath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_render.ASM" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_render_data.inc" beforeDir="false" afterPath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_render_data.inc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_set_render.ASM" beforeDir="false" afterPath="$PROJECT_DIR$/../../GraficAPI/gf_main/gf_set_render.ASM" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Setup Files/OPENGL.inc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../IMGUIDLL.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Main.asm" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Main.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../MineOnline.prt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MineOnline.prt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../_trash/Main.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../_trash/Main.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../_trash/Project.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../_trash/Project.prt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../imgui/imgui_helper" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+</project>

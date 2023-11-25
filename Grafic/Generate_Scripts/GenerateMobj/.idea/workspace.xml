@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d7d367ee-7f61-491b-ac72-998e18b1ac33" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../Assets/ObjectsPack/LCube1.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Assets/ObjectsPack/LCube2.mobj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Assets/TextuteHandler.ASM" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Assets/TextuteHandler.inc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../GameInit.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../GameInitData.inc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../IMGUIDLL.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Main.asm" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Main.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../MineOnline.prt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../MineOnline.prt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../_trash/Main.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../_trash/Main.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../_trash/Project.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../_trash/Project.prt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../imgui/imgui_helper" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+</project>

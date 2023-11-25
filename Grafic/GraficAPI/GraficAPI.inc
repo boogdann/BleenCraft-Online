@@ -1,5 +1,8 @@
-include "gf_main\gf_api_init.inc"  ;2)  
-include "gf_main\gf_render_data.inc"  ;3) 
+include "gf_main\gf_api_init.inc"   
+include "gf_main\gf_render_data.inc"   
+
+GF_RENDER_BLOCKS_RADIUS         dd     10, 10, 10 
+
 
 true            =               1
 false           =               0
@@ -13,8 +16,7 @@ pfd             PIXELFORMATDESCRIPTOR   sizeof.PIXELFORMATDESCRIPTOR, 1, PFD_FLA
                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
                                                             COLOR_DEPTH, 0, 0, PFD_MAIN_PLANE, 0, PFD_MAIN_PLANE
                               
-                              
-                                                            
+                                                                       
 className       db              "GraficAPI"
 hdcBack         dd              ?
 startTime       dd              ?

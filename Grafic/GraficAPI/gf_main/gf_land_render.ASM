@@ -48,7 +48,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     ;==========================
     ;Расчёт MIN_X:
     mov eax, [PlIntPos]
-    sub eax, [GF_BLOCKS_RADIUS]
+    sub eax, [GF_RENDER_BLOCKS_RADIUS]
     cmp eax, 0
     jns @F
       mov eax, 0
@@ -60,7 +60,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     mov [MIN_XYZ], eax
     ;Расчёт MAX_X:
     mov eax, [PlIntPos]
-    add eax, [GF_BLOCKS_RADIUS]
+    add eax, [GF_RENDER_BLOCKS_RADIUS]
     cmp eax, 0
     jns @F
       mov eax, 0
@@ -76,7 +76,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     
     ;Расчёт MIN_Y:
     mov eax, [PlIntPos + 8]
-    sub eax, [GF_BLOCKS_RADIUS + 4]
+    sub eax, [GF_RENDER_BLOCKS_RADIUS + 4]
     cmp eax, 0
     jns @F
       mov eax, 0
@@ -88,7 +88,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     mov [MIN_XYZ + 4], eax
     ;Расчёт MAX_Y:
     mov eax, [PlIntPos + 8]
-    add eax, [GF_BLOCKS_RADIUS + 4]
+    add eax, [GF_RENDER_BLOCKS_RADIUS + 4]
     cmp eax, 0
     jns @F
       mov eax, 0
@@ -108,7 +108,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     
     ;Расчёт MIN_Z:
     mov eax, [PlIntPos + 4]
-    sub eax, [GF_BLOCKS_RADIUS + 8]
+    sub eax, [GF_RENDER_BLOCKS_RADIUS + 8]
     cmp eax, 0
     jns @F
       mov eax, 0
@@ -120,7 +120,7 @@ proc gf_RenderMineLand uses esi edi ebx, LandData, X, Y, Z, PlPos, PlEye, isOnly
     mov [MIN_XYZ + 8], eax
     ;Расчёт MAX_Z:
     mov eax, [PlIntPos + 4]
-    add eax, [GF_BLOCKS_RADIUS + 8]
+    add eax, [GF_RENDER_BLOCKS_RADIUS + 8]
     cmp eax, 0
     jns @F
       mov eax, 0

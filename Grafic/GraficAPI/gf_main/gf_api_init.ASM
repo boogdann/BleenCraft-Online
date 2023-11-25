@@ -141,3 +141,14 @@
     
     ret
  endp
+ 
+proc Set_GF_RENDER_BLOCKS_RADIUS, x, y, z
+  mov eax, [x]
+  mov [GF_RENDER_BLOCKS_RADIUS], eax
+  mov eax, [y]
+  mov [GF_RENDER_BLOCKS_RADIUS + 4], eax
+  mov eax, [z]
+  mov [GF_RENDER_BLOCKS_RADIUS + 8], eax
+
+  ret
+endp
