@@ -5,9 +5,9 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
     tempCamera dd 0.0, 0.0, 0.0
     tempVector dd 0, 0, 0
     
-    currentVector dd 1.0
+    currentVector dd 0.1
     PiDegree      dd 180.0    
-    temp          dd 0.5
+    temp          dd 0.1
       
     tempScale     dd 1.01
     
@@ -15,7 +15,7 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
     b dd ?
     
   endl
-  
+              
   mov esi, [cameraTurn]
   mov edi, [playerPos]
   ;CameraPos[1] - cos(a) * sin(b) * currentConst 
@@ -148,7 +148,7 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
   fadd [temp]
   fstp [currentVector]
   
-  cmp ecx, 3
+  cmp ecx, 10
   jl .zaloop
   
   .finish:
@@ -207,7 +207,8 @@ proc ct_build_block, prevCubePos
 
   stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 1
 
-
+  
+  
 
   ret
 endp
