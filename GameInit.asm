@@ -20,7 +20,7 @@ proc GameStart
   mov     [SizeWorld], eax
   
   mov     ecx, [WorldPower]
-  sub     ecx, 2
+  sub     ecx, 1
   stdcall Field.GenerateClouds, ecx, filenameSky
   mov     dword[SkyLand], eax
   mov     eax, [Field.SkyLength]
