@@ -22,7 +22,7 @@ Block.Tallgrass          =      7
 ;                   Sand
 Block.Sand               =      8
 Block.Sandstone          =      9
-Block.Glass              =      10
+Block.Torch              =      10
 
 Block.Gravel             =      11
 

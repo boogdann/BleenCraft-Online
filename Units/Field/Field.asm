@@ -272,13 +272,30 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     fstp  dword[Field.SpawnPoint+8]      
    
 .Finish:
-     stdcall Random.Initialize
-      stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
+    stdcall Random.Initialize
+    stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
     
     mov    dword[isGenerated], 1 
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
 .EndSetWorld:
+
+    stdcall Field.GenerateBedrock
     ret
+endp
+
+proc Field.GenerateBedrock uses ecx eax edx edi 
+     xor     edx, edx
+     mov     eax, [Field.Length]
+     mul     dword[Field.Width]
+     
+     xchg    ecx, eax
+     mov     al, Block.Bedrock  
+     
+     mov     edi, [Field.Blocks] 
+     
+     rep stosb
+.Finish:
+     ret
 endp
 
 proc Field.GenerateSpawnPoint uses edi, resAddr
@@ -348,11 +365,18 @@ endp
 ;    Input:  dWord X, dWord Y, dWord Z
 ;    Output: eax <- BlockIndex or ErrorCode
 ;
-proc Field.GetBlockIndex uses edi, X: word, Y: word, Z: word  
+proc Field.GetBlockIndex uses edi esi ecx ebx ecx edx, X, Y, Z  
+     xor    eax, eax
+
+     stdcall Field.TestBounds, [X], [Y], [Z]
+     cmp     eax, ERROR_OUT_OF_BOUND
+     jz      .Finish
+
      xor    eax, eax
 
      mov    eax, dword[Y]  
-      
+     
+     xor    edx, edx 
      mov    edi, [Field.Length]
      mul    edi
      
@@ -361,6 +385,7 @@ proc Field.GetBlockIndex uses edi, X: word, Y: word, Z: word
      
      xchg   eax, edi
      
+     xor    edx, edx
      mov    esi, dword[Z]
      mov    eax, [Field.Length]
      mov    ecx, [Field.Width]
@@ -373,8 +398,6 @@ proc Field.GetBlockIndex uses edi, X: word, Y: word, Z: word
      
      xchg   eax, edi
      movzx  eax, byte[edi]
-     jmp    .Finish
-
 .Finish:
      ret
 endp
@@ -391,7 +414,8 @@ proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X: dword, Y: dword, Z: dw
      jz      .Finish
      
      mov    eax, dword[Y]  
-      
+     
+     xor    edx, edx 
      mov    edi, [Field.Length]
      mul    edi
      
@@ -400,6 +424,7 @@ proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X: dword, Y: dword, Z: dw
      
      xchg   eax, edi
      
+     xor    edx, edx
      mov    esi, dword[Z]
      mov    eax, [Field.Length]
      mov    ecx, [Field.Width]
@@ -633,7 +658,7 @@ proc Field.GenerateSmallMines uses edi esi ebx edx, x, y, z, size, depth
      ret
 endp
 
-proc Field.GenerateSphere uses eax ebx edx ecx, x, y, z, len
+proc Field.GenerateSphere uses eax ebx edx ecx esi, x, y, z, len
      locals
         newX dd ?
         newY dd ?
@@ -660,18 +685,129 @@ proc Field.GenerateSphere uses eax ebx edx ecx, x, y, z, len
 .SetAirZ:
      mov     edx, [z]
      add     edx, ecx
-                         
+                        
+     push    eax ebx edx ecx
+     stdcall Field.GetBlockIndex, eax, ebx, edx
+     xchg    esi, eax
+     pop     ecx edx ebx eax
+     
+     cmp     esi, Block.Air
+     jz     .SkipSetBlock
+     
+     cmp     esi, Block.Water
+     jz     .SkipSetBlock     
+      
      stdcall Field.SetBlockIndex, eax, ebx, edx, Block.Air
      
+.SkipSetBlock:
      loop    .SetAirZ
      pop     ecx
      loop    .SetAirY
      pop     ecx
      loop    .SetAirX     
      
+;     cmp     dword[len], 3
+;     jl      .Finish
+;     
+;     stdcall Random.GetInt, 0, 1000
+;     cmp     eax, 990
+;     jl      .Finish
+;     
+;     stdcall Random.GetInt, 0, 6
+;     add     eax, 1
+;     
+;     mov     ecx, [len]
+;     cmp     eax, 1
+;     jnz     .Skip1
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip1:
+;
+;     cmp     eax, 2
+;     jnz     .Skip2
+;     add     dword[x], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip2:
+;
+;     cmp     eax, 3
+;     jnz     .Skip3
+;     add     dword[x], ecx 
+;     add     dword[y], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip3:
+;
+;     cmp     eax, 4
+;     jnz     .Skip4
+;     add     dword[x], ecx 
+;     add     dword[y], ecx
+;     add     dword[z], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip4:
+;
+;     cmp     eax, 5
+;     jnz     .Skip3
+;     add     dword[x], ecx 
+;     add     dword[z], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip5:
+;
+;     cmp     eax, 6
+;     jnz     .Skip6
+;     add     dword[y], ecx 
+;     add     dword[z], ecx 
+;     stdcall Field.GenBlocks, [x], [y], [z]
+;.Skip6:
+;     add     dword[z], ecx
+;     stdcall Field.GenBlocks, [x], [y], [z]
 .Finish:
     ret
 endp
+
+proc Field.GenBlocks uses eax ebx ecx edx, x, y, z
+;     locals
+;         nX   dd ?
+;         nY   dd ?
+;         nZ   dd ?
+;         size dd 3
+;     endl
+;         
+;.SetOre:
+;     mov     ebx, Block.CoalOre
+;     mov     ecx, [size]
+;.IterateX:
+;     mov     eax, [x]
+;     add     eax, ecx
+;     mov     [nX], eax
+;     
+;     push    ecx
+;     mov     ecx, [size]
+;.IterateY:
+;     mov     eax, [y]
+;     add     eax, ecx
+;     mov     [nY], eax
+;     
+;     push    ecx
+;     mov     ecx, [size]
+;.IterateZ:
+;     mov     eax, [z]
+;     add     eax, ecx
+;     mov     [nZ], eax
+;
+;     stdcall Random.GetInt, 0, 100
+;     cmp     eax, 25
+;     jl      .SkipSet
+;
+;     stdcall Field.SetBlockIndex, [nX], [nY], [nZ], ebx
+;     
+;.SkipSet:
+;     loop    .IterateZ
+;     pop     ecx
+;     loop    .IterateY
+;     pop     ecx
+;     loop    .IterateX
+;           
+;.Finish:
+;     ret
+endp 
 
 proc Field.GenerateBigMines uses edi esi, x, y, z,  depth, size 
      locals
@@ -1051,6 +1187,8 @@ proc Field.GenerateOre uses eax ebx edx esi edi, sizeChanc, numChanc, power
      ret
 endp
 
+
+
 proc Field.Ore uses eax ebx ecx edx, x, y, maxPosZ, typeOre
      locals
          nX   dd ?
@@ -1078,12 +1216,12 @@ proc Field.Ore uses eax ebx ecx edx, x, y, maxPosZ, typeOre
      loop     .GenZ
     
 .SetOre:
-;     stdcall Field.GetBlockIndex, [x], [y], [z]
-;     cmp     eax, Block.Air
-;     jnz      .Skip1
-;.Skip1:
-;     cmp     eax, Block.Water
-;     jz      .Finish
+     stdcall Field.GetBlockIndex, [x], [y], [z]
+     cmp     eax, Block.Air
+     jnz      .Skip1
+.Skip1:
+     cmp     eax, Block.Water
+     jz      .Finish
 
      mov     ebx, [typeOre]
      mov     ecx, [size]
