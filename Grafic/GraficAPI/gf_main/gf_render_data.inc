@@ -104,6 +104,7 @@ gf_position_matrix    Matrix4x4     1.0,0.0,0.0,0.0,\
                                     0.0,1.0,0.0,0.0,\
                                     0.0,0.0,1.0,0.0,\
                                     0.0,0.0,0.0,1.0
+                                    
 gf_scale_matrix       Matrix4x4     1.0,0.0,0.0,0.0,\
                                     0.0,1.0,0.0,0.0,\
                                     0.0,0.0,1.0,0.0,\
@@ -126,7 +127,7 @@ tmpCandlePos          dd    ?, ?, ?, 0.0
 gf_Dayly_kof          dd    -1.0 ;[-1.0:1.0]
 Max_SunIntensity      dd    0.5, 0.5, 0.5, 1.0
 SunIntensity          dd    ?,   ?,   ?,   1.0 
-SunPosition           dd    20.0, 120.0, 20.0, 1.0
+SunPosition           dd    100.0, 160.0, 100.0, 1.0
 ;Object
 Ka            dd       0.3, 0.3, 0.3
 Kd            dd       0.4, 0.4, 0.4    
@@ -165,5 +166,10 @@ radian          GLfloat         57.32
 gf_tmp_objPos   dd    ?,   ?,   ?
 gf_ViewVec3     dd    ?,   ?,   ?
 gf_temp_path    db    30   dup   (?)
+
+gf_single_matrix       Matrix4x4    1.0,0.0,0.0,0.0,\
+                                    0.0,1.0,0.0,0.0,\
+                                    0.0,0.0,1.0,0.0,\
+                                    0.0,0.0,0.0,1.0
 
 

@@ -9,12 +9,12 @@ if 2 * 2 = 5
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
-  asm3="gf_api_init.ASM"
-  asm4="gf_render.ASM"
-  asm5="gf_set_render.ASM"
+  asm3="gf_render.ASM"
+  asm4="interfase_items.asm"
+  asm5="Interface.asm"
 [inc]
   inc1="Game.inc"
-  inc2="gf_render_data.inc"
-  inc3="gf_api_init.inc"
-  inc4="GraficAPI.inc"
+  inc2="interfase_items.inc"
+  inc3="Interface.inc"
+  inc4="gf_render_data.inc"
 end if

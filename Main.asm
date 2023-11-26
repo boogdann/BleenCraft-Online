@@ -8,6 +8,8 @@ include "Game.asm"
 
 include "Grafic\GraficAPI\GraficAPI.asm"
 include "CotrollerAPI\CotrollerAPI.asm"
+
+;It is expected that openGL is already connected!
 include "Interface\Interface.asm"
 
 include "Units\Asm_Includes\Di.asm"
@@ -79,7 +81,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         @@:
         cmp [App_Mode], MENU_MODE
         jnz @F
-           stdcall RenderMainMenu
+           stdcall ui_RenderMainMenu
         @@:
         
         mov [isFalling], 1
@@ -107,7 +109,7 @@ section '.data' data readable writeable
          ;Main window descriptor
          hMainWindow        dd          ?
          ;Main window params
-         WindowRect         RECT  
+         WindowRect         RECT  ;left ;top ;right ;bottom
          ;=================================================== 
          
          ;Menu/Game mode
@@ -121,6 +123,7 @@ section '.data' data readable writeable
          include "Game.inc"
          include "Grafic\GraficAPI\GraficAPI.inc"
          include "CotrollerAPI\CotrollerAPI.inc"
+         include "Interface\Interface.inc"
 
 section '.idata' import data readable writeable
 

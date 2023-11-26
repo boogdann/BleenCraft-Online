@@ -36,7 +36,7 @@ proc GameStart
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
   ;Set radius of block rendering       (x,  y,  z)
-  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  20, 20, 30
+  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 20
   ;===========================================================
   
   ;========== Controller params ==========
@@ -68,6 +68,11 @@ proc RenderScene
                                               
     stdcall gf_renderSkyObjs, [SkyLand], [SkyLength], [SkyWidth], [SkyHieght], [WorldLength], [WorldWidth]
     
+    ;Block for 2D rendering:
+    stdcall gf_2D_Render_Start 
+      stdcall ui_renderAim, WindowRect
+    stdcall gf_2D_Render_End
+      
     stdcall gf_RenderEnd
   ret
 endp

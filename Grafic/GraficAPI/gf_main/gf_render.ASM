@@ -170,34 +170,30 @@ proc gf_renderSkyObjs, SkyLand, X, Y, Hieght, Word_X, Word_Y
     invoke glUniform1i, [gf_ColorMode], 0
     invoke glUniform1i, [gf_SkyMode], 0
   ret
-endp       
+endp 
+
+proc gf_2D_Render_Start 
+  invoke  glMatrixMode, GL_MODELVIEW
+  invoke  glLoadIdentity 
+  invoke glUseProgram, 0
+  
+  ret
+endp     
+
+proc gf_2D_Render_End
+  invoke glUseProgram, [gf_shaderProgram]
+  ret
+endp 
 
 
 proc gf_RenderEnd   
   ;Рендер солнца
   stdcall gf_renderObj3D, gf_MAIN_CloudHandle, 0, gf_SunColor,\
-                            SunPosition, gf_zeroVec, 2.0, 0
-
-
-
-;   invoke glColor3f, 1.0, 1.0, 1.0
-;      invoke glLoadIdentity
-;invoke glTranslatef, 0.0, 0.0, -1.0; // Сдвигаем систему координат в центр экрана
-;    
-;   invoke glLineWidth, 2.0
-;   
-;   invoke glBegin, GL_LINES
-;   invoke glVertex2f, -0.5, 0.0
-;   invoke glVertex2f, 0.5, 0.0
-;   invoke glVertex2f, 0.0, -0.5
-;   invoke glVertex2f, 0.0, 0.5
-;   invoke glEnd
-;    
-
+                            SunPosition, gf_zeroVec, 2.0, 0                        
 
   invoke SwapBuffers, [hdc]
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
-  
+
   
   ret
 endp
