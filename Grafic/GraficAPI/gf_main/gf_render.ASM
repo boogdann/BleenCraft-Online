@@ -78,19 +78,9 @@ proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
 endp
 
 
-proc gf_RenderSelectObj3D, Obj3D_Handle,\
-                               PosV, TurnV, Scale
-    locals
-       addScale  dd   0.002
-    endl
-
-    invoke  glPolygonMode, GL_FRONT_AND_BACK, GL_LINE
-    fld  [Scale]
-    fadd [addScale]
-    fstp [Scale]
-    stdcall gf_renderObj3D, [Obj3D_Handle], 0, gf_ConturColor,\
-                            [PosV], [TurnV], [Scale], 0 
-    invoke  glPolygonMode, GL_FRONT_AND_BACK, GL_FILL
+proc gf_RenderSelectObj3D, PosV, Scale
+    stdcall gf_renderObj3D, gf_SELECTED_CubeHandle, 0, gf_ConturColor,\
+                            [PosV], gf_zeroVec, [Scale], 0
 
     ret
 endp
@@ -112,12 +102,29 @@ proc gf_SimpleObj uses esi ecx edx, cube_Pos, VertexCount, TextureHandle
 endp  
                 
 
-proc gf_renderSkyObjs, SkyLand, X, Y, Hieght 
+proc gf_renderSkyObjs, SkyLand, X, Y, Hieght, Word_X, Word_Y 
   locals 
     _pos        dd     ?
-    _mul        dd     4.0
+    _mul        dd     5.0
+    _div        dd     2.0
     VertexCount dd     36
+    pos_sub_x   dd     0.0
+    pos_sub_y   dd     0.0
   endl
+  
+  fild [X]
+  fmul [_mul]
+  fild [Word_X]
+  fsubp
+  fdiv [_div]
+  fstp [pos_sub_x]
+  
+  fild [Y]
+  fmul [_mul]
+  fild [Word_Y]
+  fsubp
+  fdiv [_div]
+  fstp [pos_sub_y]
   
    lea esi, [gf_MAIN_CloudHandle]
    invoke glBindVertexArray, [esi]
@@ -142,10 +149,12 @@ proc gf_renderSkyObjs, SkyLand, X, Y, Hieght
              mov [_pos], ecx
              fild [_pos] 
              fmul [_mul]
+             fsub [pos_sub_x]
              fstp [gf_tmp_objPos + 0] 
              mov [_pos], edx
              fild [_pos] 
              fmul [_mul]
+             fsub [pos_sub_y]
              fstp [gf_tmp_objPos + 8] 
              
              stdcall gf_SimpleObj, gf_tmp_objPos, [VertexCount], 0
@@ -171,19 +180,20 @@ proc gf_RenderEnd
 
 
 
-   invoke glColor3f, 1.0, 1.0, 1.0
-      invoke glLoadIdentity
-   ;invoke glTranslatef, 0.0, 0.0, -1.0; // Сдвигаем систему координат в центр экрана
-    
-   invoke glLineWidth, 2.0
-   
-   invoke glBegin, GL_LINES
-   invoke glVertex2f, -0.5, 0.0
-   invoke glVertex2f, 0.5, 0.0
-   invoke glVertex2f, 0.0, -0.5
-   invoke glVertex2f, 0.0, 0.5
-   invoke glEnd
-    
+;   invoke glColor3f, 1.0, 1.0, 1.0
+;      invoke glLoadIdentity
+;invoke glTranslatef, 0.0, 0.0, -1.0; // Сдвигаем систему координат в центр экрана
+;    
+;   invoke glLineWidth, 2.0
+;   
+;   invoke glBegin, GL_LINES
+;   invoke glVertex2f, -0.5, 0.0
+;   invoke glVertex2f, 0.5, 0.0
+;   invoke glVertex2f, 0.0, -0.5
+;   invoke glVertex2f, 0.0, 0.5
+;   invoke glEnd
+;    
+
 
   invoke SwapBuffers, [hdc]
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT

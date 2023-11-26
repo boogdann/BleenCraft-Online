@@ -33,7 +33,7 @@ proc GameStart
   ;================ Grafic params ===========================
   ;Day/night params
   mov [Dayly_Kof], 0   ;0 - 65535
-  stdcall gf_subscribeDayly, Dayly_Kof, 0  ;0 - auto changing
+  stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
   ;Set radius of block rendering       (x,  y,  z)
   stdcall Set_GF_RENDER_BLOCKS_RADIUS,  20, 20, 30
@@ -53,16 +53,11 @@ proc RenderScene
     ;The lighting mode is changed by the third parameter (if underwater => TRUE)
     stdcall gf_CreateLightning, LightsCount, LightsPositions, [UnderWater]
     
-    ;TODO: Fix Selection
+    ;Selection
     cmp [flag], 0
     jz @F
-    stdcall gf_RenderSelectObj3D, obj.Cube.Handle,\ 
-                            selectCubeData, ZERO_VEC_3, 1.0
+      stdcall gf_RenderSelectObj3D, selectCubeData, 1.0
     @@:      
-                     
-    stdcall gf_RenderSelectObj3D, obj.Cube.Handle,\ 
-                            LightsPositions, ZERO_VEC_3, 1.0 
-    ;================================================================= 
                             
     ;Landscape rendering                        
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
@@ -70,9 +65,8 @@ proc RenderScene
     ;Water rendering (second time because of transparency)                                        
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
                                [WorldHeight], PlayerPos, PlayerTurn, 1
-       
-    ;TODO: Position fix                                        
-    stdcall gf_renderSkyObjs, [SkyLand], [SkyLength], [SkyWidth], [SkyHieght]
+                                              
+    stdcall gf_renderSkyObjs, [SkyLand], [SkyLength], [SkyWidth], [SkyHieght], [WorldLength], [WorldWidth]
     
     stdcall gf_RenderEnd
   ret

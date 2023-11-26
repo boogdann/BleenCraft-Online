@@ -47,17 +47,19 @@ UniformNames:
         
         
 ;Siple Objs Names:
-gf_MAIN_cloud_name   db  "LCloud.mobj", 0 
-gf_MAIN_cube_name    db  "LCube.mobj", 0
-gf_MAIN_water_name   db  "LWater.mobj", 0
+gf_MAIN_cloud_name     db  "LCloud.mobj", 0 
+gf_MAIN_cube_name      db  "LCube.mobj", 0
+gf_SELECTED_cube_name  db  "LSelectedCube.mobj", 0
+gf_MAIN_water_name     db  "LWater.mobj", 0
 ;Siple Objs Handles:
-gf_MAIN_CubeHandle   dd   ?, ? 
-gf_MAIN_CloudHandle  dd   ?, ?
-gf_MAIN_WaterHandle  dd   ?, ?
+gf_MAIN_CubeHandle     dd   ?, ?
+gf_SELECTED_CubeHandle dd   ?, ?       
+gf_MAIN_CloudHandle    dd   ?, ?
+gf_MAIN_WaterHandle    dd   ?, ?
 
 ;Textures
 tx_Water_name         db  "Water_20.mbmw", 0
-  tx_Water_Handle     dd  ?
+tx_Water_Handle       dd  ?
 tx_Destroy1_Name      db  "Destroy1_64.mbmw", 0
 tx_Destroy2_Name      db  "Destroy2_64.mbmw", 0
 tx_Destroy3_Name      db  "Destroy3_64.mbmw", 0
@@ -153,7 +155,7 @@ gf_Fog_Color        dd      0.2, 0.2, 0.2, 1.0
 
 ;===============Camera================
 fov             GLfloat         60.0
-zNear           GLfloat         0.1
+zNear           GLfloat         0.04
 zFar            GLfloat         1000.0
 aspect          GLfloat         ?
 radian          GLfloat         57.32

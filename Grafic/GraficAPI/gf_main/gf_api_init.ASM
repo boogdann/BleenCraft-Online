@@ -123,6 +123,7 @@
     stdcall gf_UploadObj3D, gf_MAIN_cube_name, gf_MAIN_CubeHandle
     stdcall gf_UploadObj3D, gf_MAIN_cloud_name, gf_MAIN_CloudHandle
     stdcall gf_UploadObj3D, gf_MAIN_water_name, gf_MAIN_WaterHandle
+    stdcall gf_UploadObj3D, gf_SELECTED_cube_name, gf_SELECTED_CubeHandle
     ;Загрузка стандартных текстур
     stdcall gf_UploadTexture, tx_Water_name, tx_Water_Handle
     stdcall gf_UploadTexture, tx_Destroy1_Name, tx_Destroy1_Handle

@@ -216,7 +216,7 @@ proc gf_changeDaylyCof
      mov [gf_lastDaylyChange], eax
      mov esi, [gf_dayly_kof_adress] 
      inc word[esi]
-     ;xadd word[esi], 200   ;Debug
+     ;add word[esi], 200   ;Debug
    @@:
   ret
 endp
@@ -227,7 +227,7 @@ proc gf_setDaylyCof
   locals 
     tmp_div  dd  32768.0
     tmp_int  dd  ?
-    tmp      dd  0.0002
+    tmp      dd  2.0
   endl 
   mov esi, [gf_dayly_kof_adress]  
   movzx eax, word[esi]

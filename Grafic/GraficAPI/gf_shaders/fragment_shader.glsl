@@ -80,7 +80,7 @@ void main() {
     //Fog
     float dist = abs(distance(CameraPos, FPosition));
     if (SkyMode) {
-        dist /= 30;
+        dist /= 55; 
         resColor = 0.9 * texColor + vec4(spec, 1.0);
     }
     float fogFactor = (MaxFogDist - dist) / (15); //MinFogDist

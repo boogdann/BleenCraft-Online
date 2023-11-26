@@ -1,7 +1,7 @@
 include "gf_main\gf_api_init.inc"   
 include "gf_main\gf_render_data.inc"   
 
-GF_RENDER_BLOCKS_RADIUS         dd     10, 10, 10 
+GF_RENDER_BLOCKS_RADIUS         dd     20, 20, 30 
 
 
 true            =               1
