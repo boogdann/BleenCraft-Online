@@ -109,30 +109,52 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     jl     .Iterate_Z
         
     cmp    ebx, [base]
-    jnl    .SetDirt
-    
-.SetDirt:
-    mov    byte[edi], Block.Dirt
-    add    edi, [Size]
-    inc    ebx
-    cmp    ebx, [base]
     jnl    .Skip
+    
+;.SetDirt:
+;    mov    byte[edi], Block.Dirt
+;    add    edi, [Size]
+;    inc    ebx
+;    cmp    ebx, [base]
+;    jnl    .Skip
+;
+;.SetGravel:
+;    mov    byte[edi], Block.Gravel
+;    add    edi, [Size]
+;    inc    ebx
+;    cmp    ebx, [base]
+;    jnl    .Skip
 
-.SetGravel:
+
+.SetWaterGravel:
     mov    byte[edi], Block.Gravel
     add    edi, [Size]
-    inc    ebx
+    inc    ebx   
     cmp    ebx, [base]
     jnl    .Skip
-
-.SetWater:  
+        
+.SetWaterFull:        
     mov    byte[edi], Block.Water
     add    edi, [Size]
     inc    ebx
     cmp    ebx, [base]
-    jl     .SetWater
+    jl     .SetWaterFull
+    jmp    .SkipSetTurfAndDirt
             
 .Skip:
+    sub    edi, [Size]
+    mov    byte[edi], Block.Dirt
+    sub    edi, [Size]
+    stdcall Random.GetInt, 1, 4
+    push    ecx
+    mov     ecx, eax
+.SetTurf:
+    mov    byte[edi], Block.Turf
+    sub    edi, [Size]
+    loop   .SetTurf
+    pop    ecx
+    
+.SkipSetTurfAndDirt:
     inc   dword[y]
     mov   eax, dword[y]
     cmp   eax, dword[Field.Width]
@@ -208,7 +230,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     add    eax, [Field.Matrix]
     
     mov    edi, [eax]
-    add    edi, 1
+    ; add    edi, 1
     mov    [z], edi
         
     stdcall Field.GetBlockIndex, [x], [y], [z]
@@ -466,15 +488,15 @@ proc Field.TestBounds uses ebx, X, Y, Z
 
      mov    eax, [Field.Length]
      cmp    [X], eax
-     jge    .Error
+     jnl    .Error
 
      mov    eax, [Field.Width]
      cmp    [Y], eax
-     jge    .Error
+     jnl    .Error
 
      mov    eax, [Field.Height]
      cmp    [Z], Field.Height
-     jge    .Error
+     jnl    .Error
 
      cmp    [X], 0
      jl     .Error 
