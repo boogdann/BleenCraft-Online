@@ -2,7 +2,7 @@ include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
 
 proc GameStart
-  stdcall Client.Init, serverIp, [serverPortUDP], [serverPortTCP]
+  ;stdcall Client.Init, serverIp, [serverPortUDP], [serverPortTCP]
   
   ;Refactoring!!!!!!!!!!!
   ;================World initialize=================

@@ -4,7 +4,7 @@ ct_last_ch_spd     dd    0
           
 ct_sensitivity     dd    0.07
 ñt_WalkingSpeed    dd    0.03
-ñt_RunningSpeed    dd    0.06
+ñt_RunningSpeed    dd    0.035
 ct_isMoving        dd    1
 prevTime           dd    0
 

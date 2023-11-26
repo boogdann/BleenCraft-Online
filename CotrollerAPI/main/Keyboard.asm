@@ -1,4 +1,4 @@
-proc ct_on_keyDown, wParam
+proc ct_on_keyDown, wParam, lParam
   
   ;Esc
   cmp [wParam], VK_ESCAPE
@@ -31,7 +31,7 @@ proc ct_check_moves, CameraPos, CameraTurn
     Speed   dd   ?
     curTime  dd  ?
     distancePerSecond  dd 130.0
-    shiftConst         dd 100.0
+    shiftConst         dd 40.0
     waterSpeed         dd 300.0
     
     
@@ -125,6 +125,7 @@ proc ct_check_moves, CameraPos, CameraTurn
      .skipBuild:
      
   @@: 
+
   
   ;Хождения:
   invoke  GetAsyncKeyState, $57 

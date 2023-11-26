@@ -179,11 +179,15 @@ proc ct_destroy_block, cubePos
   fld dword[edi + 8]
   fistp [tempPos + 8]
 
-  mov eax, 0
+  mov eax, 0   
 
-  invoke GetTickCount   
-
-  stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 0
+  cmp [UnderWater], 1
+  jne @F
+    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
+    jmp .finish
+  @@:
+  
+  stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 0  
 
 .finish:
 
