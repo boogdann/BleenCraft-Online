@@ -22,6 +22,7 @@ Client.hUDPSock dd ?
 
 
 Client.sockAddrUDP       sockaddr_in
+Client.sockAddrTCP       sockaddr_in
 ;Client.res            
 ;Client.sockfd   dd ?
 ;Client.newfd    dd ?

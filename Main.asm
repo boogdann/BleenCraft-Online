@@ -131,7 +131,9 @@ section '.idata' import data readable writeable
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
           opengl32, 'opengl32.DLL',\   
-          gdi32,    'GDI32.DLL'  
+          gdi32,    'GDI32.DLL',\
+          wsock32,  'WSOCK32.DLL'  
                                        
   include 'api\kernel32.inc'
   include 'api\user32.inc'
+  include 'api\wsock32.inc'

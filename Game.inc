@@ -27,8 +27,13 @@ SkyHieght        dd       200
 SizeSky          dd       ? 
 ;==============================
 
+;=======================================
+serverIp         db       "127.0.0.1", 0
+serverPortUDP    dd       9999
+serverPortTCP    dd       10000
+;=======================================
+
 ;=============================================
-isGenerated      dd       0
 filename         db       "testSave.txt", 0 
 filenameSky      db       "testSaveSky.txt", 0
 ;==============================================

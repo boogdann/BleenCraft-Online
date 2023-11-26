@@ -52,17 +52,19 @@ proc ws_new_socket, socket_type  ;WS_UDP/WS_TCP
   ret
 endp
 
-;wrapper function for create connection structure (TCP/UDP)
 proc ws_new_connection_structure, ip, port
 
-  mov     [ws_sock_addr.sin_family], AF_INET
-  invoke  htons, [port]
-  mov     [ws_sock_addr.sin_port], ax 
-  invoke  inet_addr, [ip]
-  mov     [ws_sock_addr.sin_addr], eax
+  invoke GetProcessHeap
+  invoke HeapAlloc, eax, 0, sizeof.sockaddr_in
+  mov esi, eax
   
-  ;return sock_addr structure in eax
-  mov eax, ws_sock_addr
+  mov     [esi + sockaddr_in.sin_family], AF_INET
+  invoke  htons, [port]
+  mov     [esi + sockaddr_in.sin_port], ax 
+  invoke  inet_addr, [ip]
+  mov     [esi + sockaddr_in.sin_addr], eax
+  
+  mov eax, esi
 
   ret
 endp

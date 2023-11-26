@@ -1,17 +1,34 @@
-proc Client.Init uses edx ecx ebx, serverIp, serverPort
+proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
   stdcall ws_soket_init 
   
   stdcall ws_new_socket, WS_UDP
   mov     dword[Client.hUDPSock], eax
   
-  stdcall ws_new_connection_structure, [serverIp], [serverPort]
+  stdcall ws_new_connection_structure, [serverIp], [serverPortUDP]
   mov     dword[Client.sockAddrUDP], eax
   
-  stdcall ws_socket_send_msg, [Client.hUDPSock], [Client.sockAddrUDP], Client.Secret, [Client.SizeSecret]  
+  stdcall ws_socket_send_msg_udp, [Client.hUDPSock], [Client.sockAddrUDP], Client.Secret, [Client.SizeSecret]  
 
-  stdcall ws_socket_get_msg, [Client.hUDPSock], Client.ReadBuffer, [Client.SizeBuffer]
+  stdcall ws_socket_get_msg_udp, [Client.hUDPSock], Client.ReadBuffer, [Client.SizeBuffer]
   movzx   eax, byte[Client.ReadBuffer + Client.OffsetNumber]
   mov     [Client.Number], eax
+  
+  stdcall ws_new_socket, WS_TCP
+  mov     dword[Client.hTCPSock], eax
+  
+  stdcall ws_new_connection_structure, [serverIp], [serverPortTCP]
+  mov     dword[Client.sockAddrTCP], eax  
+  
+  stdcall ws_tcp_connect, [Client.hTCPSock], [Client.sockAddrTCP]
+  
+  stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], Client.Secret, [Client.SizeSecret]  
+  
+  stdcall ws_socket_get_msg_tcp, [Client.hTCPSock], Client.ReadBuffer, [Client.SizeBuffer]
+  cmp     [Client.ReadBuffer], 0
+  jnz     .Skip
+  invoke  ExitProcess, 1
+.Skip:
+  
 .Finish:
      ret
 endp

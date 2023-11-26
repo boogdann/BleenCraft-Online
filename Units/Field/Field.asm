@@ -145,7 +145,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     sub    edi, [Size]
     mov    byte[edi], Block.Dirt
     sub    edi, [Size]
-    stdcall Random.GetInt, 1, 4
+    stdcall Random.GetInt, 2, 6
     push    ecx
     mov     ecx, eax
 .SetTurf:
@@ -305,7 +305,6 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     stdcall Random.Initialize
     stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
     
-    mov    dword[isGenerated], 1 
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     
     stdcall Field.GenerateMines, [sizeChanc], 5, [power]

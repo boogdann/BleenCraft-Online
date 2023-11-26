@@ -2,6 +2,8 @@ include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
 
 proc GameStart
+  stdcall Client.Init, serverIp, [serverPortUDP], [serverPortTCP]
+  
   ;Refactoring!!!!!!!!!!!
   ;================World initialize=================
   stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], filename 
@@ -36,7 +38,7 @@ proc GameStart
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
   ;Set radius of block rendering       (x,  y,  z)
-  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 20
+  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 30
   ;===========================================================
   
   ;========== Controller params ==========
