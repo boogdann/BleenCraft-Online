@@ -92,7 +92,12 @@ proc ct_check_moves, CameraPos, CameraTurn
           
           add [destruction_time], eax      
           
-          cmp [destruction_time], 1000
+          mov eax, 0
+          
+          stdcall Blocks.GetDestroyTime, [ct_block_index], 1
+           
+     
+          cmp [destruction_time], eax
           jl .time
           
             mov [flag], 0
@@ -115,17 +120,43 @@ proc ct_check_moves, CameraPos, CameraTurn
   invoke GetAsyncKeyState, $02
   cmp eax, 0
   jz @F
+     
      cmp [flag], 1
-     jne .skipBuild
-        mov [flag], 0
-        cmp [is_readyToBuild], 1
-        jne .skipBuild
-          stdcall ct_build_block, prevCubePos
-          mov [is_readyToBuild], 0   
-     .skipBuild:
+     jne .skipBuilding
+        
+        mov [build_by_click], 0
+        
+        invoke GetTickCount
+        mov edx, eax
+        sub eax, [prev_building_time]
+        
+        mov [prev_building_time], edx
+        
+        cmp eax, 1000
+        jg .not_ready
+     
+          
+          add [building_time], eax      
+             
+          cmp [building_time], 500
+          jl .not_ready
+          
+            mov [flag], 0
+            mov [building_time], 0
+            
+            stdcall ct_build_block, prevCubePos   
+     
+        .not_ready:
+     
+     .skipBuilding: 
+     
+     jmp .rbm_pressed
      
   @@: 
-
+    
+    mov [build_by_click], 1 
+    
+  .rbm_pressed:
   
   ;Хождения:
   invoke  GetAsyncKeyState, $57 

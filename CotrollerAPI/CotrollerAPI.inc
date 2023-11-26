@@ -41,4 +41,8 @@ prev_destr_time            dd     0
 destruction_time           dd     0
 prev_block_pos             dd     0, 0, 0
 
+prev_building_time         dd     0
+building_time              dd     0
+build_by_click             dd     0
+
 skip_destroying            dd     0

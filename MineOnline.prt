@@ -9,8 +9,8 @@ if 2 * 2 = 5
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
-  asm3="Swimming.asm"
-  asm4="BlocksHighlighting.asm"
+  asm3="BlocksHighlighting.asm"
+  asm4="Keyboard.asm"
 [inc]
   inc1="Game.inc"
   inc2="CotrollerAPI.inc"

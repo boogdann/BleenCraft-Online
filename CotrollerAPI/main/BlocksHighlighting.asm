@@ -45,7 +45,7 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
 
   mov [block_detected], 0
   mov [flag], 0
-   
+  
   ;Предыдущая позиция камеры
   fld [tempCamera]
   fstp [prevCubePos]
@@ -99,12 +99,17 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
     
     mov [flag], 1
     
-    mov [is_readyToBuild], 1
+    ;remove this? mov [is_readyToBuild], 1
   
     cmp [skip_destroying], 1
     jne .destroy_flag
       mov [destruction_time], 0
     .destroy_flag:
+    
+    cmp [build_by_click], 1
+    jne .build_flag
+      mov [building_time], 500
+    .build_flag:
     
     mov edx, [tempVector]
     cmp edx, [prev_block_pos]
@@ -317,7 +322,7 @@ proc ct_destroy_block, cubePos
 .finish:
 
   ret
-endp
+endp                
 
 proc ct_build_block, prevCubePos
 
@@ -371,8 +376,11 @@ proc ct_detect_block uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
      @@:
      
      mov [block_detected], 1
-     mov [ct_block_index], esi
-            
+     
+     stdcall Field.GetBlockIndex, [X], [Y], [Z]
+     
+     mov [ct_block_index], eax  
+         
   .finish:
          
   ret
