@@ -4,17 +4,13 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=8
+  countAsm=4
   countInc=2
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
   asm3="Swimming.asm"
-  asm4="Collisions.asm"
-  asm5="CotrollerAPI.asm"
-  asm6="BlocksHighlighting.asm"
-  asm7="Keyboard.asm"
-  asm8="Jumps.asm"
+  asm4="BlocksHighlighting.asm"
 [inc]
   inc1="Game.inc"
   inc2="CotrollerAPI.inc"

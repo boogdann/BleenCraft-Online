@@ -7,7 +7,7 @@ proc ct_watter, playerPos, Field, X, Y, Z
     
   endl
 
-  mov esi, [playerPos] 
+  mov esi, [playerPos]       
   
   cmp [isWatter], 1
   jne .notWater
@@ -64,7 +64,7 @@ proc ct_watter, playerPos, Field, X, Y, Z
 .notWater:
 
   ret
-endp
+endp  
 
 proc ct_isWaterAround uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
   

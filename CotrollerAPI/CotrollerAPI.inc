@@ -29,6 +29,7 @@ ct_velocity                dd     0.0005
 ct_watter_velocity         dd     0.00005
 ct_falling_velocity        dd     0.0005
 ct_water_around            dd     0
+ct_water_underFeet         dd     0
 
 isWatter                   dd     0
 waterUnderFeets            dd     0

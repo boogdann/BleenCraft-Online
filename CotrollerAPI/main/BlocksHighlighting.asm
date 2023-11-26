@@ -248,6 +248,70 @@ proc ct_destroy_block, cubePos
     jmp .finish
   @@:
   
+  ;fifth check
+  fld dword[edi]
+  fsub [Eps]
+  fistp [tempVector]
+  fld dword[edi + 8]
+  fsub [Eps]
+  fistp [tempVector + 8]
+  
+  stdcall ct_isWaterAround, [Field.Blocks], [WorldLength], [WorldWidth], [tempVector], [tempVector + 8], [tempVector + 4]
+  
+  cmp [ct_water_around], 1
+  jne @F
+    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
+    jmp .finish
+  @@:
+  
+  ;sixth check
+  fld dword[edi]
+  fadd [Eps]
+  fistp [tempVector]
+  fld dword[edi + 8]
+  fsub [Eps]
+  fistp [tempVector + 8]
+  
+  stdcall ct_isWaterAround, [Field.Blocks], [WorldLength], [WorldWidth], [tempVector], [tempVector + 8], [tempVector + 4]
+  
+  cmp [ct_water_around], 1
+  jne @F
+    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
+    jmp .finish
+  @@:
+  
+  ;seventh check
+  fld dword[edi]
+  fsub [Eps]
+  fistp [tempVector]
+  fld dword[edi + 8]
+  fadd [Eps]
+  fistp [tempVector + 8]
+  
+  stdcall ct_isWaterAround, [Field.Blocks], [WorldLength], [WorldWidth], [tempVector], [tempVector + 8], [tempVector + 4]
+  
+  cmp [ct_water_around], 1
+  jne @F
+    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
+    jmp .finish
+  @@:
+  
+  ;eighth check
+  fld dword[edi]
+  fadd [Eps]
+  fistp [tempVector]
+  fld dword[edi + 8]
+  fadd [Eps]
+  fistp [tempVector + 8]
+  
+  stdcall ct_isWaterAround, [Field.Blocks], [WorldLength], [WorldWidth], [tempVector], [tempVector + 8], [tempVector + 4]
+  
+  cmp [ct_water_around], 1
+  jne @F
+    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
+    jmp .finish
+  @@:
+  
   stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 0  
 
 .finish:
