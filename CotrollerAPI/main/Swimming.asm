@@ -1,4 +1,4 @@
- proc ct_watter, playerPos, Field, X, Y, Z
+proc ct_watter, playerPos, Field, X, Y, Z
 
   locals
     
@@ -63,6 +63,39 @@
   
 .notWater:
 
-
   ret
 endp
+
+proc ct_isWaterAround uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
+  
+  mov [onGround], 0
+  mov [isWatter], 0
+  
+  locals
+  
+    Check   dd  ?
+    
+  endl
+
+  mov esi, [Field.Blocks]
+  mov eax, [X_SIZE]
+  imul [Y_SIZE]
+  imul [Z]
+  add esi, eax
+  
+  mov eax, [X_SIZE] 
+  imul [Y]
+  add esi, eax
+  add esi, [X]
+  
+  mov eax, 0
+  cmp byte[esi], 255 
+  jne .finish
+     
+     mov [ct_water_around], 1
+            
+  .finish:
+
+         
+  ret
+endp 
