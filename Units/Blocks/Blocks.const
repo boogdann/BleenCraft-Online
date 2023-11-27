@@ -7,7 +7,6 @@
 ;       4 - ломаются за константное время(не зависит от инструмента)
 ;
 
-Blocks.START_DESTROY_TIME =       1000
 
 Blocks.IS_DESTRUCTIBLE     =      1
 Blocks.IS_NOT_DESTRUCTIBLE =      0

@@ -1,3 +1,10 @@
+proc Blocks.SetStartTime, Time
+     mov eax, [Time]
+     mov dword[Blocks.START_DESTROY_TIME]
+.Finish:
+     ret
+endp
+
 proc Blocks.GetDestroyTime uses edi ecx, IndexBlock, IndexTool
     locals
         indexDestr        dd ?
@@ -15,7 +22,7 @@ proc Blocks.GetDestroyTime uses edi ecx, IndexBlock, IndexTool
     mov     [multiplyPriorTool], eax
     
     xor     edx, edx
-    mov     eax, Blocks.START_DESTROY_TIME
+    mov     eax, [Blocks.START_DESTROY_TIME]
     mul     dword[multiplyDestr]
     
     cmp     dword[multiplyPriorTool], 0
@@ -95,10 +102,13 @@ proc Blocks.MultDestr uses edi, IndexTool
     ret
 endp
 
+; not now
 proc Blocks.PriorTool uses edi, IndexTool 
      mov    edi, Blocks.PriorirityTool
      add    edi, [IndexTool]
      movzx  eax, byte[edi] 
+     
 .Finish:
+     mov    eax, 0
      ret
 endp
