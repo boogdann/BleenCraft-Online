@@ -216,7 +216,8 @@ proc gf_changeDaylyCof
      mov [gf_lastDaylyChange], eax
      mov esi, [gf_dayly_kof_adress] 
      inc word[esi]
-     ;add word[esi], 200   ;Debug
+     mov ax, word[DAYLY_SPEED]
+     add word[esi], ax   ;Debug
    @@:
   ret
 endp

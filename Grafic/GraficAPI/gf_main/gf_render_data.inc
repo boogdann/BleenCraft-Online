@@ -156,7 +156,7 @@ gf_Fog_Color        dd      0.2, 0.2, 0.2, 1.0
 
 ;===============Camera================
 fov             GLfloat         60.0
-zNear           GLfloat         0.04
+zNear           GLfloat         0.05
 zFar            GLfloat         1000.0
 aspect          GLfloat         ?
 radian          GLfloat         57.32
@@ -171,5 +171,7 @@ gf_single_matrix       Matrix4x4    1.0,0.0,0.0,0.0,\
                                     0.0,1.0,0.0,0.0,\
                                     0.0,0.0,1.0,0.0,\
                                     0.0,0.0,0.0,1.0
+                                    
+DAYLY_SPEED     dw     0
 
 

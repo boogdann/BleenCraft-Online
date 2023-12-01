@@ -37,9 +37,18 @@ Start:
   stdcall gf_LoadObjs
   ;================================================  
   
+  invoke im_CreateContext
+  invoke ImGui_ImplWin32_InitForOpenGL, [hMainWindow]
+  invoke ImGui_ImplOpenGL3_Init, opengl_version
+  
   ;==== Start settings ======  
   mov [App_Mode], GAME_MODE
   stdcall GameStart 
+  
+  
+  ;mov [App_Mode], MENU_MODE
+  ;stdcall ui_InterfaceInit
+  
   ;========================== 
   
   ;================ Main app cycle =====================
@@ -52,11 +61,31 @@ Start:
           invoke  DispatchMessage, msg
           jmp     .MainCycle
      .ExitMainCycle:
+     
+     invoke ImGui_ImplOpenGL3_NewFrame
+     invoke ImGui_ImplWin32_NewFrame
+     invoke im_NewFrame
+     
+     invoke im_ShowDemoWindow, show_demo_window
+     
+     invoke im_Render
+     invoke glClear, GL_COLOR_BUFFER_BIT
+     ;invoke ImGui_ImplOpenGL3_RenderDrawData, 
+     invoke SwapBuffers, [hdc]
+     
    jmp .AppCycle
    ;====================================================
         
             
 proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
+
+        invoke ImGui_ImplWin32_WndProcHandler, [hWnd], [uMsg], [wParam], [lParam]
+        cmp eax, 0
+        jz @F
+           mov eax, 1
+           jmp .Return
+        @@:
+
         ;The physical module only works in game mode (kastil)
         cmp [App_Mode], GAME_MODE
         jnz @F
@@ -73,17 +102,18 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
         jmp     .Return
 
-  .Render:
+  .Render:     
         ;Render cases
         cmp [App_Mode], GAME_MODE
-        jnz @F
+        jnz @F                 
            stdcall RenderScene
+           jmp     .RenderEnd
         @@:
         cmp [App_Mode], MENU_MODE
         jnz @F
            stdcall ui_RenderMainMenu
         @@:
-        
+        .RenderEnd:
         mov [isFalling], 1
         jmp     .ReturnZero
   .Movement:
@@ -117,6 +147,11 @@ section '.data' data readable writeable
          GAME_MODE       =     2
          App_Mode        dd    ?
          
+         show_demo_window  db  1
+         
+         
+         opengl_version  db '#version 330', 0
+         
          ;obj.Cube.Handle - CUBE
          
          ;===========Data imports============
@@ -131,9 +166,24 @@ section '.idata' import data readable writeable
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
           opengl32, 'opengl32.DLL',\   
-          gdi32,    'GDI32.DLL',\
-          wsock32,  'WSOCK32.DLL'  
+          gdi32,    'GDI32.DLL',\  
+          imgui,    'IMGUI.dll'
+          
+  import imgui,\
+        im_CreateContext, '?CreateContext@ImGui@@YAPAUImGuiContext@@PAUImFontAtlas@@@Z',\
+        im_ShowDemoWindow, '?ShowDemoWindow@ImGui@@YAXPA_N@Z',\
+        im_NewFrame, '?NewFrame@ImGui@@YAXXZ',\  
+        im_StyleColorsDark, '?StyleColorsDark@ImGui@@YAXPAUImGuiStyle@@@Z',\
+        im_ImGuiRender, '?Render@ImGui@@YAXXZ',\
+        im_GetDrawData, '?GetDrawData@ImGui@@YAPAUImDrawData@@XZ',\
+        ImGui_ImplOpenGL3_Init, '?ImGui_ImplOpenGL3_Init@@YA_NPBD@Z',\
+        ImGui_ImplWin32_InitForOpenGL, '?ImGui_ImplWin32_InitForOpenGL@@YA_NPAX@Z',\ 
+        ImGui_ImplWin32_WndProcHandler, '?ImGui_ImplWin32_WndProcHandler@@YAJPAUHWND__@@IIJ@Z',\
+        ImGui_ImplOpenGL3_NewFrame, '?ImGui_ImplOpenGL3_NewFrame@@YAXXZ',\
+        ImGui_ImplWin32_NewFrame, '?ImGui_ImplWin32_NewFrame@@YAXXZ',\
+        im_Render, '?Render@ImGui@@YAXXZ',\
+        ImGui_ImplOpenGL3_RenderDrawData, '?ImGui_ImplOpenGL3_RenderDrawData@@YAXPAUImDrawData@@@Z'
+          
                                        
   include 'api\kernel32.inc'
   include 'api\user32.inc'
-  include 'api\wsock32.inc'

@@ -23,7 +23,7 @@ SkyLand          dd       ?
 ;Sky params
 SkyLength        dd       ?
 SkyWidth         dd       ?
-SkyHieght        dd       200  
+SkyHieght        dd       120  
 SizeSky          dd       ? 
 ;==============================
 
@@ -51,7 +51,7 @@ flag             dd       0
 ;==============================================
 
 ;========== Other ========================
-ZERO_VEC_3       dd        0.0, 0.0, 0.0
+ZERO_VEC_3       dd        45.0, 45.0, 0.0
 ;=========================================
 
 

@@ -175,6 +175,11 @@ endp
 proc gf_2D_Render_Start 
   invoke  glMatrixMode, GL_MODELVIEW
   invoke  glLoadIdentity 
+  invoke  glMatrixMode, GL_PROJECTION
+  invoke  glPushMatrix
+  invoke  glLoadIdentity 
+  
+  invoke glLoadIdentity 
   invoke glUseProgram, 0
   
   ret
@@ -182,6 +187,9 @@ endp
 
 proc gf_2D_Render_End
   invoke glUseProgram, [gf_shaderProgram]
+  
+  invoke  glMatrixMode, GL_PROJECTION
+  invoke  glPopMatrix
   ret
 endp 
 
@@ -189,7 +197,7 @@ endp
 proc gf_RenderEnd   
   ;Рендер солнца
   stdcall gf_renderObj3D, gf_MAIN_CloudHandle, 0, gf_SunColor,\
-                            SunPosition, gf_zeroVec, 2.0, 0                        
+                            SunPosition, gf_zeroVec, 5.0, 0                        
 
   invoke SwapBuffers, [hdc]
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT

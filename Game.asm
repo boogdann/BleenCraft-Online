@@ -2,8 +2,6 @@ include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
 
 proc GameStart
-  ;stdcall Client.Init, serverIp, [serverPortUDP], [serverPortTCP]
-  
   ;Refactoring!!!!!!!!!!!
   ;================World initialize=================
   stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], filename 
@@ -34,11 +32,12 @@ proc GameStart
   
   ;================ Grafic params ===========================
   ;Day/night params
-  mov [Dayly_Kof], 0   ;0 - 65535
+  mov [Dayly_Kof], 10000   ;0 - 65535
+  mov [DAYLY_SPEED], 10
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
   ;Set radius of block rendering       (x,  y,  z)
-  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 30
+  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 20
   ;===========================================================
   
   ;========== Controller params ==========
@@ -71,9 +70,15 @@ proc RenderScene
     stdcall gf_renderSkyObjs, [SkyLand], [SkyLength], [SkyWidth], [SkyHieght], [WorldLength], [WorldWidth]
     
     ;Block for 2D rendering:
+    cmp [App_Mode], GAME_MODE
+    jnz .SkipUI
     stdcall gf_2D_Render_Start 
-      stdcall ui_renderAim, WindowRect
+        stdcall ui_renderAim, WindowRect
+        stdcall ui_renderHealth, WindowRect, 10, 6
+        ;stdcall ui_renderBag, 10.0, 10.0, 50.0
+
     stdcall gf_2D_Render_End
+    .SkipUI:
       
     stdcall gf_RenderEnd
   ret
