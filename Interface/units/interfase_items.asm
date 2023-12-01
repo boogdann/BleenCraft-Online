@@ -38,6 +38,13 @@ proc ui_renderBag uses esi, WindowRect, tools_count, tools_arr, pointer
     cur_x        dd ?
     cur_y        dd -0.95
     n_2          dd 2.0
+    
+    n_15         dd 15.0
+    elm_x        dd ?
+    elm_y        dd ?
+    x_add        dd ?
+    y_add        dd ?
+    tmp_xy       dd ?, ?
   endl
   
   mov esi, [WindowRect]
@@ -56,12 +63,36 @@ proc ui_renderBag uses esi, WindowRect, tools_count, tools_arr, pointer
   fsubp
   fstp [cur_x]
   
-  invoke glColor3f, 0.43, 0.37, 0.29
-  invoke glColor3f, 0.63, 0.57, 0.45
+  fld [bag_height]
+  fld [bag_height]
+  fdiv [n_15]
+  fst [y_add]
+  fsubp
+  fsub [y_add]
+  fstp [elm_y]
+  
+  fld [bag_width]
+  fld [bag_width]
+  fdiv [n_15]
+  fst [x_add]
+  fsubp
+  fsub [x_add]
+  fstp [elm_x]
+  
+  
+  
   mov esi, 0
   .DrawLoop:
+    fld [cur_x]
+    fadd [x_add]
+    fstp [tmp_xy]
+    fld [cur_y]
+    fadd [y_add]
+    fstp [tmp_xy + 4]
+    invoke glColor3f, 0.43, 0.37, 0.29
+    stdcall ui_draw_rectangle, [tmp_xy], [tmp_xy + 4], [elm_x], [elm_y]
+    invoke glColor3f, 0.63, 0.57, 0.45
     stdcall ui_draw_rectangle, [cur_x], [cur_y], [bag_width], [bag_height]
-    ;stdcall ui_render_heart, [WindowRect], [cur_x], [cur_y], [isHealth]
     fld [cur_x]
     fadd [bag_width]
     fstp [cur_x]
@@ -79,6 +110,8 @@ proc ui_renderHealth uses esi, WindowRect, all_count, health_count
     cur_y        dd -0.75
     isHealth     dd 1
     
+
+    
     n_2          dd 2.0
   endl
   
@@ -90,6 +123,7 @@ proc ui_renderHealth uses esi, WindowRect, all_count, health_count
   fld1
   fsubp
   fstp [cur_x]
+  
 
   mov esi, 0
   .DrawLoop:
@@ -101,6 +135,7 @@ proc ui_renderHealth uses esi, WindowRect, all_count, health_count
     fld [cur_x]
     fadd [heart_width]
     fstp [cur_x]
+    
   inc esi
   cmp esi, [all_count]
   jnz .DrawLoop

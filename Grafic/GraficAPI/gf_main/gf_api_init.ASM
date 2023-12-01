@@ -6,6 +6,9 @@
     invoke  RegisterClass, wndClass
     invoke  CreateWindowEx, 0, className, className, WINDOW_STYLE,\
                             0, 0, 0, 0, 0, 0, 0, 0
+                            
+    ;    invoke  CreateWindowEx, 0, className, className, WS_VISIBLE,\
+    ;                        0, 0, 1000, 500, 0, 0, 0, 0
     mov     [hMainWindow], eax
 
     invoke  GetClientRect, eax, WindowRect
