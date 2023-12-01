@@ -75,8 +75,7 @@ proc RenderScene
     stdcall gf_2D_Render_Start 
         stdcall ui_renderAim, WindowRect
         stdcall ui_renderHealth, WindowRect, 10, 6
-        ;stdcall ui_renderBag, 10.0, 10.0, 50.0
-
+        stdcall ui_renderBag, WindowRect, 9, 0, 2
     stdcall gf_2D_Render_End
     .SkipUI:
       

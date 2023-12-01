@@ -31,10 +31,86 @@ proc ui_renderAim uses esi, WindowRect
    ret
 endp
 
-proc ui_draw_rectangle, x, y, x_sz, y_sz
+proc ui_renderBag uses esi, WindowRect, tools_count, tools_arr, pointer 
+  locals
+    bag_width    dd ?
+    bag_height   dd 0.13
+    cur_x        dd ?
+    cur_y        dd -0.95
+    n_2          dd 2.0
+  endl
+  
+  mov esi, [WindowRect]
+  fild dword[esi + 12]
+  fild dword[esi + 8]
+  fdivp
+  fmul [bag_height]
+  fstp [bag_width]
+  
+  fld [n_2]
+  fild [tools_count]
+  fmul [bag_width]
+  fsubp
+  fdiv [n_2]
+  fld1
+  fsubp
+  fstp [cur_x]
+  
+  invoke glColor3f, 0.43, 0.37, 0.29
+  invoke glColor3f, 0.63, 0.57, 0.45
+  mov esi, 0
+  .DrawLoop:
+    stdcall ui_draw_rectangle, [cur_x], [cur_y], [bag_width], [bag_height]
+    ;stdcall ui_render_heart, [WindowRect], [cur_x], [cur_y], [isHealth]
+    fld [cur_x]
+    fadd [bag_width]
+    fstp [cur_x]
+  inc esi
+  cmp esi, [tools_count]
+  jnz .DrawLoop
+  
+  ret
+endp
 
+proc ui_renderHealth uses esi, WindowRect, all_count, health_count 
+  locals
+    heart_width  dd 0.05 
+    cur_x        dd ?
+    cur_y        dd -0.75
+    isHealth     dd 1
+    
+    n_2          dd 2.0
+  endl
+  
+  fld [n_2]
+  fild [all_count]
+  fmul [heart_width]
+  fsubp
+  fdiv [n_2]
+  fld1
+  fsubp
+  fstp [cur_x]
+
+  mov esi, 0
+  .DrawLoop:
+    cmp esi, [health_count]
+    jnz @F
+      mov [isHealth], 0
+    @@:
+    stdcall ui_render_heart, [WindowRect], [cur_x], [cur_y], [isHealth]
+    fld [cur_x]
+    fadd [heart_width]
+    fstp [cur_x]
+  inc esi
+  cmp esi, [all_count]
+  jnz .DrawLoop
   
 
+  ret
+endp
+
+
+proc ui_draw_rectangle, x, y, x_sz, y_sz
   invoke glBegin, GL_QUADS
     invoke glVertex2f, [x], [y]
     fld [x]
@@ -54,31 +130,6 @@ proc ui_draw_rectangle, x, y, x_sz, y_sz
   ret
 endp
 
-proc ui_renderHealth uses esi, WindowRect, all_count, health_count 
-  locals
-    heart_width  dd 0.05 
-    cur_x        dd -0.25
-    cur_y        dd -0.75
-    isHealth     dd 1
-  endl
-
-  mov esi, 0
-  .DrawLoop:
-    cmp esi, [health_count]
-    jnz @F
-      mov [isHealth], 0
-    @@:
-    stdcall ui_render_heart, [WindowRect], [cur_x], [cur_y], [isHealth]
-    fld [cur_x]
-    fadd [heart_width]
-    fstp [cur_x]
-  inc esi
-  cmp esi, [all_count]
-  jnz .DrawLoop
-  
-
-  ret
-endp
 
 proc ui_render_heart uses esi, WindowRect, x, y, isHealth
   locals 
@@ -177,7 +228,6 @@ proc ui_render_heart uses esi, WindowRect, x, y, isHealth
   dec esi
   cmp esi, 0
   jnz .DrawLoop
-  
   
   ret
 endp
