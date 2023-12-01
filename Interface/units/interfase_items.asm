@@ -31,20 +31,30 @@ proc ui_renderAim uses esi, WindowRect
    ret
 endp
 
-proc ui_renderBag uses esi, WindowRect, tools_count, tools_arr, pointer 
+proc ui_renderBag uses esi edi, WindowRect, tools_count, tools_arr, pointer 
   locals
     bag_width    dd ?
     bag_height   dd 0.13
     cur_x        dd ?
     cur_y        dd -0.95
-    n_2          dd 2.0
     
+    n_2          dd 2.0
     n_15         dd 15.0
+    n_5          dd 5.0
+    
     elm_x        dd ?
     elm_y        dd ?
     x_add        dd ?
     y_add        dd ?
     tmp_xy       dd ?, ?
+    
+    elm_x_elm        dd ?
+    elm_y_elm        dd ?
+    x_add_elm        dd ?
+    y_add_elm        dd ?
+    tmp_xy_elm       dd ?, ?
+    
+    t_4              dd 4
   endl
   
   mov esi, [WindowRect]
@@ -79,10 +89,64 @@ proc ui_renderBag uses esi, WindowRect, tools_count, tools_arr, pointer
   fsub [x_add]
   fstp [elm_x]
   
+  fld [bag_height]
+  fld [bag_height]
+  fdiv [n_5]
+  fst [y_add_elm]
+  fsubp
+  fsub [y_add_elm]
+  fstp [elm_y_elm]
   
+  fld [bag_width]
+  fld [bag_width]
+  fdiv [n_5]
+  fst [x_add_elm]
+  fsubp
+  fsub [x_add_elm]
+  fstp [elm_x_elm]
   
+  mov edi, [tools_arr]
   mov esi, 0
   .DrawLoop:
+  
+    mov ax, word[edi]
+    cmp ax, 0
+    jz @F
+      fld [cur_x]
+      fadd [x_add_elm]
+      fstp [tmp_xy_elm]
+      fld [cur_y]
+      fadd [y_add_elm]
+      fstp [tmp_xy_elm + 4]
+      invoke glColor3f, 0.2, 0.2, 0.2
+      
+      mov ax, word[edi]
+      cmp ax, 255
+      jle .cubes
+         ;other elements case
+         stdcall ui_draw_rectangle, [tmp_xy_elm], [tmp_xy_elm + 4], [elm_x_elm], [elm_y_elm]
+      jmp .readyRender
+      .cubes:
+         ;cube element case:
+         xor edx, edx
+         push eax
+         movzx eax, word[edi]
+         dec eax
+         mov ebx, 4
+         imul eax, ebx 
+         add eax, TextureHandles 
+         invoke glEnable, GL_TEXTURE_2D;
+         invoke glBindTexture, GL_TEXTURE_2D, [eax]
+         pop eax
+         
+         stdcall ui_draw_rectangle_textured_block, [tmp_xy_elm], [tmp_xy_elm + 4], [elm_x_elm], [elm_y_elm]
+         
+         invoke glDisable, GL_TEXTURE_2D
+      .readyRender:
+      
+    @@:
+    
+    
     fld [cur_x]
     fadd [x_add]
     fstp [tmp_xy]
@@ -92,10 +156,15 @@ proc ui_renderBag uses esi, WindowRect, tools_count, tools_arr, pointer
     invoke glColor3f, 0.43, 0.37, 0.29
     stdcall ui_draw_rectangle, [tmp_xy], [tmp_xy + 4], [elm_x], [elm_y]
     invoke glColor3f, 0.63, 0.57, 0.45
+    cmp esi, [pointer]
+    jnz @F
+      invoke glColor3f, 0.8, 0.8, 0.8
+    @@:
     stdcall ui_draw_rectangle, [cur_x], [cur_y], [bag_width], [bag_height]
     fld [cur_x]
     fadd [bag_width]
     fstp [cur_x]
+    add edi, 4
   inc esi
   cmp esi, [tools_count]
   jnz .DrawLoop
@@ -109,8 +178,6 @@ proc ui_renderHealth uses esi, WindowRect, all_count, health_count
     cur_x        dd ?
     cur_y        dd -0.75
     isHealth     dd 1
-    
-
     
     n_2          dd 2.0
   endl
@@ -161,6 +228,36 @@ proc ui_draw_rectangle, x, y, x_sz, y_sz
     fstp [x]    
     invoke glVertex2f, [x], [y]        
   invoke glEnd;  
+
+  ret
+endp
+
+proc ui_draw_rectangle_textured_block, x, y, x_sz, y_sz
+               ;f 12 13 5 14
+  invoke glEnable, GL_LIGHTING
+  invoke glEnable, GL_LIGHT0
+  invoke glBegin, GL_QUADS
+    invoke glTexCoord2f, 0.010000, 0.510000; 
+    invoke glVertex2f, [x], [y]
+    fld [x]
+    fadd [x_sz]
+    fstp [x]
+    invoke glTexCoord2f,  0.343333, 0.510000;
+   
+    invoke glVertex2f, [x], [y]   
+    fld [y]
+    fadd [y_sz]
+    fstp [y]
+    invoke glTexCoord2f, 0.343333, 0.710000; 
+    invoke glVertex2f, [x], [y] 
+    fld [x]
+    fsub [x_sz]
+    fstp [x]    
+    invoke glTexCoord2f, 0.010000, 0.710000
+    invoke glVertex2f, [x], [y]        
+  invoke glEnd;  
+  invoke glDisable, GL_LIGHTING
+  invoke glDisable, GL_LIGHT0
 
   ret
 endp
