@@ -4,13 +4,15 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=4
+  countAsm=6
   countInc=5
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
   asm3="interfase_items.asm"
   asm4="gf_api_init.ASM"
+  asm5="Interface.asm"
+  asm6="GraficAPI.ASM"
 [inc]
   inc1="Game.inc"
   inc2="GraficAPI.inc"

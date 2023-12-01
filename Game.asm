@@ -1,6 +1,15 @@
 include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
 
+include "Grafic\GraficAPI\gf_assets\gf_macro.ASM"
+
+;Ui rendering cases (This is necessary use Ilya) !!!
+UI_GAME        equ  1   ;General ui render (in game)
+UI_WORKBENCH   equ  2   ;Only Workbench ui render
+UI_MAINBAG     equ  3   ;Only main (big) bag render 
+UI_ESC_MENU    equ  4   ;Setting and other menu ui      
+;mov [UI_MODE], CONST
+
 proc GameStart
   ;Refactoring!!!!!!!!!!!
   ;================World initialize=================
@@ -73,9 +82,24 @@ proc RenderScene
     cmp [App_Mode], GAME_MODE
     jnz .SkipUI
     stdcall gf_2D_Render_Start 
-        stdcall ui_renderAim, WindowRect
-        stdcall ui_renderHealth, WindowRect, 10, 6
-        stdcall ui_renderBag, WindowRect, 9, tools_arr_example, 2
+    
+        switch  [UI_MODE]
+        case    .UI_pGame,        UI_GAME       
+        case    .UI_pWorkBench,   UI_WORKBENCH 
+        case    .UI_pMainBag,     UI_MAINBAG  
+        
+        .UI_pGame:
+          stdcall ui_renderAim, WindowRect
+          stdcall ui_renderHealth, WindowRect, 10, 6
+          stdcall ui_renderBag, WindowRect, 9, tools_arr_example, 2
+          jmp .UI_RenderEnd
+       .UI_pWorkBench:
+       
+          jmp .UI_RenderEnd
+       .UI_pMainBag:
+       
+          jmp .UI_RenderEnd
+       .UI_RenderEnd:   
     stdcall gf_2D_Render_End
     .SkipUI:
       

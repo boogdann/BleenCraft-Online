@@ -3,15 +3,15 @@ stack 0x10000
 entry Start
 
 ;===============Module include================
-include "win32a.inc" 
+include "win32a.inc"  
 include "Game.asm"
 
 include "Grafic\GraficAPI\GraficAPI.asm"
 include "CotrollerAPI\CotrollerAPI.asm"
 
-;It is expected that openGL is already connected!
 include "Interface\Interface.asm"
 
+;It is expected that openGL is already connected!
 include "Units\Asm_Includes\Di.asm"
 include "Units\Asm_Includes\Du.asm"
 
