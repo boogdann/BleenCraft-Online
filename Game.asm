@@ -83,8 +83,10 @@ proc RenderScene
     ;Block for 2D rendering:
     cmp [App_Mode], GAME_MODE
     jnz .SkipUI
-    stdcall gf_2D_Render_Start 
+    stdcall gf_2D_Render_Start
     
+        ;mov [UI_MODE], UI_MAINBAG
+        
         switch  [UI_MODE]
         case    .UI_pGame,        UI_GAME       
         case    .UI_pWorkBench,   UI_WORKBENCH 
@@ -92,19 +94,34 @@ proc RenderScene
         
         .UI_pGame:
           stdcall ct_change_mouse, 0
-          stdcall ui_renderAim, WindowRect
           stdcall ui_renderHealth, WindowRect, 10, 6
-          stdcall ui_renderBag, WindowRect, 9, tools_arr_example, 2
+          stdcall ui_renderBag, WindowRect, 9, tools_arr_example, 2 
+          stdcall ui_renderAim, WindowRect
           jmp .UI_RenderEnd
-       .UI_pWorkBench:
+        .UI_pWorkBench:
+          
+          stdcall ui_renderShadowEffect
           stdcall ct_change_mouse, 1
           jmp .UI_RenderEnd
-       .UI_pMainBag:
+        .UI_pMainBag:
+          ;36 elements in main bag required!!! 
+          ;last 9 elm-s from mini bag!!!
+          stdcall ui_renderBigBag, WindowRect, 0
+          stdcall ui_renderShadowEffect
           stdcall ct_change_mouse, 1
           jmp .UI_RenderEnd
-       .UI_RenderEnd:   
+        .UI_RenderEnd:   
     stdcall gf_2D_Render_End
     .SkipUI:
+    
+    cmp [App_Mode], GAME_MODE
+    jnz @F
+    cmp [UI_MODE], UI_MAINBAG 
+    jnz @F
+      stdcall gf_render_PlayerItem
+    @@:
+    
+    
       
     stdcall gf_RenderEnd
   ret

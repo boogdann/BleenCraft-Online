@@ -22,7 +22,6 @@ proc gf_RenderBegin, CameraPos, CameraTurn
   ret
 endp
 
-
 proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
                                PosV, TurnV, Scale, dectroyMode                      
   cmp [tx_Handle], 0
@@ -183,7 +182,38 @@ proc gf_2D_Render_Start
   invoke glUseProgram, 0
   
   ret
-endp     
+endp 
+
+proc gf_render_PlayerItem 
+  locals
+    add_turn  dd   2.0
+  endl
+
+
+  invoke glClear, GL_DEPTH_BUFFER_BIT
+  invoke glUniform4fv, [gf_SunPosition], 1, tmp_SunPosition
+  invoke  glMatrixMode, GL_MODELVIEW
+  invoke  glLoadIdentity
+  stdcall gf_get_camera_lookvec, ZERO_VEC_3, ZERO_VEC_3 
+  stdcall gf_get_camera_upvec, ZERO_VEC_3 
+  stdcall Matrix.LookAt, ZERO_VEC_3, gf_camera_lookvec, gf_uplookvec
+  invoke glGetFloatv, GL_MODELVIEW_MATRIX, gf_view_matrix 
+  stdcall gf_MatrixMultiply, gf_view_matrix, gf_projection_matrix, gf_pr_view_matrix
+  invoke glUniform3fv, [gf_CameraPos], 1, ZERO_VEC_3
+  ;=================
+  stdcall gf_renderObj3D, obj.Player.Body.Handle, [tx.Player.Handle], 0, GRAFIC_TMP_VEC_3, PLAYER_ITEM_TURN, 0.004, 0
+  stdcall gf_renderObj3D, obj.Player.LLeg.Handle, [tx.Player.Handle], 0, GRAFIC_TMP_VEC_3, PLAYER_ITEM_TURN, 0.004, 0
+  stdcall gf_renderObj3D, obj.Player.RLeg.Handle, [tx.Player.Handle], 0, GRAFIC_TMP_VEC_3, PLAYER_ITEM_TURN, 0.004, 0
+  stdcall gf_renderObj3D, obj.Player.LHand.Handle, [tx.Player.Handle], 0, GRAFIC_TMP_VEC_3, PLAYER_ITEM_TURN, 0.004, 0
+  stdcall gf_renderObj3D, obj.Player.RHand.Handle, [tx.Player.Handle], 0, GRAFIC_TMP_VEC_3, PLAYER_ITEM_TURN, 0.004, 0
+  ;=================
+  
+  fld [PLAYER_ITEM_TURN+4]
+  fadd [add_turn]
+  fstp [PLAYER_ITEM_TURN+4]
+
+  ret
+endp    
 
 proc gf_2D_Render_End
   invoke glUseProgram, [gf_shaderProgram]

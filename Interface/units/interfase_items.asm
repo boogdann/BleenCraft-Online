@@ -31,6 +31,245 @@ proc ui_renderAim uses esi, WindowRect
    ret
 endp
 
+proc ui_draw_slot uses esi edi, x, y, s_x, s_y
+  locals 
+    n_20     dd    20.0
+    tmp_xy   dd    ?, ?
+    add_xy   dd    ?, ?
+    
+  endl
+  
+  fld[s_x]
+  fdiv [n_20]
+  fstp [tmp_xy] 
+  fld[s_y]
+  fdiv [n_20]
+  fstp [tmp_xy + 4] 
+  
+  fld [s_x]
+  fsub [tmp_xy]
+  fsub [tmp_xy]
+  fstp[s_x]
+  fld [s_y]
+  fsub [tmp_xy + 4]
+  fsub [tmp_xy + 4]
+  fstp[s_y]
+    
+  invoke glColor3f, 0.55, 0.55, 0.55
+  stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y]
+
+  
+  fld [s_x]
+  fadd [tmp_xy]
+  fstp[s_x]
+  fld [s_y]
+  fadd [tmp_xy + 4]
+  fstp[s_y]
+  invoke glColor3f, 0.22, 0.22, 0.22
+  fld[x]
+  fsub [tmp_xy]
+  fstp [add_xy] 
+  fld[y]
+  fstp [add_xy + 4] 
+  stdcall ui_draw_rectangle, [add_xy], [add_xy+4], [s_x], [s_y]
+  
+ 
+  fld[x]
+  fsub [tmp_xy]
+  fstp [add_xy] 
+  fld[y]
+  fsub [tmp_xy + 4]
+  fstp [add_xy + 4]
+  fld [s_x]
+  fadd [tmp_xy]
+  fstp[s_x]
+  fld [s_y]
+  fadd [tmp_xy + 4]
+  fstp[s_y]
+  invoke glColor3f, 0.9, 0.9, 0.9
+  stdcall ui_draw_rectangle, [add_xy], [add_xy+4], [s_x], [s_y]
+  
+
+  ret
+endp
+
+proc ui_renderBigBag uses esi edi, WindowRect, tools_arr
+  locals 
+    xy_size    dd   ?, 1.8 ;2.0 * 0.9
+    xy_add     dd   ?, -0.9
+    
+    size_cof   dd   0.9
+    n_2        dd   2.0
+    n_5        dd   5.0
+    n_10       dd   10.0
+    tmp_sizes  dd   ?, ?
+    tmp_add    dd   0.005, 0.01
+    
+    slot_xy    dd   ?, ?
+    
+    cur_slot_xy  dd   ?, 0.0
+    start_slot_x dd   ?
+    
+    player_slot_xy  dd  ?, ?
+    player_slot_xy_size  dd  ?, ?
+    tmp_pl_slot  dd   2.4
+    
+    redactor_slot_y  dd 0.45
+  endl
+  
+  mov esi, [WindowRect]
+  fild dword[esi + 12]
+  fild dword[esi + 8]
+  fdivp
+  fmul [xy_size + 4]
+  fstp [xy_size]
+  fld1
+  fchs
+  fld [n_2]
+  fsub[xy_size]
+  fdiv[n_2]
+  faddp
+  fstp[xy_add]
+ 
+  ;========================================================================= 
+  fld [xy_size + 4]
+  fdiv [n_10]
+  fstp [slot_xy + 4]
+  mov esi, [WindowRect]
+  fild dword[esi + 12]
+  fild dword[esi + 8]
+  fdivp
+  fmul [slot_xy + 4]
+  fstp [slot_xy]
+  
+  fld[xy_add]
+  fld [slot_xy]
+  fdiv [n_2]
+  faddp 
+  fstp [start_slot_x]
+  
+  mov edi, 0
+  .DrawSlotsRow:
+    mov eax, [start_slot_x]
+    mov [cur_slot_xy], eax
+    fld [cur_slot_xy + 4]
+    fsub [slot_xy + 4]
+    fstp [cur_slot_xy + 4] 
+    mov esi, 0
+    .DrawSlots:
+        stdcall ui_draw_slot, [cur_slot_xy], [cur_slot_xy + 4], [slot_xy], [slot_xy + 4]
+        fld [cur_slot_xy]
+        fadd [slot_xy]
+        fstp [cur_slot_xy] 
+    inc esi
+    cmp esi, 9
+    jnz .DrawSlots
+      
+  inc edi
+  cmp edi, 3
+  jnz @F
+    fld [cur_slot_xy + 4]
+    fld [slot_xy + 4]
+    fdiv[n_2]
+    fsubp
+    fstp [cur_slot_xy + 4] 
+  @@:
+  cmp edi, 4
+  jnz .DrawSlotsRow
+  ;=========================================================================
+  invoke glColor3f, 0.04, 0.04, 0.04    ;player_slot_xy    ;tmp_pl_slot ;player_slot_xy_size 
+  fld [start_slot_x]
+  fstp [player_slot_xy]
+  fldz
+  fld [slot_xy]
+  fdiv [n_2]
+  faddp
+  fstp [player_slot_xy + 4]
+  fld [xy_size]
+  fdiv [tmp_pl_slot]
+  fstp [player_slot_xy_size]  
+  
+  stdcall ui_draw_rectangle, [player_slot_xy], [player_slot_xy + 4], [player_slot_xy_size], 0.8
+  ;=========================================================================
+  
+  fld [start_slot_x]
+  fld [slot_xy]
+  fmul [n_5]
+  faddp
+  fstp [start_slot_x]
+  fld [start_slot_x]
+  fstp [cur_slot_xy]
+  
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  fld [cur_slot_xy]
+  fadd [slot_xy]
+  fstp [cur_slot_xy] 
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  fld [start_slot_x]
+  fstp [cur_slot_xy]
+  fld [redactor_slot_y]
+  fsub [slot_xy + 4]
+  fstp [redactor_slot_y]
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  fld [cur_slot_xy]
+  fadd [slot_xy]
+  fstp [cur_slot_xy] 
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  
+  fld [start_slot_x]
+  fadd [slot_xy]
+  fadd [slot_xy]
+  fld [slot_xy]
+  fdiv [n_2]
+  faddp
+  fstp [cur_slot_xy]
+  fld [redactor_slot_y]
+  fld [slot_xy + 4]
+  fdiv [n_2]
+  faddp
+  fstp [redactor_slot_y]
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  ;=========================================================================
+  
+  ;=========================================================================
+  invoke glColor3f, 0.77, 0.77, 0.77
+  stdcall ui_draw_rectangle, [xy_add], [xy_add + 4], [xy_size], [xy_size + 4]
+  ;=========================================================================
+  push [xy_add]
+  push [xy_add + 4]
+  mov esi, [WindowRect]
+  fild dword[esi + 12]
+  fild dword[esi + 8]
+  fdivp
+  fmul [xy_add + 4]
+  fstp [xy_add]
+  fld [xy_add]
+  fsub [tmp_add]
+  fstp[xy_add]
+  fld [xy_add + 4]
+  fadd [tmp_add + 4]
+  fstp[xy_add + 4]
+  invoke glColor3f, 0.9, 0.9, 0.9
+  stdcall ui_draw_rectangle, [xy_add], [xy_add + 4], [xy_size], [xy_size + 4]
+  fld [xy_add]
+  fadd [tmp_add]
+  fadd [tmp_add]
+  fstp[xy_add]
+  fld [xy_add + 4]
+  fsub [tmp_add + 4]
+  fsub [tmp_add + 4]
+  fstp[xy_add + 4]
+  invoke glColor3f, 0.33, 0.33, 0.33
+  stdcall ui_draw_rectangle, [xy_add], [xy_add + 4], [xy_size], [xy_size + 4]
+  ;=========================================================================
+  pop [xy_add + 4]
+  pop [xy_add]
+  
+
+  ret
+endp
+
+
 proc ui_renderBag uses esi edi, WindowRect, tools_count, tools_arr, pointer 
   locals
     bag_width    dd ?
@@ -139,7 +378,7 @@ proc ui_renderBag uses esi edi, WindowRect, tools_count, tools_arr, pointer
          invoke glEnable, GL_TEXTURE_2D
          pop    eax
          invoke glBindTexture, GL_TEXTURE_2D, [eax]
-         pop    eax
+         pop eax
          
          stdcall ui_draw_rectangle_textured_block, [tmp_xy_elm], [tmp_xy_elm + 4], [elm_x_elm], [elm_y_elm]
          
@@ -363,5 +602,11 @@ proc ui_render_heart uses esi, WindowRect, x, y, isHealth
   cmp esi, 0
   jnz .DrawLoop
   
+  ret
+endp
+
+proc ui_renderShadowEffect
+    invoke glColor4f, 0.0, 0.0, 0.0, 0.4
+    stdcall ui_draw_rectangle, -1.0, -1.0, 2.0, 2.0
   ret
 endp

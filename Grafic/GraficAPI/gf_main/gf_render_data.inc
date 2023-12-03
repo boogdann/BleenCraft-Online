@@ -175,3 +175,7 @@ gf_single_matrix       Matrix4x4    1.0,0.0,0.0,0.0,\
 DAYLY_SPEED     dw     0
 
 
+GRAFIC_TMP_VEC_3 dd    0.025, 0.025, 0.1
+PLAYER_ITEM_TURN  dd    0.0, 180.0, 0.0 
+tmp_SunPosition  dd    0.0, 0.0, -1.0
+
