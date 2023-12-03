@@ -358,23 +358,12 @@ proc ui_renderBag uses esi edi, WindowRect, tools_count, tools_arr, pointer
     cur_x        dd ?
     cur_y        dd -0.95
     
+    background_xy      dd    ?, ?
+    background_size    dd    ?, ?
+    background_add     dd    ?, ?
+    background_tmp     dd    20.0
+    
     n_2          dd 2.0
-    n_15         dd 15.0
-    n_5          dd 5.0
-    
-    elm_x        dd ?
-    elm_y        dd ?
-    x_add        dd ?
-    y_add        dd ?
-    tmp_xy       dd ?, ?
-    
-    elm_x_elm        dd ?
-    elm_y_elm        dd ?
-    x_add_elm        dd ?
-    y_add_elm        dd ?
-    tmp_xy_elm       dd ?, ?
-    
-    t_4              dd 4
   endl
   
   mov esi, [WindowRect]
@@ -392,104 +381,50 @@ proc ui_renderBag uses esi edi, WindowRect, tools_count, tools_arr, pointer
   fld1
   fsubp
   fstp [cur_x]
-  
-  fld [bag_height]
-  fld [bag_height]
-  fdiv [n_15]
-  fst [y_add]
-  fsubp
-  fsub [y_add]
-  fstp [elm_y]
-  
-  fld [bag_width]
-  fld [bag_width]
-  fdiv [n_15]
-  fst [x_add]
-  fsubp
-  fsub [x_add]
-  fstp [elm_x]
-  
-  fld [bag_height]
-  fld [bag_height]
-  fdiv [n_5]
-  fst [y_add_elm]
-  fsubp
-  fsub [y_add_elm]
-  fstp [elm_y_elm]
-  
-  fld [bag_width]
-  fld [bag_width]
-  fdiv [n_5]
-  fst [x_add_elm]
-  fsubp
-  fsub [x_add_elm]
-  fstp [elm_x_elm]
+
+  push [cur_x]
   
   mov edi, [tools_arr]
   mov esi, 0
   .DrawLoop:
-  
-    mov ax, word[edi]
-    cmp ax, 0
-    jz @F
-      fld [cur_x]
-      fadd [x_add_elm]
-      fstp [tmp_xy_elm]
-      fld [cur_y]
-      fadd [y_add_elm]
-      fstp [tmp_xy_elm + 4]
-      invoke glColor3f, 0.2, 0.2, 0.2
-      
-      mov ax, word[edi]
-      cmp ax, 255
-      jle .cubes
-         ;other elements case
-         stdcall ui_draw_rectangle, [tmp_xy_elm], [tmp_xy_elm + 4], [elm_x_elm], [elm_y_elm]
-      jmp .readyRender
-      .cubes:
-         ;cube element case:
-         xor edx, edx
-         push eax
-         movzx eax, word[edi]
-         dec eax
-         mov ebx, 4
-         imul eax, ebx 
-         add eax, TextureHandles 
-         push   eax
-         invoke glEnable, GL_TEXTURE_2D
-         pop    eax
-         invoke glBindTexture, GL_TEXTURE_2D, [eax]
-         pop eax
-         
-         stdcall ui_draw_rectangle_textured_block, [tmp_xy_elm], [tmp_xy_elm + 4], [elm_x_elm], [elm_y_elm]
-         
-         invoke glDisable, GL_TEXTURE_2D
-      .readyRender:
-      
-    @@:
+     stdcall ui_draw_slot, [cur_x], [cur_y], [bag_width], [bag_height], [edi]
+     fld [cur_x]
+     fadd [bag_width]
+     fstp [cur_x]
     
-    
-    fld [cur_x]
-    fadd [x_add]
-    fstp [tmp_xy]
-    fld [cur_y]
-    fadd [y_add]
-    fstp [tmp_xy + 4]
-    invoke glColor3f, 0.43, 0.37, 0.29
-    stdcall ui_draw_rectangle, [tmp_xy], [tmp_xy + 4], [elm_x], [elm_y]
-    invoke glColor3f, 0.63, 0.57, 0.45
-    cmp esi, [pointer]
-    jnz @F
-      invoke glColor3f, 0.8, 0.8, 0.8
-    @@:
-    stdcall ui_draw_rectangle, [cur_x], [cur_y], [bag_width], [bag_height]
-    fld [cur_x]
-    fadd [bag_width]
-    fstp [cur_x]
     add edi, 4
   inc esi
   cmp esi, [tools_count]
   jnz .DrawLoop
+  
+  fld  [bag_width]
+  fdiv [background_tmp]
+  fstp [background_add]
+  fld  [bag_height]
+  fdiv [background_tmp]
+  fstp [background_add + 4]
+  
+  fld [bag_width]
+  fild [tools_count]
+  fmulp
+  fadd [background_add]
+  fadd [background_add]
+  fstp [background_size]
+  fld [bag_height]
+  fadd [background_add + 4]
+  fstp [background_size + 4]
+  
+  pop [cur_x]
+  fld [cur_y]
+  fsub [background_add + 4]
+  fstp [cur_y]
+  fld [cur_x]
+  fsub [background_add]
+  fsub [background_add]
+  fstp [cur_x]
+  
+  invoke glColor3f, 0.77, 0.77, 0.77 
+  stdcall ui_draw_rectangle, [cur_x], [cur_y], [background_size], [background_size + 4]
   
   ret
 endp
