@@ -2,11 +2,22 @@ HOST   = 0
 PLAYER = 1
 Client.OffsetNumber = 6
 
+Client.MSGSendWorld      dd 0
+Client.MSGPlayerPosition dd 1
+Client.BlockState        dd 2
+Client.HandBlock         dd 3
+Client.GetWorld          dd 4
+Client.UserState         dd 5
+Client.Rotetions         dd 6
+Client.TCPInit           dd 7
+Client.UDPInit           dd 8
+
 testUDPLine db 'Hello', 0
 
 Client.Secret     db 'whevf', 0
 Client.SizeSecret dd 5
 Client.Number     dd ?
+Client.GroupID    dd ?
 
 Client.ReadBuffer db 150 dup(0)
 Client.SizeBuffer dd $ - Client.ReadBuffer

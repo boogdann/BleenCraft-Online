@@ -9,12 +9,19 @@ proc ws_socket_send_msg_tcp, socket, msg, msg_len
 endp
 
 proc ws_socket_get_msg_udp, socket, buf, buf_len 
-  invoke recvfrom, [socket], [buf], [buf_len], 0, ws_server_addr, ws_server_addr_len
+  locals
+    ws_server_addr_len   dd   sizeof.sockaddr 
+  endl 
+  
+  invoke GetProcessHeap
+  invoke HeapAlloc, eax, 0, sizeof.sockaddr
+  
+  lea esi, [ws_server_addr_len]
+  invoke recvfrom, [socket], [buf], [buf_len], 0, eax, esi
   ret
 endp
 
 proc ws_socket_get_msg_tcp, socket, buf, buf_len
-  invoke recv, [socket], [buf], [buf_len]
+  invoke recv, [socket], [buf], [buf_len], 0
   ret
 endp
-  
