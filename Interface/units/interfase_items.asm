@@ -139,7 +139,7 @@ proc ui_renderBag uses esi edi, WindowRect, tools_count, tools_arr, pointer
          invoke glEnable, GL_TEXTURE_2D
          pop    eax
          invoke glBindTexture, GL_TEXTURE_2D, [eax]
-         
+         pop    eax
          
          stdcall ui_draw_rectangle_textured_block, [tmp_xy_elm], [tmp_xy_elm + 4], [elm_x_elm], [elm_y_elm]
          
