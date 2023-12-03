@@ -27,6 +27,10 @@ SkyHieght        dd       120
 SizeSky          dd       ? 
 ;==============================
 
+Inventory           dd    ?
+InventorySize       dd    ?
+InventoryMainOffset =     9*3*4
+
 ;=======================================
 serverIp         db       "127.0.0.1", 0
 serverPortUDP    dd       9999

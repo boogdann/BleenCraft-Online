@@ -13,6 +13,10 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;Mouse modes switch automatically!!!
 
 proc GameStart
+  stdcall Inventory.Initialize, Inventory, InventorySize
+  mov     eax, [Inventory]
+  mov     eax, [InventorySize]
+
   ;Refactoring!!!!!!!!!!!
   ;================World initialize=================
   stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], filename 
