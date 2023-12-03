@@ -89,7 +89,7 @@ proc RenderScene
     jnz .SkipUI
     stdcall gf_2D_Render_Start
     
-        ;mov [UI_MODE], UI_MAINBAG
+        mov [UI_MODE], UI_MAINBAG
         
         switch  [UI_MODE]
         case    .UI_pGame,        UI_GAME       
@@ -110,7 +110,7 @@ proc RenderScene
         .UI_pMainBag:
           ;36 elements in main bag required!!! 
           ;last 9 elm-s from mini bag!!!
-          stdcall ui_renderBigBag, WindowRect, 0
+          stdcall ui_renderBigBag, WindowRect, bigBag_arr_example, bigBag_craft_arr_example
           stdcall ui_renderShadowEffect
           stdcall ct_change_mouse, 1
           jmp .UI_RenderEnd

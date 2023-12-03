@@ -31,12 +31,14 @@ proc ui_renderAim uses esi, WindowRect
    ret
 endp
 
-proc ui_draw_slot uses esi edi, x, y, s_x, s_y
+proc ui_draw_slot uses esi edi, x, y, s_x, s_y, elm_info
   locals 
     n_20     dd    20.0
     tmp_xy   dd    ?, ?
     add_xy   dd    ?, ?
     
+    n_8      dd    6.0
+    n_3      dd    3.0
   endl
   
   fld[s_x]
@@ -54,6 +56,78 @@ proc ui_draw_slot uses esi edi, x, y, s_x, s_y
   fsub [tmp_xy + 4]
   fsub [tmp_xy + 4]
   fstp[s_y]
+    
+  fld [s_x]
+  fld [tmp_xy]
+  fmul [n_8]
+  fsubp
+  fstp[s_x]
+  fld [s_y]
+  fld [tmp_xy + 4]
+  fmul [n_8]
+  fsubp
+  fstp[s_y]   
+  
+  fld [x]
+  fld [tmp_xy]
+  fmul [n_3]
+  faddp
+  fstp[x]
+  fld [y]
+  fld [tmp_xy + 4]
+  fmul [n_3]
+  faddp
+  fstp[y]  
+          
+  mov ax, word[elm_info]
+  cmp ax, 0
+  jz .readyRender
+  cmp ax, 255
+  jle .cubes
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     ;other elements case
+    jmp .readyRender
+  .cubes:
+     ;cube element case:
+     xor edx, edx
+     push eax
+     movzx eax, word[elm_info]
+     dec eax
+     mov ebx, 4
+     imul eax, ebx 
+     add eax, TextureHandles 
+     push   eax
+     invoke glEnable, GL_TEXTURE_2D
+     pop    eax
+     invoke glBindTexture, GL_TEXTURE_2D, [eax]
+     pop eax
+     
+     stdcall ui_draw_rectangle_textured_block, [x], [y], [s_x], [s_y]
+     
+     invoke glDisable, GL_TEXTURE_2D
+  .readyRender:   
+
+  fld [s_x]
+  fld [tmp_xy]
+  fmul [n_8]
+  faddp
+  fstp[s_x]
+  fld [s_y]
+  fld [tmp_xy + 4]
+  fmul [n_8]
+  faddp
+  fstp[s_y]
+  
+  fld [x]
+  fld [tmp_xy]
+  fmul [n_3]
+  fsubp
+  fstp[x]
+  fld [y]
+  fld [tmp_xy + 4]
+  fmul [n_3]
+  fsubp
+  fstp[y]
     
   invoke glColor3f, 0.55, 0.55, 0.55
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y]
@@ -88,12 +162,11 @@ proc ui_draw_slot uses esi edi, x, y, s_x, s_y
   fstp[s_y]
   invoke glColor3f, 0.9, 0.9, 0.9
   stdcall ui_draw_rectangle, [add_xy], [add_xy+4], [s_x], [s_y]
-  
 
   ret
 endp
 
-proc ui_renderBigBag uses esi edi, WindowRect, tools_arr
+proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr 
   locals 
     xy_size    dd   ?, 1.8 ;2.0 * 0.9
     xy_add     dd   ?, -0.9
@@ -157,7 +230,14 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr
     fstp [cur_slot_xy + 4] 
     mov esi, 0
     .DrawSlots:
-        stdcall ui_draw_slot, [cur_slot_xy], [cur_slot_xy + 4], [slot_xy], [slot_xy + 4]
+        push esi
+        push edi
+        imul edi, 36
+        add edi, [tools_arr]
+        mov esi, [esi * 4 + edi]
+        stdcall ui_draw_slot, [cur_slot_xy], [cur_slot_xy + 4], [slot_xy], [slot_xy + 4], esi
+        pop edi
+        pop esi
         fld [cur_slot_xy]
         fadd [slot_xy]
         fstp [cur_slot_xy] 
@@ -200,21 +280,22 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr
   fld [start_slot_x]
   fstp [cur_slot_xy]
   
-  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  mov esi, [redactor_arr]
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi + 4]
   fld [cur_slot_xy]
   fadd [slot_xy]
   fstp [cur_slot_xy] 
-  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi + 8]
   fld [start_slot_x]
   fstp [cur_slot_xy]
   fld [redactor_slot_y]
   fsub [slot_xy + 4]
   fstp [redactor_slot_y]
-  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi + 12]
   fld [cur_slot_xy]
   fadd [slot_xy]
   fstp [cur_slot_xy] 
-  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi + 16]
   
   fld [start_slot_x]
   fadd [slot_xy]
@@ -228,7 +309,7 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr
   fdiv [n_2]
   faddp
   fstp [redactor_slot_y]
-  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4]
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi]
   ;=========================================================================
   
   ;=========================================================================
