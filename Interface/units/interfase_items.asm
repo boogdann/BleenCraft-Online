@@ -188,6 +188,8 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
     tmp_pl_slot  dd   2.4
     
     redactor_slot_y  dd 0.45
+    
+    slot_data        dd ?
   endl
   
   mov esi, [WindowRect]
@@ -221,6 +223,11 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   faddp 
   fstp [start_slot_x]
   
+  mov eax, [slot_xy]
+  mov [big_bag_slot_size_xy], eax
+  mov eax, [slot_xy + 4]
+  mov [big_bag_slot_size_xy + 4], eax
+  
   mov edi, 0
   .DrawSlotsRow:
     mov eax, [start_slot_x]
@@ -230,14 +237,26 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
     fstp [cur_slot_xy + 4] 
     mov esi, 0
     .DrawSlots:
-        push esi
-        push edi
+        push esi edi
         imul edi, 36
         add edi, [tools_arr]
         mov esi, [esi * 4 + edi]
+        mov [slot_data], esi
         stdcall ui_draw_slot, [cur_slot_xy], [cur_slot_xy + 4], [slot_xy], [slot_xy + 4], esi
-        pop edi
-        pop esi
+        pop edi esi
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        push esi edi
+          imul edi, 9
+          add edi, esi
+          imul edi, 12
+          mov eax, [cur_slot_xy]
+          mov [big_bag_data + edi], eax
+          mov eax, [cur_slot_xy + 4]
+          mov [big_bag_data + edi + 4], eax
+          mov eax, [slot_data]
+          mov [big_bag_data + edi + 8], eax
+        pop edi esi
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         fld [cur_slot_xy]
         fadd [slot_xy]
         fstp [cur_slot_xy] 
@@ -494,7 +513,7 @@ proc ui_draw_rectangle_textured_block, x, y, x_sz, y_sz
   invoke glEnable, GL_LIGHTING
   invoke glEnable, GL_LIGHT0
   invoke glBegin, GL_QUADS
-    invoke glTexCoord2f, 0.010000, 0.500000; 
+    invoke glTexCoord2f, 0.001000, 0.500000; 
     invoke glVertex2f, [x], [y]
     fld [x]
     fadd [x_sz]
@@ -510,7 +529,7 @@ proc ui_draw_rectangle_textured_block, x, y, x_sz, y_sz
     fld [x]
     fsub [x_sz]
     fstp [x]    
-    invoke glTexCoord2f, 0.010000, 0.750000
+    invoke glTexCoord2f, 0.001000, 0.750000
     invoke glVertex2f, [x], [y]        
   invoke glEnd;  
   invoke glDisable, GL_LIGHTING

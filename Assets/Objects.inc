@@ -1,4 +1,5 @@
 ObjectsNames:     
+        obj.Player.Hand.Name      db      "Player\RHandpl.mobj", 0
         obj.Cube.Name             db      "LCube.mobj", 0                     
         obj.Player.Body.Name      db      "Player\Body.mobj", 0
         obj.Player.LLeg.Name      db      "Player\LLeg.mobj", 0
@@ -9,6 +10,7 @@ ObjectsNames:
         db      0
         
 ObjectsHandles:
+        obj.Player.Hand.Handle     dd     ?, ?
         obj.Cube.Handle            dd     ?, ?
         obj.Player.Body.Handle     dd     ?, ?
         obj.Player.LLeg.Handle     dd     ?, ?

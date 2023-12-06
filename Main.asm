@@ -32,9 +32,9 @@ Start:
   stdcall gf_grafic_init
   
   ;Attention! Dangerous dependencies with /assets 
+  stdcall gf_LoadObjs
   stdcall gf_LoadTextures
   stdcall gf_LoadAddictionalTextures
-  stdcall gf_LoadObjs
   ;================================================  
   
   ;==== Start settings ======  
@@ -69,13 +69,14 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         jnz @F
           stdcall ct_move_check, PlayerPos, PlayerTurn,\
                                  [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]  
-        @@:
-                
+        @@:   
         ;Message switch            
         switch  [uMsg]
         case    .Render,        WM_PAINT
         case    .Destroy,       WM_DESTROY
-        case    .Movement,      WM_KEYDOWN  
+        case    .Movement,      WM_KEYDOWN 
+        case    .MouseDown,     WM_LBUTTONDOWN 
+        case    .MouseUp,     WM_LBUTTONUP
         
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
         jmp     .Return
@@ -96,6 +97,14 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         jmp     .ReturnZero
   .Movement:
         stdcall ct_on_keyDown, [wParam] 
+        jmp     .ReturnZero
+  .MouseDown:
+        stdcall ui_slots_controller, WindowRect
+        jmp     .ReturnZero
+  .MouseUp:
+        ;govnokod no uje pohui
+        ;All parameters are array to slots hz v kakom poryadke
+        stdcall ui_drag_end, WindowRect, bigBag_arr_example
         jmp     .ReturnZero
   .Destroy:
         ;stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], filename       

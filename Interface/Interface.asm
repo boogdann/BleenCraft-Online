@@ -1,4 +1,5 @@
-include "units\interfase_items.ASM"
+include "units\interfase_items.ASM"   
+include "units\interfase_controller.ASM"
 
 proc ui_InterfaceInit
   

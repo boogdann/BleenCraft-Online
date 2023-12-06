@@ -11,7 +11,7 @@ import (
 
 // https://hexed.it/ - win hex online для отладки
 // Тот самый выбор в начале:
-type tIndex = uint8 //Можно заменить на uint8 или uint32
+type tIndex = uint16 //Можно заменить на uint8 или uint32
 
 type tFragmet struct {
 	setsCount int16
@@ -206,10 +206,8 @@ func saveData(file *os.File, data *mobjData) {
 
 }
 
-
-
 //КПО - хуйня
 //КТ  - похуй
 //АКТИОС - вроде сложно, но интересно, так что збс
 //ТВИМС - Полнейшая хуета!!! Жалко тратить время, но надо
-//АИСД - 
+//АИСД -

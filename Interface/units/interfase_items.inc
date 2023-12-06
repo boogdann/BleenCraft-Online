@@ -1,14 +1,13 @@
 ui_aim_size  dd  0.015
 bag_size     dd  10
 
-bagRect      dd  0.0,0.0,  1.0,0.0,  1.0,1.0,  0.0,1.0
-bagRectUV    dd  0.0,0.0,  1.0,0.0,  1.0,1.0,  0.0,1.0
+big_bag_slot_size_xy  dd   ?, ?
+big_bag_data          dd   36  dup (0, 0, 0)
 
+ui_cursor_pos         dd   ?, ?
 
-orthoMatrix  dd  0.00125, 0.0, 0.0, 0.0,\
-                 0.0, -0.0025, 0.0, 0.0,\
-                 0.0, 0.0, -1.0, 0.0,\
-                 -1.0, 1.0,  0.0, 1.0 
+ui_is_drag            dd   0
+ui_drag_item          dd   0
 
 
 
