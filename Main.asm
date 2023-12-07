@@ -99,12 +99,12 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         stdcall ct_on_keyDown, [wParam] 
         jmp     .ReturnZero
   .MouseDown:
-        stdcall ui_slots_controller, WindowRect, bigBag_arr_example
+        stdcall ui_slots_controller, WindowRect, bigBag_arr_example, bigBag_craft_arr_example
         jmp     .ReturnZero
   .MouseUp:
         ;govnokod no uje pohui
         ;All parameters are array to slots hz v kakom poryadke
-        stdcall ui_drag_end, WindowRect, bigBag_arr_example
+        stdcall ui_drag_end, WindowRect, bigBag_arr_example, bigBag_craft_arr_example
         jmp     .ReturnZero
   .Destroy:
         ;stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], filename       

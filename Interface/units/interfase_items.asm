@@ -190,7 +190,6 @@ proc ui_draw_slot uses esi edi, x, y, s_x, s_y, elm_info
   fmul [n_3]
   fsubp
   fstp[y]
-    
   invoke glColor3f, 0.55, 0.55, 0.55
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y]
 
@@ -353,8 +352,14 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   stdcall ui_draw_rectangle, [player_slot_xy], [player_slot_xy + 4], [player_slot_xy_size], 0.8
   ;=========================================================================
   
+  ;=========================================================================
+  
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  mov edi, 12
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  
   fld [start_slot_x]
-  fld [slot_xy]
+  fld [slot_xy]                                    ; ;big_bag_craft_data  
   fmul [n_5]
   faddp
   fstp [start_slot_x]
@@ -363,20 +368,57 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   
   mov esi, [redactor_arr]
   stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi + 4]
+  ;=================================
+  mov eax, [cur_slot_xy]
+  mov [big_bag_craft_data + edi], eax
+  mov eax, [redactor_slot_y]
+  mov [big_bag_craft_data + edi + 4], eax
+  mov eax, [esi + 4]
+  mov [big_bag_craft_data + edi + 8], eax
+  add edi, 3 * 4
+  ;===================================
+  
   fld [cur_slot_xy]
   fadd [slot_xy]
   fstp [cur_slot_xy] 
   stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi + 8]
+  ;=================================
+  mov eax, [cur_slot_xy]
+  mov [big_bag_craft_data + edi], eax
+  mov eax, [redactor_slot_y]
+  mov [big_bag_craft_data + edi + 4], eax
+  mov eax, [esi + 8]
+  mov [big_bag_craft_data + edi + 8], eax
+  add edi, 3 * 4
+  ;===================================
   fld [start_slot_x]
   fstp [cur_slot_xy]
   fld [redactor_slot_y]
   fsub [slot_xy + 4]
   fstp [redactor_slot_y]
   stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi + 12]
+  ;=================================
+  mov eax, [cur_slot_xy]
+  mov [big_bag_craft_data + edi], eax
+  mov eax, [redactor_slot_y]
+  mov [big_bag_craft_data + edi + 4], eax
+  mov eax, [esi + 12]
+  mov [big_bag_craft_data + edi + 8], eax
+  add edi, 3 * 4
+  ;===================================
   fld [cur_slot_xy]
   fadd [slot_xy]
   fstp [cur_slot_xy] 
   stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi + 16]
+  ;=================================
+  mov eax, [cur_slot_xy]
+  mov [big_bag_craft_data + edi], eax
+  mov eax, [redactor_slot_y]
+  mov [big_bag_craft_data + edi + 4], eax
+  mov eax, [esi + 16]
+  mov [big_bag_craft_data + edi + 8], eax
+  add edi, 3 * 4
+  ;===================================
   
   fld [start_slot_x]
   fadd [slot_xy]
@@ -391,6 +433,14 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   faddp
   fstp [redactor_slot_y]
   stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi]
+  ;=================================
+  mov eax, [cur_slot_xy]
+  mov [big_bag_craft_data], eax
+  mov eax, [redactor_slot_y]
+  mov [big_bag_craft_data + 4], eax
+  mov eax, [esi]
+  mov [big_bag_craft_data + 8], eax
+  ;===================================
   ;=========================================================================
   
   ;=========================================================================

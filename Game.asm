@@ -99,11 +99,14 @@ proc RenderScene
         .UI_pGame:
           stdcall ct_change_mouse, 0
           stdcall ui_renderHealth, WindowRect, 10, 6
-          stdcall ui_renderBag, WindowRect, 9, tools_arr_example, 2 
+          
+          lea esi, [bigBag_arr_example + 3*9 *4]
+          stdcall ui_renderBag, WindowRect, 9, esi, 2 
+          
           stdcall ui_renderAim, WindowRect
           jmp .UI_RenderEnd
         .UI_pWorkBench:
-          stdcall ui_draw_drag
+          stdcall ui_draw_drag, WindowRect
           stdcall ui_renderShadowEffect
           stdcall ct_change_mouse, 1
           jmp .UI_RenderEnd

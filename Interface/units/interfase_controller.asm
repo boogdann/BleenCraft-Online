@@ -1,4 +1,4 @@
-proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr
+proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr 
   
   ;big_bag_data  
   invoke GetCursorPos, ui_cursor_pos
@@ -12,14 +12,27 @@ proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr
     mov eax, [bigBag_arr]
     mov [ui_drag_array_out], eax
     mov [ui_drag_index_out], ebx
+    jmp .Return
   @@:
   
+  stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
+  cmp eax, 1
+  jnz @F
+    mov [ui_is_drag], eax
+    mov [ui_drag_item], ecx
+    mov eax, [bigBag_craft_arr]
+    mov [ui_drag_array_out], eax
+    mov [ui_drag_index_out], ebx
+    jmp .Return
+  @@:
   
-      
+  ;TODO: Проверка на совпадение элементов, проверка на колличество 
+  
+  .Return:    
   ret
 endp
 
-proc ui_drag_end uses esi edi, WindowRect, bigBag_arr
+proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
   cmp [ui_is_drag], 1
   jnz .Return
   
@@ -30,6 +43,22 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr
   jnz @F  
     ;Insert
     mov esi, [bigBag_arr]
+    mov eax, [ui_drag_item]
+    shl ebx, 2
+    mov dword[esi + ebx], eax
+    
+    ;Delete from root
+    mov esi, [ui_drag_array_out]
+    mov edi, [ui_drag_index_out]
+    shl edi, 2
+    mov dword[esi + edi], 0
+  @@:
+  
+  stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
+  cmp eax, 1
+  jnz @F  
+    ;Insert
+    mov esi, [bigBag_craft_arr]
     mov eax, [ui_drag_item]
     shl ebx, 2
     mov dword[esi + ebx], eax
