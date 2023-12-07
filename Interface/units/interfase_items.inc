@@ -8,7 +8,10 @@ ui_cursor_pos         dd   ?, ?
 
 ui_is_drag            dd   0
 ui_drag_item          dd   0
-
+ui_drag_index_out     dd   0
+ui_drag_array_out     dd   0
+                                
+;64 - max count of elements in slot
 
 
 

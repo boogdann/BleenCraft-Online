@@ -1,4 +1,4 @@
-proc ui_slots_controller uses esi edi, WindowRect
+proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr
   
   ;big_bag_data  
   invoke GetCursorPos, ui_cursor_pos
@@ -9,8 +9,13 @@ proc ui_slots_controller uses esi edi, WindowRect
   jnz @F
     mov [ui_is_drag], eax
     mov [ui_drag_item], ecx
+    mov eax, [bigBag_arr]
+    mov [ui_drag_array_out], eax
+    mov [ui_drag_index_out], ebx
   @@:
-        
+  
+  
+      
   ret
 endp
 
@@ -27,13 +32,22 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr
     mov esi, [bigBag_arr]
     mov eax, [ui_drag_item]
     shl ebx, 2
-    mov dword[esi + ebx], eax 
+    mov dword[esi + ebx], eax
     
-    mov [ui_is_drag], 0
-    mov [ui_drag_item], 0
+    ;Delete from root
+    mov esi, [ui_drag_array_out]
+    mov edi, [ui_drag_index_out]
+    shl edi, 2
+    mov dword[esi + edi], 0
   @@:
 
+
+
   .Return:
+  mov [ui_is_drag], 0
+  mov [ui_drag_item], 0
+  mov [ui_drag_index_out], 0
+  mov [ui_drag_array_out], 0
   ret
 endp
 

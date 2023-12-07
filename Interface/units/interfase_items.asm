@@ -31,6 +31,68 @@ proc ui_renderAim uses esi, WindowRect
    ret
 endp
 
+proc ui_draw_drag uses esi edi, WindowRect
+  locals 
+    size_xy   dd  ?, ?
+    pos_xy    dd  ?, ?
+    
+    n_2       dd  2.0
+  endl
+
+  cmp [ui_is_drag], 1
+  jnz .Return
+      invoke GetCursorPos, ui_cursor_pos
+      
+      mov esi, [WindowRect]
+      fild [ui_cursor_pos]
+      fild dword[esi + 8]
+      fdivp
+      fmul [n_2]
+      fld1
+      fsubp
+      fstp [size_xy]
+      fild [ui_cursor_pos + 4]
+      fild dword[esi + 12]
+      fdivp
+      fmul [n_2]
+      fld1
+      fsubp
+      fchs
+      fstp [size_xy + 4]
+      
+      mov ax, word[ui_drag_item]
+      cmp ax, 0
+      jz .readyRender
+      cmp ax, 255
+      jle .cubes
+         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+         ;other elements case
+        jmp .readyRender
+      .cubes:
+         ;cube element case:
+         xor edx, edx
+         push eax
+         movzx eax, word[ui_drag_item]
+         dec eax
+         mov ebx, 4
+         imul eax, ebx 
+         add eax, TextureHandles 
+         push   eax
+         invoke glEnable, GL_TEXTURE_2D
+         pop    eax
+         invoke glBindTexture, GL_TEXTURE_2D, [eax]
+         pop eax
+         
+         stdcall ui_draw_rectangle_textured_block, [size_xy], [size_xy + 4], [big_bag_slot_size_xy], [big_bag_slot_size_xy+4]
+         
+         invoke glDisable, GL_TEXTURE_2D
+      .readyRender: 
+  
+  
+  .Return:
+  ret
+endp
+
 proc ui_draw_slot uses esi edi, x, y, s_x, s_y, elm_info
   locals 
     n_20     dd    20.0
