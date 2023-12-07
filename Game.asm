@@ -89,7 +89,7 @@ proc RenderScene
     jnz .SkipUI
     stdcall gf_2D_Render_Start
     
-        mov [UI_MODE], UI_MAINBAG
+        ;mov [UI_MODE], UI_MAINBAG
         
         switch  [UI_MODE]
         case    .UI_pGame,        UI_GAME       
