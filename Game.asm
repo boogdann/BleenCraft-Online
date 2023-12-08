@@ -52,7 +52,7 @@ proc GameStart
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
   ;Set radius of block rendering       (x,  y,  z)
-  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 20
+  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  12, 12, 12
   ;===========================================================
   
   ;========== Controller params ==========
