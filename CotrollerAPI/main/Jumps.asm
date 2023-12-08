@@ -11,8 +11,9 @@ proc ct_fall_check, playerPos, Field, X, Y
      tempCamera dd  0, 0, 0
      tempPlayerPos dd 0.0, 0.0, 0.0
      
-     MAX_TICKS_COUNT  dd  100
+     MAX_TICKS_COUNT  dd  500
      MIN_TICKS_COUNT  dd  10
+     
   endl
   
   cmp [isFalling], 1

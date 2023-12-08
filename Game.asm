@@ -1,6 +1,6 @@
 include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
-
+include "Units\Animations\RightHandAnimation.asm"
 include "Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 
 
@@ -74,7 +74,9 @@ proc RenderScene
     jz @F
       stdcall gf_RenderSelectObj3D, selectCubeData, 1.0
     @@:      
-                            
+    
+    stdcall anim_RightHand, PlayerPos, PlayerTurn
+
     ;Landscape rendering                        
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
                                [WorldHeight], PlayerPos, PlayerTurn, 0      

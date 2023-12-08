@@ -120,7 +120,7 @@ proc ct_check_moves, CameraPos, CameraTurn
   invoke GetAsyncKeyState, $02
   cmp eax, 0
   jz @F
-     
+          
      cmp [flag], 1
      jne .skipBuilding
         

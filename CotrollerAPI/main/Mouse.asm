@@ -22,7 +22,6 @@ proc ct_check_turns uses esi, playerTurn
   div ebx
   mov [center.y], eax
   
-  
   invoke GetCursorPos, ct_mouse
   ;—двиг по X
   mov eax, [center.x]
@@ -31,7 +30,7 @@ proc ct_check_turns uses esi, playerTurn
   ;—двиг по Y
   mov eax, [center.y]
   sub [ct_mouse.y], eax
-     
+    
   fld  dword[esi + 4]
   fild [ct_mouse.x]
   fmul [ct_sensitivity]
@@ -42,9 +41,8 @@ proc ct_check_turns uses esi, playerTurn
   fild [ct_mouse.y]
   fmul [ct_sensitivity]
   fsubp
-  fstp dword[esi] 
-  
-  
+  fstp dword[esi]
+
   fld dword[esi]
   fistp dword[tmpCamera]
   mov eax, [tmpCamera]

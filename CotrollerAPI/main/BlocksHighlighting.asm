@@ -11,8 +11,8 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
       
     tempScale     dd 1.01
     
-    a dd 0.0            
-    b dd ?
+    a             dd 0.0            
+    b             dd ?
     
   endl
               
@@ -41,7 +41,7 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
 
   mov ecx, 1
 
-.zaloop: 
+.check_loop: 
 
   mov [block_detected], 0
   mov [flag], 0
@@ -99,8 +99,6 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
     
     mov [flag], 1
     
-    ;remove this? mov [is_readyToBuild], 1
-  
     cmp [skip_destroying], 1
     jne .destroy_flag
       mov [destruction_time], 0
@@ -154,10 +152,10 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
   fstp [currentVector]
   
   cmp ecx, 10
-  jl .zaloop
-  
+  jl .check_loop
+    
   .finish:
-  
+ 
   ret
 endp
 
@@ -328,6 +326,7 @@ proc ct_build_block, prevCubePos
 
   locals
     tempPos dd 0, 0, 0
+    tempVector dd 0, 0, 0
   endl
 
   mov edi, [prevCubePos]
@@ -339,10 +338,14 @@ proc ct_build_block, prevCubePos
   fld dword[edi + 8]
   fistp [tempPos + 8]
 
-  stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 1
+  cmp [build_is_prohibited], 1
+  je @F
+     
+     stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 1
 
-  
-  
+  @@:
+
+  .finish:
 
   ret
 endp

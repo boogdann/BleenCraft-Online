@@ -20,7 +20,7 @@ isBlock       dd      0
 isFalling     dd      0
 ct_isJump     dd      1
 
-ct_start_jump_speed        dd     -0.006
+ct_start_jump_speed        dd     -0.003
 ct_water_jump_speed        dd     -0.001
 ct_jump_distancePerSecond  dd     0.005
 ct_isStartOfJump           dd     0    
@@ -44,5 +44,7 @@ prev_block_pos             dd     0, 0, 0
 prev_building_time         dd     0
 building_time              dd     0
 build_by_click             dd     0
+
+build_is_prohibited        dd     0
 
 skip_destroying            dd     0

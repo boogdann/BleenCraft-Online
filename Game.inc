@@ -54,6 +54,12 @@ prevCubePos      dd       0, 0, 0
 flag             dd       0
 ;==============================================
 
+;== Animations Global Variables =============
+Anim_Hand_Position dd     0.0, 0.0, 0.0
+Anim_Hand_Turn     dd     0.0, 0.0, 0.0
+XAxisMuliplier     dd     0.1
+;==============================================     
+
 ;=========== UI data ========================
 UI_MODE            dd        UI_GAME
 tools_arr_example  dw  1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0 
