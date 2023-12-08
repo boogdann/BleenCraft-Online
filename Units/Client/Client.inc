@@ -4,13 +4,15 @@ Client.OffsetNumber = 6
 
 Client.MSGSendWorld      dd 0
 Client.MSGPlayerPosition dd 1
-Client.BlockState        dd 2
-Client.HandBlock         dd 3
-Client.GetWorld          dd 4
-Client.UserState         dd 5
-Client.Rotetions         dd 6
-Client.TCPInit           dd 7
-Client.UDPInit           dd 8
+Client.MSGBlockState        dd 2
+Client.MSGHandBlock         dd 3
+Client.MSGGetWorld          dd 4
+Client.MSGUserState         dd 5
+Client.MSGRotetions         dd 6
+Client.MSGTCPInit           dd 7
+Client.MSGUDPInit           dd 8
+Client.MSGStartSendWorld    dd 9
+Client.MSGEndSendWorld      dd 10
 
 testUDPLine db 'Hello', 0
 

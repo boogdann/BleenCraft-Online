@@ -13,9 +13,28 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;Mouse modes switch automatically!!!
 
 proc GameStart
+;  stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
+
   stdcall Inventory.Initialize, Inventory, InventorySize
-  mov     eax, [Inventory]
-  mov     eax, [InventorySize]
+  
+  ;TEST
+;  stdcall Inventory.SetCell, 1, Block.Log, 10
+  stdcall Inventory.SetCell, 12, Block.Stone, 64
+;  stdcall Inventory.SetCell, 35, Block.Cobblestone, 10
+;  stdcall Inventory.SetCell, 0, Block.Tallgrass, 10
+  
+  stdcall Inventory.IncCell, 12
+  
+  stdcall Inventory.GetCell, 12
+  cmp     eax, Block.Stone
+  jz      @F
+  invoke  ExitProcess, 1
+@@:
+  cmp     edx, 64 
+  jz      @F
+  invoke  ExitProcess, 1  
+@@:
+
 
   ;Refactoring!!!!!!!!!!!
   ;================World initialize=================
@@ -52,7 +71,7 @@ proc GameStart
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
   ;Set radius of block rendering       (x,  y,  z)
-  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  12, 12, 12
+  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 30
   ;===========================================================
   
   ;========== Controller params ==========
@@ -102,7 +121,8 @@ proc RenderScene
           ;stdcall ct_change_mouse, 0
           stdcall ui_renderHealth, WindowRect, 10, 6
           
-          lea esi, [bigBag_arr_example + 3*9 *4]
+          mov eax, [Inventory]
+          lea esi, [eax + InventoryMainOffset]
           stdcall ui_renderBag, WindowRect, 9, esi, 2 
           
           stdcall ui_renderAim, WindowRect
@@ -116,7 +136,7 @@ proc RenderScene
           stdcall ui_draw_drag, WindowRect
           ;36 elements in main bag required!!! 
           ;last 9 elm-s from mini bag!!!
-          stdcall ui_renderBigBag, WindowRect, bigBag_arr_example, bigBag_craft_arr_example
+          stdcall ui_renderBigBag, WindowRect, [Inventory], bigBag_craft_arr_example
           stdcall ui_renderShadowEffect
           ;stdcall ct_change_mouse, 1
           jmp .UI_RenderEnd

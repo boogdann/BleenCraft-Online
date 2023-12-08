@@ -98,12 +98,12 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         stdcall ct_on_keyDown, [wParam] 
         jmp     .ReturnZero
   .MouseDown:
-        stdcall ui_slots_controller, WindowRect, bigBag_arr_example, bigBag_craft_arr_example
+        stdcall ui_slots_controller, WindowRect, [Inventory], bigBag_craft_arr_example
         jmp     .ReturnZero
   .MouseUp:
         ;govnokod no uje pohui
         ;All parameters are array to slots hz v kakom poryadke
-        stdcall ui_drag_end, WindowRect, bigBag_arr_example, bigBag_craft_arr_example
+        stdcall ui_drag_end, WindowRect, [Inventory], bigBag_craft_arr_example
         jmp     .ReturnZero
  
   .Destroy:
@@ -148,7 +148,9 @@ section '.idata' import data readable writeable
   library kernel32, 'KERNEL32.DLL',\
 	        user32,   'USER32.DLL',\    
           opengl32, 'opengl32.DLL',\   
-          gdi32,    'GDI32.DLL'
+          gdi32,    'GDI32.DLL', \
+          wsock32,  'WSOCK32.DLL'
                                     
   include 'api\kernel32.inc'
   include 'api\user32.inc'
+  include 'api\wsock32.inc'

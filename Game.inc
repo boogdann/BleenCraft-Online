@@ -32,9 +32,9 @@ InventorySize       dd    ?
 InventoryMainOffset =     9*3*4
 
 ;=======================================
-serverIp         db       "127.0.0.1", 0
-serverPortUDP    dd       9999
-serverPortTCP    dd       10000
+ServerIp         db       "127.0.0.1", 0
+ServerPortUDP    dd       9999
+ServerPortTCP    dd       10000
 ;=======================================
 
 ;=============================================
