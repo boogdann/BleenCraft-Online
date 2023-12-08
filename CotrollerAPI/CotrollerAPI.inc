@@ -20,7 +20,7 @@ isBlock       dd      0
 isFalling     dd      0
 ct_isJump     dd      1
 
-ct_start_jump_speed        dd     -0.003
+ct_start_jump_speed        dd     -0.004
 ct_water_jump_speed        dd     -0.001
 ct_jump_distancePerSecond  dd     0.005
 ct_isStartOfJump           dd     0    
