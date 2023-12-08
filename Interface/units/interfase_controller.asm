@@ -56,7 +56,6 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
   
   cmp [App_Mode], GAME_MODE
   jnz .SkipGameController
-    
     cmp [UI_MODE], UI_WORKBENCH
     jz @F
        cmp [UI_MODE], UI_MAINBAG
@@ -64,36 +63,18 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
     @@:
     stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data 
     cmp eax, 1
-    jnz @F  
-      ;Insert
-      mov esi, [bigBag_arr]
-      mov eax, [ui_drag_item]
-      shl ebx, 2
-      mov dword[esi + ebx], eax
-      
-      ;Delete from root
-      mov esi, [ui_drag_array_out]
-      mov edi, [ui_drag_index_out]
-      shl edi, 2
-      mov dword[esi + edi], 0
-    @@:
+    jnz .SkipBigBagCheck 
+       stdcall MoveElement, [bigBag_arr], ebx, 64
+    .SkipBigBagCheck:
     
     cmp [UI_MODE], UI_MAINBAG
     jnz .SkipBigBagCraft
       stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
       cmp eax, 1
       jnz @F  
-        ;Insert
-        mov esi, [bigBag_craft_arr]
-        mov eax, [ui_drag_item]
-        shl ebx, 2
-        mov dword[esi + ebx], eax
-        
-        ;Delete from root
-        mov esi, [ui_drag_array_out]
-        mov edi, [ui_drag_index_out]
-        shl edi, 2
-        mov dword[esi + edi], 0
+        cmp ebx, 0
+        jz @F
+        stdcall MoveElement, [bigBag_craft_arr], ebx, 1
       @@:
     .SkipBigBagCraft:
     
@@ -110,6 +91,85 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
   mov [ui_drag_array_out], 0
   ret
 endp
+
+
+proc MoveElement, arrayIn, findItemIndex, InsertCount
+  locals 
+    InElmAddr     dd   ?
+    
+    FromElm       dd   0
+    InElm         dd   0
+    
+    FromCount     dd   0
+    InCount       dd   0
+    
+    ResCount      dd   0
+  endl
+  
+      mov esi, [ui_drag_array_out]
+      mov edi, [ui_drag_index_out]
+      shl edi, 2
+      movzx eax, word[esi + edi]
+      mov [FromElm], eax
+      movzx eax, word[esi + edi + 2]
+      mov [FromCount], eax
+      
+      mov ebx, [findItemIndex]
+      mov esi, [arrayIn]  ;cur array
+      shl ebx, 2
+      add esi, ebx
+      mov [InElmAddr], esi
+      movzx eax, word[esi]
+      mov [InElm], eax
+      movzx eax, word[esi + 2]
+      mov [InCount], eax
+      
+      mov esi, [ui_drag_array_out]
+      mov edi, [ui_drag_index_out] 
+      shl edi, 2
+      add edi, esi
+      cmp edi, [InElmAddr]
+      jz .SkipCheck
+      
+      mov eax, [FromElm]
+      cmp eax, [InElm]
+      jz @F
+        cmp [InElm], 0
+        jnz .SkipCheck
+      @@:
+      
+      mov ecx, 0
+      mov eax, [FromCount]
+      add eax, [InCount]
+      cmp eax, [InsertCount]
+      jle @F
+        mov ecx, eax
+        mov eax, [InsertCount]
+        sub ecx, eax
+      @@:
+      mov [ResCount], eax 
+      
+      mov esi, [ui_drag_array_out]
+      mov edi, [ui_drag_index_out]
+      shl edi, 2
+      cmp ecx, 0
+      jz @F 
+        mov word[esi + edi + 2], cx
+        jmp .SkipDelete
+      @@:
+      mov dword[esi + edi], 0
+      .SkipDelete:
+      
+      mov eax, [ui_drag_item]
+      mov esi, [InElmAddr]
+      mov dword[esi], eax
+      mov eax, [ResCount]
+      mov word[esi + 2], ax
+
+  .SkipCheck:
+  ret
+endp
+
 
 ;required --> ui_cursor_pos = invoke GetCursorPos
 proc ui_check_slot_section uses esi edi, WindowRect, gl_slot_size, slots_arr_data

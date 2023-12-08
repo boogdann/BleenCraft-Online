@@ -191,9 +191,13 @@ proc ui_draw_slot uses esi edi, x, y, s_x, s_y, elm_info
   fsubp
   fstp[y]
   invoke glColor3f, 0.55, 0.55, 0.55
+  cmp [global_selected_slot_kostil], 0
+  jz @F
+     invoke glColor3f, 0.7, 0.7, 0.7
+  @@:
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y]
 
-  
+        ;global_selected_slot_kostil
   fld [s_x]
   fadd [tmp_xy]
   fstp[s_x]
@@ -201,6 +205,7 @@ proc ui_draw_slot uses esi edi, x, y, s_x, s_y, elm_info
   fadd [tmp_xy + 4]
   fstp[s_y]
   invoke glColor3f, 0.22, 0.22, 0.22
+
   fld[x]
   fsub [tmp_xy]
   fstp [add_xy] 
@@ -518,11 +523,15 @@ proc ui_renderBag uses esi edi, WindowRect, tools_count, tools_arr, pointer
   mov edi, [tools_arr]
   mov esi, 0
   .DrawLoop:
+     cmp esi, [pointer]
+     jnz @F
+        mov [global_selected_slot_kostil], 1
+     @@:
      stdcall ui_draw_slot, [cur_x], [cur_y], [bag_width], [bag_height], [edi]
      fld [cur_x]
      fadd [bag_width]
      fstp [cur_x]
-    
+     mov [global_selected_slot_kostil], 0
     add edi, 4
   inc esi
   cmp esi, [tools_count]

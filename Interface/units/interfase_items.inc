@@ -12,7 +12,11 @@ ui_is_drag            dd   0
 ui_drag_item          dd   0
 ui_drag_index_out     dd   0
 ui_drag_array_out     dd   0
-                                
+
+
+MAX_SLOT_ELM_COUNT    dd   64 
+
+global_selected_slot_kostil  dd  0                               
 ;64 - max count of elements in slot
 
 
