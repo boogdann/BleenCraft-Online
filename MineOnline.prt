@@ -4,11 +4,13 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=2
-  countInc=1
+  countAsm=3
+  countInc=2
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
+  asm3="Keyboard.asm"
 [inc]
   inc1="Game.inc"
+  inc2="CotrollerAPI.inc"
 end if

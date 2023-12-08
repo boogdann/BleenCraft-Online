@@ -5,22 +5,35 @@ proc ct_on_keyDown, wParam, lParam
   jnz @F
      cmp [ct_is_mouse], 1
      jz .hide
+       mov [UI_MODE], UI_ESC_MENU    
        stdcall ct_change_mouse, 1
        jmp .skip
      .hide:
+       mov [UI_MODE], UI_GAME
        stdcall ct_change_mouse, 0
      .skip:
      jmp .final
   @@:
       
-  
+  cmp [wParam], $49
+  jnz @F
+     
+     neg [openMainBag]
+     
+     cmp [openMainBag], 1
+     jne .hideBag
+        stdcall ct_change_mouse, 1
+        mov [UI_MODE], UI_MAINBAG
+        jmp .showBag
+     .hideBag:
+        stdcall ct_change_mouse, 0
+        mov [UI_MODE], UI_GAME
+     .showBag:
+     
+  @@:
+   
   ;... Другие клавиши
   
-  cmp [wParam], VK_F2
-  jnz @F
-    neg [isDebug]
-  @@: 
-
   .final:  
   ret
 endp

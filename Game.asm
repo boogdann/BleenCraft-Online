@@ -99,7 +99,7 @@ proc RenderScene
         case    .UI_pMainBag,     UI_MAINBAG  
         
         .UI_pGame:
-          stdcall ct_change_mouse, 0
+          ;stdcall ct_change_mouse, 0
           stdcall ui_renderHealth, WindowRect, 10, 6
           
           lea esi, [bigBag_arr_example + 3*9 *4]
@@ -110,7 +110,7 @@ proc RenderScene
         .UI_pWorkBench:
           stdcall ui_draw_drag, WindowRect
           stdcall ui_renderShadowEffect
-          stdcall ct_change_mouse, 1
+          ;stdcall ct_change_mouse, 1
           jmp .UI_RenderEnd
         .UI_pMainBag:
           stdcall ui_draw_drag, WindowRect
@@ -118,7 +118,7 @@ proc RenderScene
           ;last 9 elm-s from mini bag!!!
           stdcall ui_renderBigBag, WindowRect, bigBag_arr_example, bigBag_craft_arr_example
           stdcall ui_renderShadowEffect
-          stdcall ct_change_mouse, 1
+          ;stdcall ct_change_mouse, 1
           jmp .UI_RenderEnd
         .UI_RenderEnd:   
     stdcall gf_2D_Render_End
@@ -131,8 +131,6 @@ proc RenderScene
       stdcall gf_render_PlayerItem
     @@:
     
-    
-      
     stdcall gf_RenderEnd
   ret
 endp

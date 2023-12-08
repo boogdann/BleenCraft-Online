@@ -48,3 +48,5 @@ build_by_click             dd     0
 build_is_prohibited        dd     0
 
 skip_destroying            dd     0
+
+openMainBag                dd     -1
