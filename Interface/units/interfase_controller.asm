@@ -1,32 +1,47 @@
+;TODO: Проверка на совпадение элементов, проверка на колличество
+
 proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr 
   
-  ;big_bag_data  
   invoke GetCursorPos, ui_cursor_pos
   
-  ;check big bag
-  stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data 
-  cmp eax, 1
-  jnz @F
-    mov [ui_is_drag], eax
-    mov [ui_drag_item], ecx
-    mov eax, [bigBag_arr]
-    mov [ui_drag_array_out], eax
-    mov [ui_drag_index_out], ebx
-    jmp .Return
-  @@:
-  
-  stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
-  cmp eax, 1
-  jnz @F
-    mov [ui_is_drag], eax
-    mov [ui_drag_item], ecx
-    mov eax, [bigBag_craft_arr]
-    mov [ui_drag_array_out], eax
-    mov [ui_drag_index_out], ebx
-    jmp .Return
-  @@:
-  
-  ;TODO: Проверка на совпадение элементов, проверка на колличество 
+  cmp [App_Mode], GAME_MODE
+  jnz .SkipGameController
+    
+    cmp [UI_MODE], UI_WORKBENCH
+    jz @F
+       cmp [UI_MODE], UI_MAINBAG
+       jnz .ReturnGameConroller
+    @@:
+    ;check big bag + verstack
+    stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data 
+    cmp eax, 1
+    jnz @F
+      mov [ui_is_drag], eax
+      mov [ui_drag_item], ecx
+      mov eax, [bigBag_arr]
+      mov [ui_drag_array_out], eax
+      mov [ui_drag_index_out], ebx
+      jmp .ReturnGameConroller
+    @@:
+    
+    cmp [UI_MODE], UI_MAINBAG
+    jnz .SkipBigBagCraft
+      ;check big bag craft
+      stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
+      cmp eax, 1
+      jnz @F
+        mov [ui_is_drag], eax
+        mov [ui_drag_item], ecx
+        mov eax, [bigBag_craft_arr]
+        mov [ui_drag_array_out], eax
+        mov [ui_drag_index_out], ebx
+        jmp .ReturnGameConroller
+      @@:
+    .SkipBigBagCraft:
+   
+  .ReturnGameConroller:
+     ;RETURN 
+  .SkipGameController:
   
   .Return:    
   ret
@@ -38,37 +53,53 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
   
   invoke GetCursorPos, ui_cursor_pos
   
-  stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data 
-  cmp eax, 1
-  jnz @F  
-    ;Insert
-    mov esi, [bigBag_arr]
-    mov eax, [ui_drag_item]
-    shl ebx, 2
-    mov dword[esi + ebx], eax
-    
-    ;Delete from root
-    mov esi, [ui_drag_array_out]
-    mov edi, [ui_drag_index_out]
-    shl edi, 2
-    mov dword[esi + edi], 0
-  @@:
   
-  stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
-  cmp eax, 1
-  jnz @F  
-    ;Insert
-    mov esi, [bigBag_craft_arr]
-    mov eax, [ui_drag_item]
-    shl ebx, 2
-    mov dword[esi + ebx], eax
+  cmp [App_Mode], GAME_MODE
+  jnz .SkipGameController
     
-    ;Delete from root
-    mov esi, [ui_drag_array_out]
-    mov edi, [ui_drag_index_out]
-    shl edi, 2
-    mov dword[esi + edi], 0
-  @@:
+    cmp [UI_MODE], UI_WORKBENCH
+    jz @F
+       cmp [UI_MODE], UI_MAINBAG
+       jnz .ReturnGameConroller
+    @@:
+    stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data 
+    cmp eax, 1
+    jnz @F  
+      ;Insert
+      mov esi, [bigBag_arr]
+      mov eax, [ui_drag_item]
+      shl ebx, 2
+      mov dword[esi + ebx], eax
+      
+      ;Delete from root
+      mov esi, [ui_drag_array_out]
+      mov edi, [ui_drag_index_out]
+      shl edi, 2
+      mov dword[esi + edi], 0
+    @@:
+    
+    cmp [UI_MODE], UI_MAINBAG
+    jnz .SkipBigBagCraft
+      stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
+      cmp eax, 1
+      jnz @F  
+        ;Insert
+        mov esi, [bigBag_craft_arr]
+        mov eax, [ui_drag_item]
+        shl ebx, 2
+        mov dword[esi + ebx], eax
+        
+        ;Delete from root
+        mov esi, [ui_drag_array_out]
+        mov edi, [ui_drag_index_out]
+        shl edi, 2
+        mov dword[esi + edi], 0
+      @@:
+    .SkipBigBagCraft:
+    
+    .ReturnGameConroller:
+     ;RETURN 
+  .SkipGameController:
 
 
 

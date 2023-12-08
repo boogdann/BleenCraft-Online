@@ -1,5 +1,4 @@
 format PE GUI 4.0
-stack 0x10000
 entry Start
 
 ;===============Module include================
@@ -76,7 +75,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         case    .Destroy,       WM_DESTROY
         case    .Movement,      WM_KEYDOWN 
         case    .MouseDown,     WM_LBUTTONDOWN 
-        case    .MouseUp,     WM_LBUTTONUP
+        case    .MouseUp,       WM_LBUTTONUP
         
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
         jmp     .Return
@@ -106,6 +105,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         ;All parameters are array to slots hz v kakom poryadke
         stdcall ui_drag_end, WindowRect, bigBag_arr_example, bigBag_craft_arr_example
         jmp     .ReturnZero
+ 
   .Destroy:
         ;stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], filename       
         ;stdcall Field.SaveInFileWorld, [SkyLand],[SkyLength] ,[SkyWidth], 1 ,[SizeSky], filenameSky

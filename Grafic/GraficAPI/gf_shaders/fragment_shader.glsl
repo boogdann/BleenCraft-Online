@@ -5,8 +5,8 @@ in vec4 eyePosition;
 in vec3 eyeNorm;
 in vec3 FPosition;
 
-layout(binding=0) uniform sampler2D Tex1;
-layout(binding=1) uniform sampler2D Tex2;
+uniform sampler2D Tex1;
+uniform sampler2D Tex2;
 uniform vec3 Kd;
 uniform vec3 Ka;
 uniform vec3 Ks;
@@ -39,7 +39,7 @@ void ads( int i, vec4 LPos, vec3 LIntens, vec4 position,
     float CandleCof = 1.5;
     if (i != 0) {
         float LightDist = abs(distance(vec3(LPos), FPosition));
-        CandleCof = max(CandleRadius - LightDist, 0.0) / (CandleRadius / 5);
+        CandleCof = max(CandleRadius - LightDist, 0.0) / (CandleRadius / 5.0);
         if (CandleCof < 0.1) { return; }
         Ka = vec3(0.0);
         Ks = vec3(0.0);
@@ -71,19 +71,29 @@ void main() {
     vec3 ambDiff = vec3(0.0);
     vec3 spec = vec3(0.0);
 
-    for( int i = 0; i < LightsCount; i++ )
-         ads( i, lights[i].Position, lights[i].Intensity,
-             eyePosition, eyeNorm, Ka, Kd, Ks, ambDiff, spec);
+
+    int i = LightsCount * 0;
+
+    //ads( i, lights[i].Position, lights[i].Intensity,
+    //         eyePosition, eyeNorm, Ka, Kd, Ks, ambDiff, spec);
+
+    for( i = 0; i < LightsCount; i++ ) {
+        //if (i > LightsCount) { break; }
+    
+        ads( i, lights[i].Position, lights[i].Intensity,
+            eyePosition, eyeNorm, Ka, Kd, Ks, ambDiff, spec);
+    }
+
 
     vec4 resColor = (vec4(ambDiff, 1.0) * texColor + vec4(spec, 1.0)); 
 
     //Fog
     float dist = abs(distance(CameraPos, FPosition));
     if (SkyMode) {
-        dist /= 55; 
+        dist /= 55.0; 
         resColor = 0.9 * texColor + vec4(spec, 1.0);
     }
-    float fogFactor = (MaxFogDist - dist) / (15); //MinFogDist
+    float fogFactor = (MaxFogDist - dist) / (15.0); //MinFogDist
 
     fogFactor = clamp( fogFactor, 0.0, 1.0 );
     resColor = mix( FogColor, resColor, fogFactor );
