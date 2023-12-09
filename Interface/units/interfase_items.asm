@@ -93,7 +93,7 @@ proc ui_draw_drag uses esi edi, WindowRect
   ret
 endp
 
-proc ui_draw_slot uses esi edi, x, y, s_x, s_y, elm_info
+proc ui_draw_slot uses esi edi ecx, x, y, s_x, s_y, elm_info
   locals 
     n_20     dd    20.0
     tmp_xy   dd    ?, ?
@@ -232,7 +232,22 @@ proc ui_draw_slot uses esi edi, x, y, s_x, s_y, elm_info
   ret
 endp
 
-proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr 
+
+proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
+  stdcall ui_renderGameMenu, [WindowRect], [tools_arr], [redactor_arr], 0
+
+  ret
+endp
+
+
+proc ui_renderWorkBench uses esi edi, WindowRect, tools_arr, redactor_arr
+  stdcall ui_renderGameMenu, [WindowRect], [tools_arr], [redactor_arr], 1
+
+  ret
+endp
+
+
+proc ui_renderGameMenu uses esi edi, WindowRect, tools_arr, redactor_arr, mode 
   locals 
     xy_size    dd   ?, 1.8 ;2.0 * 0.9
     xy_add     dd   ?, -0.9
@@ -256,6 +271,8 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
     redactor_slot_y  dd 0.45
     
     slot_data        dd ?
+    
+    start_tmp_ultra_pofig  dd  -0.25
   endl
   
   mov esi, [WindowRect]
@@ -341,6 +358,9 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   @@:
   cmp edi, 4
   jnz .DrawSlotsRow
+  
+  cmp [mode], 0
+  jnz .SkipModeZero 
   ;=========================================================================
   invoke glColor3f, 0.04, 0.04, 0.04    ;player_slot_xy    ;tmp_pl_slot ;player_slot_xy_size 
   fld [start_slot_x]
@@ -359,12 +379,13 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   
   ;=========================================================================
   
+  
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   mov edi, 12
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   
   fld [start_slot_x]
-  fld [slot_xy]                                    ; ;big_bag_craft_data  
+  fld [slot_xy]                                      
   fmul [n_5]
   faddp
   fstp [start_slot_x]
@@ -445,15 +466,100 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   mov [big_bag_craft_data + 4], eax
   mov eax, [esi]
   mov [big_bag_craft_data + 8], eax
+  jmp .SkipModeOne
   ;===================================
   ;=========================================================================
+  .SkipModeZero:
+  ;#############################################
+  fld [redactor_slot_y]
+  fld [slot_xy + 4]
+  fdiv [n_2]
+  fsubp
+  fstp [redactor_slot_y]
+  mov [cur_slot_xy], 0.15
   
+  fldz
+  fsub [slot_xy]
+  fsub [slot_xy]
+  fstp [start_tmp_ultra_pofig]
+  
+  fld [start_tmp_ultra_pofig]
+  fadd [slot_xy]
+  fadd [slot_xy]
+  fadd [slot_xy]
+  fld [slot_xy]
+  fdiv [n_2]
+  faddp
+  fstp [cur_slot_xy]
+  
+              ;start_tmp_ultra_pofig
+  mov esi, [redactor_arr]
+  stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi]
+  mov eax, [cur_slot_xy]
+  mov [workbranchCraft_data], eax
+  mov eax, [redactor_slot_y]
+  mov [workbranchCraft_data + 4], eax
+  mov eax, [esi]
+  mov [workbranchCraft_data + 8], eax
+  
+  
+  fld [redactor_slot_y]
+  fadd [slot_xy + 4]
+  fstp [redactor_slot_y] 
+  
+  mov ecx, 0
+  mov edi, 0
+  .Loop_A:
+      mov eax, [start_tmp_ultra_pofig]
+      mov [cur_slot_xy], eax
+      mov edx, 0
+      .Loop_B:  
+          inc ecx
+          push edx
+          add esi, 4
+          stdcall ui_draw_slot, [cur_slot_xy], [redactor_slot_y], [slot_xy], [slot_xy + 4], [esi]
+              
+          ;==
+          push edi
+          mov eax, ecx
+          imul eax, 12
+          mov edi, eax
+          mov eax, [cur_slot_xy]
+          mov [workbranchCraft_data + edi], eax
+          mov eax, [redactor_slot_y]
+          mov [workbranchCraft_data + edi + 4], eax
+          mov eax, [esi]
+          mov [workbranchCraft_data + edi + 8], eax
+          pop edi
+          ;==
+          
+          fld [cur_slot_xy]
+          fadd [slot_xy]
+          fstp [cur_slot_xy]
+          pop edx
+      inc edx
+      cmp edx, 3
+      jnz .Loop_B
+      fld [redactor_slot_y]
+      fsub [slot_xy + 4]
+      fstp [redactor_slot_y] 
+  inc edi
+  cmp edi, 3
+  jnz .Loop_A  
+  
+  
+  
+  
+  
+  
+  ;##############################################
+  .SkipModeOne:
   ;=========================================================================
   invoke glColor3f, 0.77, 0.77, 0.77
   stdcall ui_draw_rectangle, [xy_add], [xy_add + 4], [xy_size], [xy_size + 4]
   ;=========================================================================
-  push [xy_add]
-  push [xy_add + 4]
+  
+ 
   mov esi, [WindowRect]
   fild dword[esi + 12]
   fild dword[esi + 8]
@@ -468,6 +574,7 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   fstp[xy_add + 4]
   invoke glColor3f, 0.9, 0.9, 0.9
   stdcall ui_draw_rectangle, [xy_add], [xy_add + 4], [xy_size], [xy_size + 4]
+  
   fld [xy_add]
   fadd [tmp_add]
   fadd [tmp_add]
@@ -479,8 +586,9 @@ proc ui_renderBigBag uses esi edi, WindowRect, tools_arr, redactor_arr
   invoke glColor3f, 0.33, 0.33, 0.33
   stdcall ui_draw_rectangle, [xy_add], [xy_add + 4], [xy_size], [xy_size + 4]
   ;=========================================================================
-  pop [xy_add + 4]
-  pop [xy_add]
+  
+  
+  ;########################
   
 
   ret

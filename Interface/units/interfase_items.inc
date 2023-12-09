@@ -4,7 +4,8 @@ bag_size     dd  10
 big_bag_slot_size_xy  dd   ?, ?
 big_bag_data          dd   36  dup (0, 0, 0)
 
-big_bag_craft_data    dd   5  dup (0, 0, 0)
+big_bag_craft_data      dd   5  dup (0, 0, 0)
+workbranchCraft_data    dd  10  dup (0, 0, 0)
 
 ui_cursor_pos         dd   ?, ?
 

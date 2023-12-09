@@ -1,6 +1,6 @@
 ;TODO: Проверка на совпадение элементов, проверка на колличество
 
-proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr 
+proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workbench_craft_arr 
   
   invoke GetCursorPos, ui_cursor_pos
   
@@ -9,11 +9,11 @@ proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
     
     cmp [UI_MODE], UI_WORKBENCH
     jz @F
-       cmp [UI_MODE], UI_MAINBAG
-       jnz .ReturnGameConroller
+    cmp [UI_MODE], UI_MAINBAG
+    jnz .ReturnGameConroller
     @@:
     ;check big bag + verstack
-    stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data 
+    stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data, 36 
     cmp eax, 1
     jnz @F
       mov [ui_is_drag], eax
@@ -27,7 +27,7 @@ proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
     cmp [UI_MODE], UI_MAINBAG
     jnz .SkipBigBagCraft
       ;check big bag craft
-      stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
+      stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data, 5 
       cmp eax, 1
       jnz @F
         mov [ui_is_drag], eax
@@ -38,6 +38,20 @@ proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
         jmp .ReturnGameConroller
       @@:
     .SkipBigBagCraft:
+    
+    cmp [UI_MODE], UI_WORKBENCH
+    jnz .SkipWorkBranchCraft
+      stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, workbranchCraft_data, 10 
+      cmp eax, 1
+      jnz @F
+        mov [ui_is_drag], eax
+        mov [ui_drag_item], ecx
+        mov eax, [workbench_craft_arr]
+        mov [ui_drag_array_out], eax
+        mov [ui_drag_index_out], ebx
+        jmp .ReturnGameConroller
+      @@:
+    .SkipWorkBranchCraft:
    
   .ReturnGameConroller:
      ;RETURN 
@@ -47,7 +61,7 @@ proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
   ret
 endp
 
-proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
+proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workbench_craft_arr
   cmp [ui_is_drag], 1
   jnz .Return
   
@@ -58,10 +72,10 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
   jnz .SkipGameController
     cmp [UI_MODE], UI_WORKBENCH
     jz @F
-       cmp [UI_MODE], UI_MAINBAG
-       jnz .ReturnGameConroller
+    cmp [UI_MODE], UI_MAINBAG
+    jnz .ReturnGameConroller
     @@:
-    stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data 
+    stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data, 36 
     cmp eax, 1
     jnz .SkipBigBagCheck 
        stdcall MoveElement, [bigBag_arr], ebx, 64
@@ -69,14 +83,25 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr
     
     cmp [UI_MODE], UI_MAINBAG
     jnz .SkipBigBagCraft
-      stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data 
+      stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_craft_data, 5 
       cmp eax, 1
       jnz @F  
         cmp ebx, 0
         jz @F
-        stdcall MoveElement, [bigBag_craft_arr], ebx, 1
-      @@:
+          stdcall MoveElement, [bigBag_craft_arr], ebx, 1
+        @@:
     .SkipBigBagCraft:
+    
+    cmp [UI_MODE], UI_WORKBENCH
+    jnz .SkipWorkBranchCraft
+      stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, workbranchCraft_data, 10 
+      cmp eax, 1
+      jnz @F  
+        cmp ebx, 0
+        jz @F
+          stdcall MoveElement, [workbench_craft_arr], ebx, 1
+        @@:
+    .SkipWorkBranchCraft:
     
     .ReturnGameConroller:
      ;RETURN 
@@ -172,7 +197,7 @@ endp
 
 
 ;required --> ui_cursor_pos = invoke GetCursorPos
-proc ui_check_slot_section uses esi edi, WindowRect, gl_slot_size, slots_arr_data
+proc ui_check_slot_section uses esi edi, WindowRect, gl_slot_size, slots_arr_data, count
   locals 
      slot_size    dd    ?
      cur_pos      dd    ?, ?
@@ -244,7 +269,7 @@ proc ui_check_slot_section uses esi edi, WindowRect, gl_slot_size, slots_arr_dat
     
     pop esi
   inc esi  
-  cmp esi, 36
+  cmp esi, [count]
   jnz .CheckSlots
          
   ;Return:       

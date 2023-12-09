@@ -29,7 +29,20 @@ proc ct_on_keyDown, wParam, lParam
         stdcall ct_change_mouse, 0
         mov [UI_MODE], UI_GAME
      .showBag:
-     
+  @@:
+  
+  ;TODO: Checking the distance to the workbench!!!
+  ;Workbench handler 
+  cmp [wParam], 'E'
+  jnz @F     
+     cmp [UI_MODE], UI_WORKBENCH
+     je .hideWorkBench
+        stdcall ct_change_mouse, 1
+        mov [UI_MODE], UI_WORKBENCH
+        jmp @F
+     .hideWorkBench:
+        stdcall ct_change_mouse, 0
+        mov [UI_MODE], UI_GAME
   @@:
    
   ;... Другие клавиши
