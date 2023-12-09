@@ -28,7 +28,7 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
      ret
 endp
 
-proc Client.SendWorld uses edx ecx ebx, pWorld, SizeX, SizeY, SizeZ
+proc Client.SendWorld uses edx ecx ebx edi, pWorld, SizeX, SizeY, SizeZ
      locals
         hHeap      dd ?
         buffer     dd ?
@@ -57,17 +57,48 @@ proc Client.SendWorld uses edx ecx ebx, pWorld, SizeX, SizeY, SizeZ
                           
      invoke  HeapAlloc, [hHeap], HEAP_ZERO_MEMORY, ebx
      mov     [msgAddr], eax  
-     
-     invoke setsockopt, [Client.hTCPSock], 1, 7, 5000000, 4
-     test eax, eax
-     jnz .Error                        
-    
-     stdcall Client.GetMessage, 13, Client.Secret, [Client.SizeSecret], \
-                                [Client.GroupID], [Client.Number], [buffer], [written], [msgAddr] 
-      
-     stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], [msgAddr], 1000000
+          
+     stdcall Client.GetMessage, [Client.MSGStartSendWorld], Client.Secret, [Client.SizeSecret], \
+                                [Client.GroupID], [Client.Number], [buffer], 0, [msgAddr] 
+                                
+     stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], [msgAddr], eax
 
-     invoke setsockopt, [Client.hTCPSock], 1, 7, 65536, 4
+     mov     edi, [written]
+.SendWorld: 
+     cmp     edi, Client.MAX_SIZE_MSG
+     jle     .SendNotFull
+     mov     edx, Client.MAX_SIZE_MSG
+     jmp     .GetMSG
+.SendNotFull:
+     mov     edx, edi     
+.GetMSG:
+     sub     edi, edx
+     stdcall Client.GetMessage, [Client.MSGSendWorld], Client.Secret, [Client.SizeSecret], \
+                                [Client.GroupID], [Client.Number], [buffer], edx, [msgAddr] 
+     add     dword[buffer], edx 
+     
+     cmp     edx, Client.MAX_SIZE_MSG + Client.HEADER_SIZE 
+     jnl     .SkipClearBuffer
+.ClearBuffer:
+     mov     esi, [msgAddr]
+     add     esi, edx
+     mov     byte[esi], 0
+
+     inc     edx
+     cmp     edx, Client.MAX_SIZE_MSG + Client.HEADER_SIZE 
+     jl      .ClearBuffer
+
+.SkipClearBuffer:
+
+     stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], [msgAddr], Client.MAX_SIZE_MSG + Client.HEADER_SIZE
+     
+     cmp     edi, 0
+     jnle    .SendWorld
+     
+     stdcall Client.GetMessage, [Client.MSGEndSendWorld], Client.Secret, [Client.SizeSecret], \
+                                [Client.GroupID], [Client.Number], [buffer], 0, [msgAddr] 
+                                
+     stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], [msgAddr], eax 
      
      jmp     .Finish
 .Error:
@@ -78,7 +109,38 @@ proc Client.SendWorld uses edx ecx ebx, pWorld, SizeX, SizeY, SizeZ
      ret
 endp
 
-proc Client.GetMessage uses ebx edx ecx edi, typeMsg, secretMsg, sizeSecretMsg, groupID, \
+proc Client.GetWorld, pWorld, pSizeX, pSizeY, pSizeZ
+     locals
+        hHeap      dd ?
+        buffer     dd ?
+        bufferSize dd ?
+        written    dd ?
+        msgAddr    dd ?
+        sizeMsg    dd ?
+     endl
+     
+          mov     dword[bufferSize], 50000000
+     invoke  GetProcessHeap
+     mov     [hHeap], eax
+     
+     invoke  HeapAlloc, [hHeap], HEAP_ZERO_MEMORY, [bufferSize]
+     mov     [buffer], eax
+     
+     invoke  HeapAlloc, [hHeap], HEAP_ZERO_MEMORY, 
+     mov     [msgAddr], eax 
+
+     stdcall Client.GetMessage, [Client.MSGSendWorld], Client.Secret, [Client.SizeSecret], \
+                                [Client.GroupID], [Client.Number], [buffer], 0, [msgAddr]      
+     
+     
+     
+     
+
+.Finish:
+     ret
+endp
+
+proc Client.GetMessage uses edx ecx edi, typeMsg, secretMsg, sizeSecretMsg, groupID, \
                        userID, msg, sizeMsg, res
      locals
        hHead   dd ?
@@ -91,11 +153,8 @@ proc Client.GetMessage uses ebx edx ecx edi, typeMsg, secretMsg, sizeSecretMsg, 
      add    edi, 4
      
      mov    ecx, [sizeSecretMsg]
-     
-     mov   esi, [secretMsg]
-     rep   movsb
-     
-     dec   edi
+     mov    esi, [secretMsg]
+     repe   movsb
      
      mov   eax, [groupID]
      mov   dword[edi], eax
@@ -104,14 +163,18 @@ proc Client.GetMessage uses ebx edx ecx edi, typeMsg, secretMsg, sizeSecretMsg, 
      mov   dword[edi], eax
      add   edi, 4
      
+     cmp   [sizeMsg], 0
+     jz    @F
      mov   ecx, [sizeMsg]
      mov   esi, [msg]
      repe  movsb
-     
-     mov   eax, [res]           
+@@:     
+     mov   eax, 12
+     add   eax, [sizeMsg]
+     add   eax, [sizeSecretMsg]           
 .Finish:
      ret
-endp
+endp    
 
 proc Client.MarshalWorld uses edx ecx ebx esi edi, pWorld, SizeX, SizeY, SizeZ, buf 
      locals

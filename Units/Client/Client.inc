@@ -1,18 +1,22 @@
 HOST   = 0
 PLAYER = 1
 Client.OffsetNumber = 6
+Client.MAX_SIZE_MSG = 65000
+Client.HEADER_SIZE  = 17
 
-Client.MSGSendWorld      dd 0
-Client.MSGPlayerPosition dd 1
+Client.MSGSendWorld         dd 0
+Client.MSGPlayerPosition    dd 1
 Client.MSGBlockState        dd 2
 Client.MSGHandBlock         dd 3
 Client.MSGGetWorld          dd 4
 Client.MSGUserState         dd 5
-Client.MSGRotetions         dd 6
+Client.MSGRotations         dd 6
 Client.MSGTCPInit           dd 7
 Client.MSGUDPInit           dd 8
 Client.MSGStartSendWorld    dd 9
 Client.MSGEndSendWorld      dd 10
+
+Client.SizeWorldBuffer      dd ?
 
 testUDPLine db 'Hello', 0
 
@@ -36,14 +40,5 @@ Client.hUDPSock dd ?
 
 Client.sockAddrUDP       sockaddr_in
 Client.sockAddrTCP       sockaddr_in
-;Client.res            
-;Client.sockfd   dd ?
-;Client.newfd    dd ?
-Client.hints          sockaddr_in
-;Client.res      addrinfo
-;Client.p        addrinfo
-;Client.p        addrinfo
-;Client.sin_size dd       ?
-;Client.their_addr dd     sockaddr_storage 
 
 Client.maxConn  dd 5
