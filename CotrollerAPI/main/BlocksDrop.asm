@@ -29,8 +29,7 @@ proc addBlockToArray, blockPos
       dec edi
       imul edi, 4
       add edi, TextureHandles
-  
-      mov edi, TextureHandles
+
   
       mov dword[esi + ebx + 12], edi
       
@@ -51,7 +50,7 @@ proc addBlockToArray, blockPos
 endp
 
 proc renderDestroyedBlocks
-
+  
     mov ecx, 0
     mov ebx, 0
     
@@ -72,8 +71,10 @@ proc renderDestroyedBlocks
           push ebx 
           push esi
           push ecx
-           
-          stdcall gf_renderObj3D, obj.Cube.Handle, [TextureHandles], 0,\
+          
+          mov esi, dword[esi + ebx + 12]
+          
+          stdcall gf_renderObj3D, obj.Cube.Handle, dword[esi], 0,\
                                 destroyedBlocksVector, ZERO_VEC_3, 0.2, 0
           
           pop ecx
