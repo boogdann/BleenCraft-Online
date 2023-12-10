@@ -64,9 +64,14 @@ proc RenderScene
       stdcall gf_RenderSelectObj3D, selectCubeData, 1.0
     @@:      
     
-    stdcall anim_RightHand, PlayerPos, PlayerTurn
-
-    stdcall renderDestroyedBlocks
+    stdcall anim_RightHand, PlayerPos, PlayerTurn  
+    cmp [App_Mode], GAME_MODE
+    jnz .RenderGameItems
+      ;==== Block for ilya ===============
+      stdcall renderDestroyedBlocks
+      
+      ;===================================
+    .RenderGameItems:
     
     ;Landscape rendering                        
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\

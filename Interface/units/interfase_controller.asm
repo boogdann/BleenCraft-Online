@@ -284,3 +284,73 @@ proc ui_check_slot_section uses esi edi, WindowRect, gl_slot_size, slots_arr_dat
 
   ret
 endp
+
+;eax = 0 => no | eax = 1 => yea
+proc ui_CheckMouseIn uses esi edi, WindowRect, x, y, s_x, s_y
+      locals 
+         cur_pos      dd    ?, ?
+         n_2          dd    2.0
+         
+         size         dd    ?, ?
+      endl
+
+      invoke GetCursorPos, ui_cursor_pos
+      
+      mov esi, [WindowRect]
+      fld [s_x]
+      fild dword[esi + 8]
+      fmulp 
+      fdiv [n_2]
+      fistp [size]
+      fld [s_y]
+      fild dword[esi + 12]
+      fmulp 
+      fdiv [n_2]
+      fistp [size + 4]
+
+      mov edi, [WindowRect]
+
+      ;==== pos converter ====      
+      fld [x]
+      fld1
+      faddp
+      fild dword[edi + 8]
+      fmulp 
+      fdiv [n_2]
+      fistp [cur_pos] 
+       
+      fild dword[edi + 12]
+      fld [y]
+      fld1
+      faddp
+      fild dword[edi + 12]
+      fmulp 
+      fdiv [n_2]
+      fsubp
+      fistp [cur_pos + 4]
+      ;========================
+      ;====== pos checker =====
+      mov eax, [ui_cursor_pos]
+      cmp [cur_pos], eax
+      jg .OutSlot
+      sub eax, [size]
+      cmp [cur_pos], eax
+      jl .OutSlot
+      
+      mov eax, [ui_cursor_pos + 4]
+      add eax, [size + 4]
+      cmp [cur_pos + 4], eax
+      jg .OutSlot
+      sub eax, [size + 4]
+      cmp [cur_pos + 4], eax
+      jl .OutSlot      
+      
+      .InSlot:
+         mov eax, 1
+         jmp .Return
+      .OutSlot:
+         xor eax, eax
+      ;========================
+  .Return:
+  ret
+endp

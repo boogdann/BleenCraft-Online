@@ -17,7 +17,10 @@ ui_drag_array_out     dd   0
 
 MAX_SLOT_ELM_COUNT    dd   64 
 
-global_selected_slot_kostil  dd  0                               
+global_selected_slot_kostil  dd  0   
+
+Selected_ButtonId       dd    0   
+CUR_MENU                dd    UI_MAIN_MENU                         
 ;64 - max count of elements in slot
 
 

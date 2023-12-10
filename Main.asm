@@ -89,7 +89,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         @@:
         cmp [App_Mode], MENU_MODE
         jnz @F
-           stdcall ui_RenderMenu
+           stdcall ui_RenderMenu, WindowRect
         @@:
         .RenderEnd:
         mov [isFalling], 1
@@ -98,10 +98,17 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         stdcall ct_on_keyDown, [wParam] 
         jmp     .ReturnZero
   .MouseDown:
-        stdcall ui_slots_controller, WindowRect, [Inventory],\                ;9x4
-                                                  bigBag_craft_arr_example,\  ;2x2 + 1
-                                                  workbench_craft_arr_example ;3x3 + 1
-        jmp     .ReturnZero
+        switch  [App_Mode]
+        case    .MenuController,    MENU_MODE
+        case    .GameController,    GAME_MODE
+        .MenuController: 
+            stdcall ui_onClick, WindowRect
+            jmp .ReturnZero
+        .GameController:
+            stdcall ui_slots_controller, WindowRect, [Inventory],\               ;9x4
+                                                     bigBag_craft_arr_example,\  ;2x2 + 1
+                                                     workbench_craft_arr_example ;3x3 + 1
+            jmp     .ReturnZero
   .MouseUp:
         ;govnokod no uje pohui
         ;All parameters are array to slots hz v kakom poryadke
