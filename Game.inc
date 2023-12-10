@@ -64,7 +64,6 @@ XAxisMuliplier     dd     0.1
 destrHeap             dd 0
 arrayOfDroppedBlocks  dd 0
 destroyedBlocksVector dd 0.0, 0.0, 0.0
-blocksTurn            dd 0.0, 0.0, 0.0
 ;============================================== 
 
 ;=========== UI data ========================
@@ -95,7 +94,7 @@ bigBag_craft_arr_example  dw   4,1,  1,1,  1,1,  1,1,  1,1
 ZERO_VEC_3       dd        0.0, 0.0, 0.0
 ;=========================================
 
-
+blocksTurn       dd        0.0, 0.0, 0.0
 
 
 

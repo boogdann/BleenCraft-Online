@@ -41,7 +41,7 @@ proc _client.StartServe_PlayerData uses esi, args
         stdcall ws_socket_send_msg_udp, dword[esi], dword[esi + 4], cl_PlayerDataMsg, eax 
         cmp eax, SOCKET_ERROR
         jnz @F
-            invoke ExitProcess, 0
+            ;invoke ExitProcess, 0
         @@:
         
       .SkipSend:
