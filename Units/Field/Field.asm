@@ -25,9 +25,10 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
     stdcall Random.Initialize
     
-   ; stdcall Field.ReadFromFiles, [filename]
-   ; cmp     eax, -1
-   ; jnz     .EndSetWorld
+;    stdcall Field.ReadFromFiles, [filename]
+;    cmp     eax, -1
+;    jnz     .EndSetWorld
+
 
     invoke  GetProcessHeap
     mov    [Field.hHeap], eax
@@ -333,7 +334,7 @@ proc Field.GenerateBedrock uses ecx eax edx edi
 endp
 
 proc Field.GenerateSpawnPoint uses edi, resAddr
-    ;mov    eax, 100.0
+    ;mov    eax, 500.0
     mov    eax, [Field.SpawnPoint]
     mov    edi, [resAddr]
     mov    [edi], eax
@@ -343,7 +344,7 @@ proc Field.GenerateSpawnPoint uses edi, resAddr
     mov    edi, [resAddr]
     mov    [edi+4], eax
     
-    ;mov    eax, 100.0
+    ;mov    eax, 900.0
     mov    eax, [Field.SpawnPoint+8]
     mov    edi, [resAddr]
     mov    [edi+8], eax   

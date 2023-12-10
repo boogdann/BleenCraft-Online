@@ -42,7 +42,3 @@ Client.sockAddrUDP       sockaddr_in
 Client.sockAddrTCP       sockaddr_in
 
 Client.maxConn  dd 5
-
-
-
-include 'playerData/player.inc'
