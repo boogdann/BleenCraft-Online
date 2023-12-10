@@ -89,7 +89,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         @@:
         cmp [App_Mode], MENU_MODE
         jnz @F
-           stdcall ui_RenderMainMenu
+           stdcall ui_RenderMenu
         @@:
         .RenderEnd:
         mov [isFalling], 1

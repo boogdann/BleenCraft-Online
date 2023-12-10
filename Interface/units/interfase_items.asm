@@ -14,7 +14,7 @@ proc ui_renderAim uses esi, WindowRect
   fmul [aim_size_y]
   fstp [aim_size_x]
   
-  invoke glColor3f, 0.73, 0.73, 0.73;
+  invoke glColor3f, 0.73, 0.73, 0.73
   invoke glBegin, GL_LINES
   invoke glVertex2f, [aim_size_x], 0.0
   fld [aim_size_x]
