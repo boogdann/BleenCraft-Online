@@ -100,7 +100,8 @@ proc RenderScene
     stdcall anim_RightHand, PlayerPos, PlayerTurn
 
     stdcall renderDestroyedBlocks
-
+    stdcall pickBlock
+    
     ;Landscape rendering                        
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
                                [WorldHeight], PlayerPos, PlayerTurn, 0      

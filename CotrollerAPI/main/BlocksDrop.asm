@@ -94,8 +94,60 @@ proc renderDestroyedBlocks
     ret
 endp
 
-proc spawnDestroyedBlock
-
+proc pickBlock
+    
+    locals
+      blockPos         dd 0, 0, 0
+      playerCurPos     dd 0, 0, 0 
+      destroyedBlocksVector dd 0, 0, 0
+    endl
+    
+    fld [PlayerPos]
+    fistp [playerCurPos]
+    fld [PlayerPos + 8]
+    fistp [playerCurPos + 8]
+  
+    mov ecx, 0
+    mov ebx, 0
+    
+    mov esi, [arrayOfDroppedBlocks]
+    
+    .zaloop:
+        
+        mov edx, 0
+         
+        fld dword[esi + ebx]
+        fistp [destroyedBlocksVector]
+        fld dword[esi + ebx + 8]
+        fistp [destroyedBlocksVector + 8]
+        
+        mov eax, [playerCurPos]
+        cmp [destroyedBlocksVector], eax
+        jne @F
+          inc edx
+        @@:
+  
+        mov eax, [playerCurPos + 8]
+        cmp [destroyedBlocksVector + 8], eax
+        jne @F
+          inc edx
+        @@:
+  
+        cmp edx, 2
+        jne .dont_pick
+        
+          mov dword[esi + ebx + 16], 0    
+          jmp .finish
+        
+        .dont_pick:
+        
+        add ebx, 20
+        inc ecx
+        
+    cmp ecx, 20
+    jle .zaloop
+    
+    .finish:
 
     ret
 endp
@@ -111,8 +163,6 @@ proc initializeDestrBlocksHeap
   mov [arrayOfDroppedBlocks], eax
   test eax, eax
   jz .error
-    
- 
 
   .error:
     
