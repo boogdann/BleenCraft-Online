@@ -1,3 +1,5 @@
+;  blockIdx | numBlocks
+;
 proc Inventory.Initialize uses ecx ebx edi, pInv, pSize
      locals
        invAddr dd ?  
@@ -136,3 +138,47 @@ proc Inventory.DecCell uses edi, idxInv
 .Finish:
      ret
 endp  
+
+;    Input  - block index
+;    Output - (-1) - error
+;
+proc Inventory.AddElement uses edi ecx, idxElem
+     mov    edi, [Inventory.Inventory]
+     add    edi, [Inventory.Size]
+
+     mov    eax, [idxElem]
+     mov    ecx, Inventory.NUM_CELL
+.IterateInv:
+     cmp    word[edi], ax
+     jnz    .Continue
+     
+     cmp    word[edi+2], 64
+     jnle   .Continue 
+     
+     inc    word[edi+2]
+     jmp    .Finish    
+.Continue:
+     sub    edi, 4
+     loop   .IterateInv
+     
+     mov    edi, [Inventory.Inventory]
+     add    edi, [Inventory.Size]     
+     mov    eax, [idxElem]
+     mov    ecx, Inventory.NUM_CELL
+.IterateInv2:
+     mov    ecx, Inventory.NUM_CELL
+     cmp    word[edi], Block.Air
+     jnz    .Continue2
+     
+     mov    word[edi], ax
+     mov    word[edi+2], 1    
+     
+     jmp    .Finish    
+.Continue2:
+     sub    edi, 4
+     loop   .IterateInv2
+          
+     mov    eax, -1
+.Finish:
+     ret
+endp

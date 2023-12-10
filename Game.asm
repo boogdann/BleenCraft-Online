@@ -17,28 +17,9 @@ proc GameStart
 ;  stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
 
   stdcall Inventory.Initialize, Inventory, InventorySize
-  
+    
   stdcall initializeDestrBlocksHeap
-
-  ;TEST
-;  stdcall Inventory.SetCell, 1, Block.Log, 10
-  stdcall Inventory.SetCell, 12, Block.Stone, 64
-;  stdcall Inventory.SetCell, 35, Block.Cobblestone, 10
-;  stdcall Inventory.SetCell, 0, Block.Tallgrass, 10
   
-  stdcall Inventory.IncCell, 12
-  
-  stdcall Inventory.GetCell, 12
-  cmp     eax, Block.Stone
-  jz      @F
-  invoke  ExitProcess, 1
-@@:
-  cmp     edx, 64 
-  jz      @F
-  invoke  ExitProcess, 1  
-@@:
-
-
   ;Refactoring!!!!!!!!!!!
   ;================World initialize=================
   stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], filename 
