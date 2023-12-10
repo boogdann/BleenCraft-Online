@@ -34,6 +34,11 @@ proc ct_on_keyDown, wParam, lParam
    
   ;... Другие клавиши
   
+  cmp [wParam], $31
+  jnz @F
+    
+  @@:
+  
   .final:  
   ret
 endp

@@ -64,6 +64,7 @@ XAxisMuliplier     dd     0.1
 destrHeap             dd 0
 arrayOfDroppedBlocks  dd 0
 destroyedBlocksVector dd 0.0, 0.0, 0.0
+blocksTurn            dd 0.0, 0.0, 0.0
 ;============================================== 
 
 ;=========== UI data ========================

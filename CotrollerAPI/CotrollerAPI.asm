@@ -4,7 +4,7 @@ include "CotrollerAPI\main\Mouse.asm"
 include "CotrollerAPI\main\Jumps.asm"
 include "CotrollerAPI\main\Swimming.asm"
 include "CotrollerAPI\main\BlocksHighlighting.asm"
-;include "CotrollerAPI\main\BlocksDrop.asm"
+include "CotrollerAPI\main\InventoryHandler.asm"
 
 frameCount  dd  0
 
@@ -21,5 +21,7 @@ proc ct_move_check, playerPos, playerTurn,\
   stdcall ct_collisionsCheck, [playerPos], [Field], [X], [Y], [Z]
   stdcall ct_watter, [playerPos], [Field], [X], [Y], [Z]
   stdcall detectBlock, [Field], [playerTurn], [playerPos], [X], [Y]
+  stdcall pickBlock
+  stdcall blockCollisions
   ret
 endp    

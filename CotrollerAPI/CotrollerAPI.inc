@@ -50,3 +50,5 @@ build_is_prohibited        dd     0
 skip_destroying            dd     0
 
 openMainBag                dd     -1
+
+blocks_skipFalling         dd     0
