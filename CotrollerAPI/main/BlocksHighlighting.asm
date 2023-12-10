@@ -2,8 +2,8 @@ proc detectBlock, Field, cameraTurn, playerPos, X, Y
 
   locals
     
-    tempCamera dd 0.0, 0.0, 0.0
-    tempVector dd 0, 0, 0
+    tempCamera    dd 0.0, 0.0, 0.0
+    tempVector    dd 0, 0, 0
     
     currentVector dd 0.1
     PiDegree      dd 180.0    
@@ -316,6 +316,8 @@ proc ct_destroy_block, cubePos
   @@:
   
   stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 0  
+  
+  stdcall addBlockToArray, selectCubeData
 
 .finish:
 
@@ -327,6 +329,7 @@ proc ct_build_block, prevCubePos
   locals
     tempPos dd 0, 0, 0
     tempVector dd 0, 0, 0
+    playerCurPos dd 0, 0, 0
   endl
 
   mov edi, [prevCubePos]
@@ -338,11 +341,42 @@ proc ct_build_block, prevCubePos
   fld dword[edi + 8]
   fistp [tempPos + 8]
 
+  ;Check if block is inside player
+  fld [PlayerPos]
+  fistp [playerCurPos]
+  fld [PlayerPos + 4]
+  fistp [playerCurPos + 4]
+  fld [PlayerPos + 8]
+  fistp [playerCurPos + 8]
+  
+  mov ecx, 0
+  
+  mov eax, [playerCurPos]
+  cmp [tempPos], eax
+  jne @F
+     inc ecx
+  @@:
+  
+  mov eax, [playerCurPos + 4]
+  cmp [tempPos + 4], eax
+  jne @F
+     inc ecx
+  @@:
+
+  mov eax, [playerCurPos + 8]
+  cmp [tempPos + 8], eax
+  jne @F
+     inc ecx
+  @@:
+  
+  cmp ecx, 3
+  je .finish
+
   cmp [build_is_prohibited], 1
   je @F
      
      stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 1
-
+    
   @@:
 
   .finish:
@@ -353,7 +387,7 @@ endp
 proc ct_detect_block uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
   
   locals
-  
+    
     Check   dd  ?
     
   endl

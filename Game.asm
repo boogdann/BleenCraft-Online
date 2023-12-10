@@ -2,6 +2,7 @@ include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
 include "Units\Animations\RightHandAnimation.asm"
 include "Grafic\GraficAPI\gf_assets\gf_macro.ASM"
+include "CotrollerAPI\main\BlocksDrop.asm"
 
 
 ;Ui rendering cases (This is necessary use Ilya) !!!
@@ -17,6 +18,8 @@ proc GameStart
 
   stdcall Inventory.Initialize, Inventory, InventorySize
   
+  stdcall initializeDestrBlocksHeap
+
   ;TEST
 ;  stdcall Inventory.SetCell, 1, Block.Log, 10
   stdcall Inventory.SetCell, 12, Block.Stone, 64
@@ -95,6 +98,8 @@ proc RenderScene
     @@:      
     
     stdcall anim_RightHand, PlayerPos, PlayerTurn
+
+    stdcall renderDestroyedBlocks
 
     ;Landscape rendering                        
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
