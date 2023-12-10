@@ -112,7 +112,6 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
  
   .Destroy:
         ;stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], filename       
-        ;stdcall Field.SaveInFileWorld, [SkyLand],[SkyLength] ,[SkyWidth], 1 ,[SizeSky], filenameSky
         invoke ExitProcess, 1
   .ReturnZero:                                                
         xor     eax, eax

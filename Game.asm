@@ -20,29 +20,15 @@ proc GameStart
     
   stdcall initializeDestrBlocksHeap
   
-  ;Refactoring!!!!!!!!!!!
   ;================World initialize=================
-  stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], filename 
-  mov     eax, [Field.Length]
-  mov     [WorldLength], eax
-  mov     eax, [Field.Width]
-  mov     [WorldWidth], eax
+  stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], filename
+  stdcall Field.SetValues, Field.Blocks, WorldLength, WorldWidth, WorldHeight, SizeWorld  
     
-  xor     edx, edx
-  mov     eax, [WorldLength]
-  mul     dword[WorldWidth]
-  mul     dword[WorldHeight]
-  mov     [SizeWorld], eax
-  
   mov     ecx, [WorldPower]
   sub     ecx, 1
   stdcall Field.GenerateClouds, ecx, filenameSky
-  mov     dword[SkyLand], eax
-  mov     eax, [Field.SkyLength]
-  mov     [SkyLength], eax
-  mov     eax, [Field.SkyWidth]
-  mov     [SkyWidth], eax 
-           
+  stdcall Field.SetCloudValues, SkyLand, SkyLength, SkyWidth 
+            
   ;=================================================
   
   ;Position initialize

@@ -317,6 +317,52 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     ret
 endp
 
+proc Field.SetValues uses edi eax edx, pWorld, pSizeX, pSizeY, pSizeZ, pFullSize
+     mov    edi, [pWorld]
+     mov    eax, [Field.Blocks]
+     mov    [edi], eax
+     
+     mov    edi, [pSizeX]
+     mov    eax, [Field.Length]
+     mov    [edi], eax
+     
+     mov    edi, [pSizeY]
+     mov    eax, [Field.Width]
+     mov    [edi], eax     
+     
+     mov    edi, [pSizeZ]
+     mov    eax, [Field.Height]
+     mov    [edi], eax
+
+     xor    edx, edx
+     mov    eax, [Field.Length]
+     mul    dword[Field.Width]
+     mul    dword[Field.Height]
+     
+     mov    edi, [pFullSize]
+     mov    [edi], eax
+
+.Finish:
+     ret
+endp
+
+proc Field.SetCloudValues uses edi eax edx, pSky, pSizeX, pSizeY
+     mov    edi, [pSky]
+     mov    eax, [Field.Sky]
+     mov    [edi], eax
+     
+     mov    edi, [pSizeX]
+     mov    eax, [Field.SkyLength]
+     mov    [edi], eax
+     
+     mov    edi, [pSizeY]
+     mov    eax, [Field.SkyWidth]
+     mov    [edi], eax     
+     
+.Finish:
+     ret
+endp
+
 proc Field.GenerateBedrock uses ecx eax edx edi 
      xor     edx, edx
      mov     eax, [Field.Length]
