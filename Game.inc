@@ -31,6 +31,11 @@ Inventory           dd    ?
 InventorySize       dd    ?
 InventoryMainOffset =     9*3*4
 
+SmallCraft          dd    ?
+BigCraft            dd    ?
+SMALL_CRAFT_SIZE    =     5
+BIG_CRAFT_SIZE      =     10
+
 ;=======================================
 ServerIp         db       "127.0.0.1", 0
 ServerPortUDP    dd       9999
@@ -74,10 +79,10 @@ bigBag_arr_example dw  1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0,
                        1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0,\
                        1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0   
                        
-workbench_craft_arr_example  dw   1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0,   0,0           
+workbench_craf_arr_example  dw   1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0,   0,0           
                        
                        
-bigBag_craft_arr_example  dw   4,1,  1,1,  1,1,  1,1,  1,1
+bigBag_craft_arr_example  dw   0,0,  1,1,  1,1,  1,1,  1,1
                               ; 0     1     2     3      4
                ;       bigBag_craft_arr_example   positions:     
                         ; ======= =======

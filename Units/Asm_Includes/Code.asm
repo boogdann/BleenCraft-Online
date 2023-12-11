@@ -1,5 +1,6 @@
 include "../Client/socket/socket_consts.asm"
 include "../Blocks/Blocks.asm"
+include "../Crafting/Crafting.asm"
 include "../Field/Field.asm"
 include "../Field/Files.asm"
 include "../Client/Client.asm"

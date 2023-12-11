@@ -13,9 +13,18 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;mov [UI_MODE], CONST
 
 proc GameStart
-;  stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
+  ;stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
 
   stdcall Inventory.Initialize, Inventory, InventorySize
+  
+  stdcall Inventory.SetCell, 1, 1, 1
+  stdcall Inventory.SetCell, 2, 1, 1
+  stdcall Inventory.SetCell, 3, 1, 1
+  stdcall Inventory.SetCell, 4, 1, 1
+  
+  stdcall Crafting.Initialize, SmallCraft, BigCraft
+  
+  ;stdcall Crafting.Craft, [SmallCraft], 5
     
   stdcall initializeDestrBlocksHeap
   
@@ -27,7 +36,8 @@ proc GameStart
   sub     ecx, 1
   stdcall Field.GenerateClouds, ecx, filenameSky
   stdcall Field.SetCloudValues, SkyLand, SkyLength, SkyWidth 
-            
+  
+  ;stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]            
   ;=================================================
   
   ;Position initialize
@@ -110,14 +120,14 @@ proc RenderScene
           jmp .UI_RenderEnd
         .UI_pWorkBench:
           stdcall ui_draw_drag, WindowRect
-          stdcall ui_renderWorkBench, WindowRect, [Inventory], workbench_craft_arr_example
+          stdcall ui_renderWorkBench, WindowRect, [Inventory], [BigCraft]
           stdcall ui_renderShadowEffect
           jmp .UI_RenderEnd
         .UI_pMainBag:
           stdcall ui_draw_drag, WindowRect
           ;36 elements in main bag required!!! 
           ;last 9 elm-s from mini bag!!!
-          stdcall ui_renderBigBag, WindowRect, [Inventory], bigBag_craft_arr_example
+          stdcall ui_renderBigBag, WindowRect, [Inventory], [SmallCraft]
           stdcall ui_renderShadowEffect
           jmp .UI_RenderEnd
         .UI_pESCMenu:

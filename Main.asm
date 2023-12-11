@@ -43,12 +43,12 @@ Start:
   ;================================================  
   
   ;==== Start settings ======  
-  ;mov [App_Mode], GAME_MODE
-  ;stdcall GameStart 
+  mov [App_Mode], GAME_MODE
+  stdcall GameStart 
   
   
-  mov [App_Mode], MENU_MODE
-  stdcall ui_InterfaceInit
+  ;mov [App_Mode], MENU_MODE
+  ;stdcall ui_InterfaceInit
   
   ;========================== 
   
@@ -117,19 +117,23 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
             switch  [UI_MODE]
             case    .EscMenuController,    UI_ESC_MENU            
             .UIGameController:
-              stdcall ui_slots_controller, WindowRect, [Inventory],\               ;9x4
-                                                       bigBag_craft_arr_example,\  ;2x2 + 1
-                                                       workbench_craft_arr_example ;3x3 + 1
+              stdcall ui_slots_controller, WindowRect, [Inventory],\   ;9x4
+                                                       [SmallCraft],\  ;2x2 + 1
+                                                       [BigCraft]      ;3x3 + 1
             jmp     .ReturnZero
             .EscMenuController:
               stdcall ui_MenuSettingsController, WindowRect                                        
             jmp     .ReturnZero
-  .MouseUp:
+  .MouseUp:        
         ;govnokod no uje pohui
         ;All parameters are array to slots hz v kakom poryadke
-        stdcall ui_drag_end, WindowRect, [Inventory],\               ;9x4
-                                         bigBag_craft_arr_example,\  ;2x2 + 1
-                                         workbench_craft_arr_example ;3x3 + 1
+        stdcall ui_drag_end, WindowRect, [Inventory],\      ;9x4
+                                         [SmallCraft],\     ;2x2 + 1
+                                         [BigCraft]         ;3x3 + 1
+                                         
+        ;
+        stdcall Crafting.Craft, [SmallCraft], 5
+        ;
         jmp     .ReturnZero
  
   .Destroy:
