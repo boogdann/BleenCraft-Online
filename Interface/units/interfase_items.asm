@@ -768,6 +768,37 @@ proc ui_draw_rectangle_textured_block, x, y, x_sz, y_sz
 endp
 
 
+proc ui_draw_rectangle_textured_block_v2, x, y, x_sz, y_sz
+               ;f 12 13 5 14
+  invoke glEnable, GL_LIGHTING
+  invoke glEnable, GL_LIGHT0
+  invoke glBegin, GL_QUADS
+    invoke glTexCoord2f, 0.013000, 0.500000; 
+    invoke glVertex2f, [x], [y]
+    fld [x]
+    fadd [x_sz]
+    fstp [x]
+    invoke glTexCoord2f,  0.343333, 0.500000;
+   
+    invoke glVertex2f, [x], [y]   
+    fld [y]
+    fadd [y_sz]
+    fstp [y]
+    invoke glTexCoord2f, 0.343333, 0.740000; 
+    invoke glVertex2f, [x], [y] 
+    fld [x]
+    fsub [x_sz]
+    fstp [x]    
+    invoke glTexCoord2f, 0.013000, 0.740000
+    invoke glVertex2f, [x], [y]        
+  invoke glEnd;  
+  invoke glDisable, GL_LIGHTING
+  invoke glDisable, GL_LIGHT0
+
+  ret
+endp
+
+
 proc ui_render_heart uses esi, WindowRect, x, y, isHealth
   locals 
     px_size_y  dd ?

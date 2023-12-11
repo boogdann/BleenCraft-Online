@@ -21,16 +21,29 @@ proc ui_InterfaceInit
   stdcall GameStart
   stdcall Set_GF_RENDER_BLOCKS_RADIUS,  40, 40, 30
   stdcall ct_change_mouse, 1
-  mov [Dayly_Kof], 5000
+  mov [Dayly_Kof], 5000 
+  
+  mov [CuruiTurn], 30.0
+  mov [PlayerTurn + 4], 30.0 
+  mov [PlayerTurn], -10.0 
+  
 
   ret
 endp
 
 proc ui_RenderMenu, WindowRect
-  
-  mov [PlayerTurn + 4], 30.0 
-  mov [PlayerTurn], -10.0 
+  locals 
+     addTurn   dd   0.04
+     addPos    dd   0.001
+  endl
   mov [Selected_ButtonId], 0
+  fld [PlayerTurn + 4]
+  fsub [addTurn]
+  fstp [PlayerTurn + 4]
+  fld [backGroundAdd]
+  fadd [addPos]
+  fstp [backGroundAdd]
+  
   
   
   switch  [CUR_MENU]
@@ -69,10 +82,10 @@ proc ui_onClick, WindowRect
     stdcall ui_Menu_MainController, [WindowRect]
   jmp .Return  
   .UI_create:
-    stdcall ui_renderMenuCreate, [WindowRect]
+    stdcall ui_MenuCreateController, [WindowRect]
   jmp .Return
   .UI_connect:
-    stdcall ui_renderMenuConnect, [WindowRect]
+    stdcall ui_MenuConnectController, [WindowRect]
   jmp .Return
   .UI_settings:
     stdcall ui_renderMenuSettings, [WindowRect]

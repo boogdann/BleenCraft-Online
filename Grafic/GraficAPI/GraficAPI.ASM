@@ -8,6 +8,7 @@ include "gf_main\gf_set_render.ASM"
 ;\gf_data_init
 include "gf_data_init\gf_obj_init.ASM"
 include "gf_data_init\gf_texture_init.ASM"
+include "gf_data_init\gf_Letters_init.ASM"
 include "gf_data_init\gf_assetsLoader.ASM"
 ;\gf_assets
 include "gf_assets\gf_macro.ASM"
@@ -28,6 +29,7 @@ proc gf_grafic_init uses esi edi
     stdcall gf_InitShaders
     stdcall gf_InitShadersData
     stdcall gf_InitRenderParams
+    stdcall gf_UploadLetters, LettersFileName, LettersHandle
     
     invoke SwapBuffers, [hdc]
     invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT

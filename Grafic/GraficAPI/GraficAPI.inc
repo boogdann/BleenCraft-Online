@@ -3,6 +3,12 @@ include "gf_main\gf_render_data.inc"
 
 GF_RENDER_BLOCKS_RADIUS         dd     20, 20, 30 
 
+LettersHandle                   dd     ?
+LettersFileName                 db     "Text\Letters.mbmw", 0    
+LettersCount                    dd     62
+LettersWidth                    dd     ?
+LettersHeight                   dd     ?
+
 
 true            =               1
 false           =               0

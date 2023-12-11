@@ -11,7 +11,6 @@ UI_WORKBENCH   equ  2   ;Only Workbench ui render
 UI_MAINBAG     equ  3   ;Only main (big) bag render 
 UI_ESC_MENU    equ  4   ;Setting and other menu ui      
 ;mov [UI_MODE], CONST
-;Mouse modes switch automatically!!!
 
 proc GameStart
 ;  stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
@@ -34,6 +33,8 @@ proc GameStart
   ;Position initialize
   stdcall Field.GenerateSpawnPoint, PlayerPos
   
+  mov [UI_MODE], UI_GAME
+  
   ;================ Grafic params ===========================
   ;Day/night params
   mov [Dayly_Kof], 10000   ;0 - 65535
@@ -52,7 +53,8 @@ proc GameStart
 endp
 
 
-proc RenderScene
+proc RenderScene  
+    mov [Selected_ButtonId], 0  
     stdcall gf_RenderBegin, PlayerPos, PlayerTurn
   
     ;The lighting mode is changed by the third parameter (if underwater => TRUE)
@@ -64,14 +66,16 @@ proc RenderScene
       stdcall gf_RenderSelectObj3D, selectCubeData, 1.0
     @@:      
     
-    stdcall anim_RightHand, PlayerPos, PlayerTurn  
+    cmp [UI_MODE], UI_ESC_MENU
+    jz .SkipRenderGameItems
+      stdcall anim_RightHand, PlayerPos, PlayerTurn  
     cmp [App_Mode], GAME_MODE
-    jnz .RenderGameItems
+    jnz .SkipRenderGameItems
       ;==== Block for ilya ===============
       stdcall renderDestroyedBlocks
       
       ;===================================
-    .RenderGameItems:
+    .SkipRenderGameItems:
     
     ;Landscape rendering                        
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\
@@ -92,7 +96,8 @@ proc RenderScene
         switch  [UI_MODE]
         case    .UI_pGame,        UI_GAME       
         case    .UI_pWorkBench,   UI_WORKBENCH 
-        case    .UI_pMainBag,     UI_MAINBAG  
+        case    .UI_pMainBag,     UI_MAINBAG 
+        case    .UI_pESCMenu,     UI_ESC_MENU  
         
         .UI_pGame:
           stdcall ui_renderHealth, WindowRect, 10, 6
@@ -115,6 +120,9 @@ proc RenderScene
           stdcall ui_renderBigBag, WindowRect, [Inventory], bigBag_craft_arr_example
           stdcall ui_renderShadowEffect
           jmp .UI_RenderEnd
+        .UI_pESCMenu:
+          stdcall ui_renderMenuSettings, WindowRect
+          jmp .UI_RenderEnd  
         .UI_RenderEnd:   
     stdcall gf_2D_Render_End
     .SkipUI:

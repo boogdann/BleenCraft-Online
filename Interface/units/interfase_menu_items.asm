@@ -16,10 +16,10 @@ proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id
      mov [Selected_ButtonId], eax
   @@:
   
-  invoke glColor3f, 0.44, 0.44, 0.44
+  invoke glColor4f, 0.44, 0.44, 0.44, 1.0
   cmp [isIn], 1
   jnz @F
-    invoke glColor3f, 0.37, 0.37, 0.37
+    invoke glColor4f, 0.37, 0.37, 0.37, 1.0
   @@:
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y]
   
@@ -41,7 +41,7 @@ proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id
   fadd [add_xy + 4]
   fstp [s_y]
   
-  invoke glColor3f, 0.66, 0.66, 0.66
+  invoke glColor4f, 0.66, 0.66, 0.66, 1.0
   
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y] 
   
@@ -51,7 +51,7 @@ proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id
   fld [y]
   fsub [add_xy + 4]
   fstp [y]
-  invoke glColor3f, 0.33, 0.33, 0.33
+  invoke glColor4f, 0.33, 0.33, 0.33, 1.0
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y] 
   
   fld [x]
@@ -71,8 +71,224 @@ proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id
   fadd [add_xy + 4]
   fadd [add_xy + 4]
   fstp [s_y]
-  invoke glColor3f, 0.0, 0.0, 0.0
+  invoke glColor4f, 0.0, 0.0, 0.0, 1.0
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y] 
  
+  ret
+endp
+
+
+proc ui_renderBackground uses esi edi, WindowRect, addiction
+  locals
+    CountH   dd   20
+    CountW   dd   ?
+    
+    SizePx   dd   ?
+    
+    sizes    dd   ?, ?
+    
+    curX     dd   ?
+    curY     dd   ?
+    n_2      dd   2.0
+    
+    addict   dd   ?
+  endl
+  
+  mov esi, [WindowRect]
+  fild dword[esi + 12]
+  fild [CountH]
+  fdivp
+  fstp [SizePx]
+  
+  fild dword[esi + 8]
+  fdiv [SizePx]
+  fistp [CountW] 
+  add [CountW], 2
+  
+  fld  [n_2]
+  fild [CountH]
+  fdivp
+  fstp [sizes + 4]
+  
+  fild dword[esi + 12]
+  fild dword[esi + 8]
+  fdivp
+  fmul [sizes + 4]
+  fstp [sizes]
+  
+  mov eax, [addiction]
+  mov [addict], eax
+  
+  fld [addict]
+  fild [CountW]
+  fdivp
+  fstp [addict]
+  
+  
+  invoke glEnable, GL_TEXTURE_2D
+  invoke glBindTexture, GL_TEXTURE_2D, [gf_block.Dirt]
+  
+  mov [curY], -1.0
+  mov ecx, 0
+  .DrawColumn:
+    mov [curX], -1.0
+    fld [curX]
+    fsub [sizes]
+    fadd [addict]
+    fstp [curX]
+    mov edi, 0
+    .DrawRow:
+        push ecx
+        stdcall ui_draw_rectangle_textured_block_v2, [curX], [curY], [sizes], [sizes + 4]
+        pop ecx
+        fld [curX]
+        fadd [sizes]
+        fstp [curX]
+    inc edi
+    cmp edi, [CountW]
+    jnz .DrawRow
+    
+  fld [curY]
+  fadd [sizes + 4]
+  fstp [curY] 
+  inc ecx
+  cmp ecx, [CountH]
+  jnz .DrawColumn
+  
+  invoke glDisable, GL_TEXTURE_2D
+  
+  
+  
+
+  ret
+endp
+
+
+;LettersCount                    dd     62
+;LettersWidth                    dd     ?
+;LettersHeight                   dd     ?
+proc ui_renderText uses esi, WindowRect, text, x, y, size
+  locals 
+    y_up           dd   ?
+    cur_x_l        dd   ?
+    cur_x_r        dd   ?
+  
+    letter_width   dd   ?
+    letter_height  dd   ?
+    letter_num     dd   ?
+    
+    tx_letter_width dd  ?
+    tx_start       dd   ?
+    tx_end         dd   ?
+    
+    n_2            dd   2.0
+    
+    tmp            dd   -8.0
+    tmpAdd         dd   0.002
+  endl
+  
+  mov esi, [WindowRect]
+  fild [size]
+  fild dword[esi + 12]
+  fdivp
+  fdiv [n_2]
+  fstp [letter_height]
+  
+  fild [size]
+  fild [LettersHeight]
+  fdivp
+  fild [LettersWidth]
+  fmulp
+  fild [LettersCount]
+  fdivp
+  fild dword[esi + 8]
+  fdivp
+  fdiv [n_2]
+  fstp [letter_width]
+  
+  fld [y]
+  fadd [letter_height]
+  fstp [y_up]
+  
+  fld1
+  fild [LettersCount]
+  fadd [tmp]
+  fdivp
+  fstp [tx_letter_width]
+  
+  
+  
+  invoke glEnable, GL_TEXTURE_2D
+  invoke glBindTexture, GL_TEXTURE_2D, [LettersHandle]
+  invoke glEnable, GL_LIGHTING
+  invoke glEnable, GL_LIGHT0
+
+  
+  mov eax, [x]
+  mov [cur_x_l], eax
+  fld [x]
+  fadd [letter_width]
+  fstp [cur_x_r]
+  
+  mov esi, [text]
+  cmp byte[esi], 0
+  jz .SkipRender
+  .LetterRender:
+      movzx eax, byte[esi]
+      cmp eax, 'A'
+      jge @F
+         sub eax, '0'
+         add eax, 26*2
+         jmp .SkipSub
+      @@:
+      cmp eax, 'a'
+      jl @F
+          sub eax, 'A'
+          sub eax, 5
+          jmp .SkipSub  
+      @@:
+      sub eax, 'A'
+      .SkipSub:
+      mov [letter_num], eax
+      
+      fild [letter_num]
+      fmul [tx_letter_width]
+      fadd [tmpAdd] 
+      fst [tx_start]
+      fadd [tx_letter_width]
+      fstp [tx_end]
+      
+      
+      push esi
+      invoke glBegin, GL_QUADS  
+        invoke glTexCoord2f, [tx_start], 0.0
+        invoke glVertex2f, [cur_x_l], [y]
+        
+        invoke glTexCoord2f, [tx_end], 0.0
+        invoke glVertex2f, [cur_x_r], [y]
+        
+        invoke glTexCoord2f, [tx_end], 1.0
+        invoke glVertex2f, [cur_x_r], [y_up]
+        
+        invoke glTexCoord2f, [tx_start], 1.0 
+        invoke glVertex2f, [cur_x_l], [y_up]       
+      invoke glEnd   
+      pop esi
+      
+      fld [cur_x_l]
+      fadd [letter_width]
+      fstp [cur_x_l]
+      fld [cur_x_r]
+      fadd [letter_width]
+      fstp [cur_x_r]
+  inc esi
+  cmp byte[esi], 0
+  jnz .LetterRender
+  .SkipRender:
+  
+  invoke glDisable, GL_LIGHTING
+  invoke glDisable, GL_LIGHT0
+  invoke glDisable, GL_TEXTURE_2D 
+
   ret
 endp

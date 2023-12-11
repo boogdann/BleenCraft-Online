@@ -31,18 +31,24 @@ Start:
   stdcall gf_grafic_init
   
   ;Attention! Dangerous dependencies with /assets 
-  stdcall gf_LoadObjs
   stdcall gf_LoadTextures
+  stdcall gf_2D_Render_Start 
+    stdcall ui_renderBackground, WindowRect, 0.0
+  stdcall gf_2D_Render_End
+  invoke SwapBuffers, [hdc]
+  invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
+  stdcall gf_LoadObjs
   stdcall gf_LoadAddictionalTextures
+  
   ;================================================  
   
   ;==== Start settings ======  
-  mov [App_Mode], GAME_MODE
-  stdcall GameStart 
+  ;mov [App_Mode], GAME_MODE
+  ;stdcall GameStart 
   
   
-  ;mov [App_Mode], MENU_MODE
-  ;stdcall ui_InterfaceInit
+  mov [App_Mode], MENU_MODE
+  stdcall ui_InterfaceInit
   
   ;========================== 
   
@@ -95,7 +101,10 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         mov [isFalling], 1
         jmp     .ReturnZero
   .Movement:
-        stdcall ct_on_keyDown, [wParam] 
+        cmp [App_Mode], GAME_MODE
+        jnz @F
+          stdcall ct_on_keyDown, [wParam] 
+        @@:
         jmp     .ReturnZero
   .MouseDown:
         switch  [App_Mode]
@@ -105,9 +114,15 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
             stdcall ui_onClick, WindowRect
             jmp .ReturnZero
         .GameController:
-            stdcall ui_slots_controller, WindowRect, [Inventory],\               ;9x4
-                                                     bigBag_craft_arr_example,\  ;2x2 + 1
-                                                     workbench_craft_arr_example ;3x3 + 1
+            switch  [UI_MODE]
+            case    .EscMenuController,    UI_ESC_MENU            
+            .UIGameController:
+              stdcall ui_slots_controller, WindowRect, [Inventory],\               ;9x4
+                                                       bigBag_craft_arr_example,\  ;2x2 + 1
+                                                       workbench_craft_arr_example ;3x3 + 1
+            jmp     .ReturnZero
+            .EscMenuController:
+              stdcall ui_MenuSettingsController, WindowRect                                        
             jmp     .ReturnZero
   .MouseUp:
         ;govnokod no uje pohui
