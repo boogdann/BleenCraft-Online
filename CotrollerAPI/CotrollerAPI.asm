@@ -23,5 +23,6 @@ proc ct_move_check, playerPos, playerTurn,\
   stdcall detectBlock, [Field], [playerTurn], [playerPos], [X], [Y]
   stdcall pickBlock
   stdcall blockCollisions
+  stdcall getCurrentBlock, [currentChosenCell]
   ret
 endp    

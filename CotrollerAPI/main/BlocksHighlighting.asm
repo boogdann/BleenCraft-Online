@@ -375,8 +375,11 @@ proc ct_build_block, prevCubePos
   cmp [build_is_prohibited], 1
   je @F
      
-     stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 1
-    
+     cmp [chosenBlockFromInv], 0
+     je .finish
+        
+     stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], [chosenBlockFromInv]
+  
   @@:
 
   .finish:

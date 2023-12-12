@@ -160,7 +160,7 @@ proc blockCollisions
   locals
       tempVector dd 0, 0, 0
       tempHeight dd 0.3
-      dropVector dd 0.01
+      dropVector dd 0.015
       
       MAX_ANGLE  dd 360
       
@@ -203,7 +203,7 @@ proc blockCollisions
             fistp [tempVector + 8]
            
             mov [blocks_skipFalling], 0
-           
+            
             stdcall detectCollision, [Field.Blocks], [WorldLength], [WorldWidth],\
                                       [tempVector], [tempVector + 8], [tempVector + 4] 
                                       
@@ -213,6 +213,7 @@ proc blockCollisions
                 fsub [dropVector]
                 fstp dword[esi + ebx + 4]
             @@:
+            
         
         .skip:
         

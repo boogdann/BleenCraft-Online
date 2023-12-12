@@ -69,7 +69,12 @@ XAxisMuliplier     dd     0.1
 destrHeap             dd 0
 arrayOfDroppedBlocks  dd 0
 destroyedBlocksVector dd 0.0, 0.0, 0.0
-;============================================== 
+;==============================================
+
+;== Global vars for inventory=================
+currentChosenCell     dd 0
+chosenBlockFromInv    dd 0
+;=============================================  
 
 ;=========== UI data ========================
 UI_MODE            dd        UI_GAME

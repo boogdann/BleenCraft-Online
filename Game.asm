@@ -114,7 +114,7 @@ proc RenderScene
           
           mov eax, [Inventory]
           lea esi, [eax + InventoryMainOffset]
-          stdcall ui_renderBag, WindowRect, 9, esi, 2 
+          stdcall ui_renderBag, WindowRect, 9, esi, [currentChosenCell] 
           
           stdcall ui_renderAim, WindowRect
           jmp .UI_RenderEnd

@@ -31,13 +31,10 @@ proc ct_on_keyDown, wParam, lParam
      .showBag:
      
   @@:
+  
+  stdcall highlightCurrentCell, [wParam]
    
   ;... Другие клавиши
-  
-  cmp [wParam], $31
-  jnz @F
-    
-  @@:
   
   .final:  
   ret
