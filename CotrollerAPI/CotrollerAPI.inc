@@ -34,6 +34,7 @@ ct_water_underFeet         dd     0
 isWatter                   dd     0
 waterUnderFeets            dd     0
 
+block_isDestructible       dd     0
 block_detected             dd     0
 is_readyToBuild            dd     0
 ct_block_index             dd     0

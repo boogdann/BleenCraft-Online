@@ -317,7 +317,12 @@ proc ct_destroy_block, cubePos
   
   stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 0  
   
-  stdcall addBlockToArray, selectCubeData
+  mov eax, [block_isDestructible]
+  
+  cmp eax, Blocks.IS_DESTRUCTIBLE 
+  jne @F
+    stdcall addBlockToArray, selectCubeData
+  @@:
 
 .finish:
 

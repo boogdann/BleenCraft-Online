@@ -33,11 +33,14 @@ proc addBlockToArray, blockPos
   
       mov dword[esi + ebx + 12], edi
       
+      mov eax, [ct_block_index]
+      mov dword[esi + ebx + 20], eax 
+      
       jmp .finish 
       
     @@:
     
-    add ebx, 20
+    add ebx, 24
     inc ecx
     
   cmp ecx, 20
@@ -84,7 +87,7 @@ proc renderDestroyedBlocks
           
         @@:
         
-        add ebx, 20
+        add ebx, 24
         inc ecx
         
     cmp ecx, 20
@@ -139,12 +142,15 @@ proc pickBlock
         cmp edx, 2
         jne .dont_pick
         
-          mov dword[esi + ebx + 16], 0    
+          mov dword[esi + ebx + 16], 0
+          
+          stdcall Inventory.AddElement, dword[esi + ebx + 20]
+             
           jmp .finish
         
         .dont_pick:
         
-        add ebx, 20
+        add ebx, 24
         inc ecx
         
     cmp ecx, 20
@@ -217,7 +223,7 @@ proc blockCollisions
         
         .skip:
         
-        add ebx, 20
+        add ebx, 24
         inc ecx
         
     cmp ecx, 20
@@ -257,7 +263,7 @@ proc initializeDestrBlocksHeap
 
   invoke  GetProcessHeap
   mov     [destrHeap], eax    
-  mov     ecx, 100         
+  mov     ecx, 120         
   mov     eax, ecx
   shl     eax, 2     
   invoke  GlobalAlloc, GPTR, eax 

@@ -1,4 +1,4 @@
-proc ct_on_keyDown, wParam, lParam
+ proc ct_on_keyDown, wParam, lParam
   
   ;Esc
   cmp [wParam], VK_ESCAPE
@@ -109,12 +109,16 @@ proc ct_check_moves, CameraPos, CameraTurn
           
           mov eax, 0
           
+          mov edx, 0
+          
           stdcall Blocks.GetDestroyTime, [ct_block_index], 1
            
      
           cmp [destruction_time], eax
           jl .time
           
+            mov [block_isDestructible], edx
+            
             mov [flag], 0
             mov [destruction_time], 0
             stdcall ct_destroy_block, selectCubeData   
