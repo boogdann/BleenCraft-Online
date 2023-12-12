@@ -321,9 +321,14 @@ proc ct_destroy_block, cubePos
   
   cmp eax, Blocks.IS_DESTRUCTIBLE 
   jne @F
-    stdcall addBlockToArray, selectCubeData
+    
+    cmp [ct_block_index], 22
+    je .leaf
+      stdcall addBlockToArray, selectCubeData   
+    .leaf:
+ 
   @@:
-
+    
 .finish:
 
   ret
@@ -376,6 +381,7 @@ proc ct_build_block, prevCubePos
   
   cmp ecx, 3
   je .finish
+  
 
   cmp [build_is_prohibited], 1
   je @F
