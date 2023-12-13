@@ -13,7 +13,10 @@ proc Crafting.Initialize uses edi ecx ebx, pSmall, pBig
      ret
 endp
 
-proc Crafting.Craft uses edi ecx esi ebx, pCrafting, Size 
+proc Crafting.Craft uses edi ecx esi ebx, pCrafting, Size
+     mov    eax, [pCrafting]
+     mov    dword[eax], 0
+      
      mov    ecx, 0
      dec    dword[Size]
      mov    edi, Crafts
