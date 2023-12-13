@@ -5,6 +5,7 @@ proc ui_draw_text uses esi edi, WindowRect, text, len, x, y, size
     
     n_8           dd   9.0
     widthLetter   dd   6.5
+    lettersArr    dd   ?
   endl
   
   mov eax, [x]
@@ -30,9 +31,31 @@ proc ui_draw_text uses esi edi, WindowRect, text, len, x, y, size
   mov esi, 0 
   @@:
     movzx eax, byte[edi + esi]
-    sub eax, 'a'
-    stdcall ui_draw_letter, [WindowRect], UI_LettersLow, eax, [size], [posX], [y]
-    
+    cmp byte[edi + esi], 'a'
+    jl .Skip1
+      sub eax, 'a'
+      mov [lettersArr], UI_LettersLow
+      jmp .ReadyGet
+    .Skip1:
+    cmp eax, 'A'
+    jl .Skip2
+      sub eax, 'A'
+      mov [lettersArr], UI_LettersHigh
+      jmp .ReadyGet
+    .Skip2:
+    cmp eax, '0'
+    jl .Skip3
+      sub eax, '0' 
+      mov [lettersArr], UI_LettersNums
+      jmp .ReadyGet
+    .Skip3:
+    cmp eax, '.'
+    jnz .SkipRender
+      mov eax, 10
+      mov [lettersArr], UI_LettersNums
+    .ReadyGet:
+    stdcall ui_draw_letter, [WindowRect], [lettersArr], eax, [size], [posX], [y]
+    .SkipRender:
     fld [posX]
     fadd [addX]
     fstp [posX]
@@ -40,9 +63,35 @@ proc ui_draw_text uses esi edi, WindowRect, text, len, x, y, size
   cmp esi, [len]
   jnz @B
 
-
   ret
 endp
+
+
+;eax - nums count
+;num_text - string
+proc ui_getNumText uses esi edi, num
+    locals
+      count   dd   0
+    endl        
+             
+    mov eax, [num]
+    mov ecx, 10
+    mov edi, num_text + 4
+
+convert_loop:
+    xor edx, edx
+    div ecx
+    add dl, '0'
+    dec edi
+    mov [edi], dl
+    inc [count]
+    test eax, eax
+    jnz convert_loop
+            
+  ;Return:
+  mov eax, [count]          
+  ret
+endp 
 
 
 ;return in eax - width
@@ -97,6 +146,13 @@ proc ui_draw_letter uses esi edi, WindowRect, LetterArr, LetterIndex, Size, X, Y
   
   mov eax, [Y]
   mov [posXY + 4], eax
+  cmp [LetterArr], UI_LettersHigh
+  jl @F
+    fld  [posXY + 4]
+    fadd [SizeXY + 4]
+    fstp [posXY + 4]
+  @@:
+  
   mov ecx, 0
   .ColumnCircle:
       mov eax, [X]

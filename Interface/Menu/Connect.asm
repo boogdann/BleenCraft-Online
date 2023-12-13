@@ -8,8 +8,8 @@ proc ui_renderMenuConnect, WindowRect
 
   stdcall gf_2D_Render_Start 
   
-    stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.2,      2, TEXT_text, 4
-    stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,      3, TEXT_text, 4
+    stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.2,      2, CONNECT_text, 7
+    stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,      3, BACK_text, 4
     
     fld [backGroundAdd]
     fcos 

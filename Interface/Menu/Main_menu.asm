@@ -13,6 +13,9 @@ proc ui_renderMenu_Main, WindowRect
   stdcall RenderScene
   stdcall gf_2D_Render_Start
   
+  invoke glColor3f, 1.0, 1.0, 1.0
+  stdcall ui_draw_text, [WindowRect], version_text, [version_text_len], -0.98, -1.0, 0.004
+  
   stdcall ui_drawButton, [WindowRect], -0.4, 0.0, 0.8, 0.15,      1, PLAY_text, 4  
   stdcall ui_drawButton, [WindowRect], -0.4, -0.2, 0.8, 0.15,     2, CONNECT_text, 7
   stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.15,    3, EXIT_text, 4                  

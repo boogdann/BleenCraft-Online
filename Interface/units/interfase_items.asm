@@ -103,6 +103,18 @@ proc ui_draw_slot uses esi edi ecx, x, y, s_x, s_y, elm_info
     n_3      dd    3.0
   endl
   
+
+  invoke glColor3f, 1.0, 1.0, 1.0
+  movzx eax, word[elm_info + 2]
+  stdcall ui_getNumText, eax
+  ;eax - nums count
+  ;num_text - string
+  lea edi, [num_text + 4]
+  sub edi, eax 
+  stdcall ui_draw_text, WindowRect, edi, eax, [x], [y], 0.002
+  
+  mov [num_text], 0
+  
   fld[s_x]
   fdiv [n_20]
   fstp [tmp_xy] 

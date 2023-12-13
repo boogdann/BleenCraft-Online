@@ -1,7 +1,6 @@
 include "..\..\Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 
 proc ui_renderMenuSettings, WindowRect 
-    ;==============================
     locals 
       curBackgroundAdd   dd   ? 
       addPos             dd   0.01
@@ -9,23 +8,14 @@ proc ui_renderMenuSettings, WindowRect
     fld [backGroundAdd]
     fadd [addPos]
     fstp [backGroundAdd]
-    ;==============================
 
-  ;stdcall gf_2D_Render_Start 
-      stdcall ui_drawButton, [WindowRect], 0.50, -0.9, 0.4, 0.15,      2, TEXT_text, 4
-      stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,      3, TEXT_text, 4
+    stdcall ui_drawButton, [WindowRect], 0.45, -0.95, 0.5, 0.15,      2, Continue_text, 8
+    stdcall ui_drawButton, [WindowRect], -0.95, -0.95, 0.5, 0.15,     3, Menu_text, 4
   
-      fld [backGroundAdd]
-      fcos 
-      fstp [curBackgroundAdd]
-      stdcall ui_renderBackground, [WindowRect], [curBackgroundAdd]
-
-  ;stdcall gf_2D_Render_End
-  
-  ;invoke SwapBuffers, [hdc]
-  ;invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
-
-
+    fld [backGroundAdd]
+    fcos 
+    fstp [curBackgroundAdd]
+    stdcall ui_renderBackground, [WindowRect], [curBackgroundAdd]
   ret
 endp
 
