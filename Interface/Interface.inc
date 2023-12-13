@@ -23,6 +23,8 @@ version_text_len  dd   $ - version_text
 
 num_text         db    ?, ?, ?, ?
 
+LABLE_ITEM_TURN   dd    0.0
+
 
 
 

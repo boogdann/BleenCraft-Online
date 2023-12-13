@@ -144,6 +144,13 @@ proc RenderScene
       stdcall gf_render_PlayerItem
     @@:
     
+    cmp [App_Mode], MENU_MODE
+    jnz @F
+    cmp [CUR_MENU], 1 
+    jnz @F
+      stdcall gf_render_LableItem
+    @@:
+    
     stdcall gf_RenderEnd
   ret
 endp

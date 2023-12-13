@@ -214,6 +214,40 @@ proc gf_render_PlayerItem
   ret
 endp    
 
+proc gf_render_LableItem
+  locals
+    add_turn  dd   0.1
+    mul_tmp   dd   10.0
+  endl
+
+
+  invoke glClear, GL_DEPTH_BUFFER_BIT
+  invoke glUniform4fv, [gf_SunPosition], 1, tmp_SunPosition
+  invoke  glMatrixMode, GL_MODELVIEW
+  invoke  glLoadIdentity
+  stdcall gf_get_camera_lookvec, ZERO_VEC_3, ZERO_VEC_3 
+  stdcall gf_get_camera_upvec, ZERO_VEC_3 
+  stdcall Matrix.LookAt, ZERO_VEC_3, gf_camera_lookvec, gf_uplookvec
+  invoke glGetFloatv, GL_MODELVIEW_MATRIX, gf_view_matrix 
+  stdcall gf_MatrixMultiply, gf_view_matrix, gf_projection_matrix, gf_pr_view_matrix
+  invoke glUniform3fv, [gf_CameraPos], 1, ZERO_VEC_3
+  
+  ;=================
+  stdcall gf_renderObj3D, obj.Player.Body.Handle, [tx.Player.Handle], 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.004, 0
+  ;=================
+  
+  fld [LABLE_ITEM_TURN]
+  fadd [add_turn]
+  fstp [LABLE_ITEM_TURN]
+  
+  fld [LABLE_ITEM_TURN]
+  fcos
+  fmul [mul_tmp]
+  fstp [PLAYER_ITEM_TURN]
+  
+  ret
+endp
+
 proc gf_2D_Render_End
   invoke glUseProgram, [gf_shaderProgram]
   

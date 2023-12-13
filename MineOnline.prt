@@ -4,8 +4,8 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=10
-  countInc=3
+  countAsm=12
+  countInc=5
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
@@ -17,8 +17,12 @@ if 2 * 2 = 5
   asm8="Connect.asm"
   asm9="interfase_items.asm"
   asm10="gf_api_init.ASM"
+  asm11="Interface.asm"
+  asm12="gf_render.ASM"
 [inc]
   inc1="Game.inc"
   inc2="interfase_text.inc"
   inc3="Interface.inc"
+  inc4="gf_api_init.inc"
+  inc5="gf_render_data.inc"
 end if
