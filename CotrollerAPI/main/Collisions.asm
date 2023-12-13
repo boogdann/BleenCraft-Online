@@ -118,6 +118,11 @@ proc ct_isBlock uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
         
      mov [isWatter], 0
      
+     stdcall getDamage
+     
+     fldz
+     fstp [ct_damageFallSpeed]
+     
      mov [onGround], 1
      mov [toSkip], 1
             

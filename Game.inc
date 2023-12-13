@@ -74,6 +74,7 @@ destroyedBlocksVector dd 0.0, 0.0, 0.0
 ;== Global vars for inventory=================
 currentChosenCell     dd 0
 chosenBlockFromInv    dd 0
+currentNumOfHearts    dd 10
 ;=============================================  
 
 ;=========== UI data ========================

@@ -110,7 +110,7 @@ proc RenderScene
         case    .UI_pESCMenu,     UI_ESC_MENU  
         
         .UI_pGame:
-          stdcall ui_renderHealth, WindowRect, 10, 6
+          stdcall ui_renderHealth, WindowRect, 10, [currentNumOfHearts]
           
           mov eax, [Inventory]
           lea esi, [eax + InventoryMainOffset]

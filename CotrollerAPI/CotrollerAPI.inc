@@ -24,6 +24,7 @@ ct_start_jump_speed        dd     -0.004
 ct_water_jump_speed        dd     -0.001
 ct_jump_distancePerSecond  dd     0.005
 ct_isStartOfJump           dd     0    
+ct_damageFallSpeed         dd     0.0
 
 ct_velocity                dd     0.0005
 ct_watter_velocity         dd     0.00005

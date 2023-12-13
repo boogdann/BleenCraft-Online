@@ -61,3 +61,37 @@ proc highlightCurrentCell, wParam
   
     ret
 endp
+
+proc getDamage
+
+  locals
+      multiplier dd 18.0
+      currentSpeed dd 0
+      currentDamage dd 0
+      divConst      dd 1.4  
+  endl
+  
+  fld [ct_damageFallSpeed]
+  fmul [multiplier]
+  fistp [currentSpeed]
+        
+  cmp [currentSpeed], 2
+  jl @F
+     cmp [currentNumOfHearts], 1
+     jg .damage
+         jmp .skip   
+     .damage:
+     
+         fild [currentSpeed]
+         fdiv [divConst]
+         fistp [currentDamage]
+          
+         mov eax, [currentDamage] 
+         
+         sub [currentNumOfHearts], eax
+  @@:
+  
+  .skip:
+  
+  ret
+endp

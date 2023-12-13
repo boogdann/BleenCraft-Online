@@ -3,10 +3,14 @@ proc ct_fall_check, playerPos, Field, X, Y
   locals
      fallTime      dd     ?
      curFallSpeed  dd     ?
-     ;tempVelocity  dd     0.0005
+     tempVel       dd     0.005
      height        dd     0.5
      tempHeight    dd     0.01
      tmp dd 100.0
+     
+     jumpSpeed     dd     0
+     
+     negone        dd     -1
      
      tempCamera dd  0, 0, 0
      tempPlayerPos dd 0.0, 0.0, 0.0
@@ -14,7 +18,7 @@ proc ct_fall_check, playerPos, Field, X, Y
      MAX_TICKS_COUNT  dd  100
      MIN_TICKS_COUNT  dd  10
      
-  endl
+  endl  
   
   cmp [isFalling], 1
   jne .Skip
@@ -73,6 +77,7 @@ proc ct_fall_check, playerPos, Field, X, Y
   fld dword[esi + 8]
   fistp [tempCamera + 4]
 
+
   stdcall ct_isBlock, [Field], [X], [Y],\
                       [tempCamera], [tempCamera + 4], [tempCamera + 8]
                       
@@ -83,8 +88,22 @@ proc ct_fall_check, playerPos, Field, X, Y
    
     fld [tempPlayerPos + 4]
     fstp dword[esi + 4]
+    
     jmp .Skip
     
+  @@:
+  
+  fld [curFallSpeed]
+  fmul [tmp]
+  fistp [jumpSpeed]
+  
+  cmp [jumpSpeed], 0
+  jl @F
+   
+    fld [ct_damageFallSpeed]
+    fadd [tempVel]
+    fstp [ct_damageFallSpeed]
+  
   @@:
   
   fld  dword[esi + 4]
