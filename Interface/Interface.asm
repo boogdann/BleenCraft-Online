@@ -7,6 +7,7 @@ UI_SETTINGS_MENU    equ  4
 include "units\interfase_items.ASM"   
 include "units\interfase_controller.ASM"
 include "units\interfase_menu_items.ASM"  
+include "units\interfase_text.ASM" 
 include "Menu\Main_menu.ASM"  
 include "Menu\Create.ASM"  
 include "Menu\Connect.ASM"  

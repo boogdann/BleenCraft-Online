@@ -7,9 +7,9 @@ proc ui_renderMenuCreate, WindowRect
 
   stdcall gf_2D_Render_Start 
   
-    stdcall ui_drawButton, [WindowRect], -0.3, 0.0, 0.6, 0.2,      1
-    stdcall ui_drawButton, [WindowRect], -0.3, -0.25, 0.6, 0.2,    2
-    stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,    3
+    stdcall ui_drawButton, [WindowRect], -0.3, 0.0, 0.6, 0.2,      1, TEXT_text, 4
+    stdcall ui_drawButton, [WindowRect], -0.3, -0.25, 0.6, 0.2,    2, TEXT_text, 4
+    stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,    3, TEXT_text, 4
     
     fld [backGroundAdd]
     fcos 

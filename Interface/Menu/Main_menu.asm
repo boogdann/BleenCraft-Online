@@ -8,17 +8,14 @@ proc ui_renderMenu_Main, WindowRect
     y     dd  0.0
     x_sz  dd  0.8
     y_sz  dd  0.8
-    
   endl 
  
   stdcall RenderScene
   stdcall gf_2D_Render_Start
-   
-  ;stdcall ui_renderText, [WindowRect], text, -0.8, 0.0, 200
   
-  stdcall ui_drawButton, [WindowRect], -0.4, 0.0, 0.8, 0.15,      1
-  stdcall ui_drawButton, [WindowRect], -0.4, -0.2, 0.8, 0.15,     2
-  stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.15,    3                  
+  stdcall ui_drawButton, [WindowRect], -0.4, 0.0, 0.8, 0.15,      1, PLAY_text, 4  
+  stdcall ui_drawButton, [WindowRect], -0.4, -0.2, 0.8, 0.15,     2, CONNECT_text, 7
+  stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.15,    3, EXIT_text, 4                  
                                                                      
   stdcall gf_2D_Render_End
   

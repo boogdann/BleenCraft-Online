@@ -1,12 +1,39 @@
-proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id
+proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
 
   locals 
     n_30     dd    30.0
+    n_TEXT   dd    20.0
+    n_2      dd    ?
+    n_2_2    dd    2.0
     tmp_xy   dd    ?, ?
     add_xy   dd    0.005, ?
     
     isIn     dd    0
+    
+    textSize    dd  ?
+    textWidth   dd  ?
+    textHeight  dd  ?
+    textX       dd  ?
   endl
+  
+  fld [s_y]
+  fdiv [n_TEXT]
+  fstp [textSize]
+  stdcall ui_getTextSizes, [WindowRect], [textLen], [textSize]
+  mov [textWidth], eax
+  mov [textHeight], ecx
+  
+  fld [x]
+  fld [s_x]
+  fsub [textWidth]
+  fdiv [n_2_2]
+  faddp
+  fstp [textX]
+  
+  
+  invoke glColor3f, 1.0, 1.0, 1.0
+  stdcall ui_draw_text, [WindowRect], [text], [textLen], [textX], [y], [textSize]
+  
   
   stdcall ui_CheckMouseIn, [WindowRect], [x], [y], [s_x], [s_y]
   cmp eax, 0
