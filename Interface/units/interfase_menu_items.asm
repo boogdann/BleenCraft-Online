@@ -2,7 +2,7 @@ proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
 
   locals 
     n_30     dd    30.0
-    n_TEXT   dd    20.0
+    n_TEXT   dd    25.0
     n_2      dd    ?
     n_2_2    dd    2.0
     tmp_xy   dd    ?, ?
