@@ -33,7 +33,6 @@ ct_water_around            dd     0
 ct_water_underFeet         dd     0
 
 isWatter                   dd     0
-waterUnderFeets            dd     0
 
 block_isDestructible       dd     0
 block_detected             dd     0
@@ -54,3 +53,5 @@ skip_destroying            dd     0
 openMainBag                dd     -1
 
 blocks_skipFalling         dd     0
+
+ct_inWater                 dd     0

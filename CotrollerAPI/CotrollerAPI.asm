@@ -19,8 +19,8 @@ proc ct_move_check, playerPos, playerTurn,\
   @@:                                                            
   stdcall ct_fall_check, [playerPos], [Field], [X], [Y] ;;;;
   stdcall ct_collisionsCheck, [playerPos], [Field], [X], [Y], [Z]
-  ;stdcall getDamage
   stdcall ct_watter, [playerPos], [Field], [X], [Y], [Z]
+  stdcall ct_isInWater, [playerPos], [Field], [X], [Y], [Z] 
   stdcall detectBlock, [Field], [playerTurn], [playerPos], [X], [Y]
   stdcall pickBlock
   stdcall blockCollisions

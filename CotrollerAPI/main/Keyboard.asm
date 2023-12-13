@@ -64,10 +64,14 @@ proc ct_check_moves, CameraPos, CameraTurn
     
   fild dword[curTime]
   fld dword[distancePerSecond]
+  cmp [ct_inWater], 1
+  je .inWater
   cmp [ct_isJump], 0
   je .water
   cmp [isWatter], 0
   jz .notWater
+  
+  .inWater:
     
     fadd [waterSpeed]
     jmp .water  
@@ -76,7 +80,7 @@ proc ct_check_moves, CameraPos, CameraTurn
   
   invoke  GetAsyncKeyState, VK_SHIFT
   cmp eax, 0
-  jz @F
+  jz @F                             
       fsub  [shiftConst] 
   @@:
   
@@ -200,7 +204,7 @@ proc ct_check_moves, CameraPos, CameraTurn
   @@:
 
   .Skip:
-
+         
   ret
 endp
 

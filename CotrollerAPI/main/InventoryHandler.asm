@@ -68,7 +68,8 @@ proc getDamage
       multiplier dd 18.0
       currentSpeed dd 0
       currentDamage dd 0
-      divConst      dd 1.4  
+      divConst      dd 2.0
+      koeff         dd 1.5  
   endl
   
   fld [ct_damageFallSpeed]
@@ -79,16 +80,23 @@ proc getDamage
   jl @F
      cmp [currentNumOfHearts], 1
      jg .damage
+         ;invoke ExitProcess, 0
          jmp .skip   
      .damage:
      
+     cmp [UnderWater], 1
+     je .water
+     
          fild [currentSpeed]
-         fdiv [divConst]
+         fdiv [divConst]      
          fistp [currentDamage]
           
          mov eax, [currentDamage] 
          
          sub [currentNumOfHearts], eax
+         
+     .water:
+     
   @@:
   
   .skip:

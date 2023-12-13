@@ -10,7 +10,7 @@ proc ct_collisionsCheck, playerPos, Field, X, Y, Z
     Pl_step   dd  0.4
     Pl_chest  dd  -1.0
     temp      dd  4.0
-    
+                     
     tempHeight dd 0.3
                       
     X_Next    dd  ?
@@ -78,7 +78,7 @@ proc ct_collisionsCheck, playerPos, Field, X, Y, Z
   @@:
   
  .finish:
- 
+   
     
   ret
 endp 
