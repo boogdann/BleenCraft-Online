@@ -105,7 +105,8 @@ proc getDamage
       currentSpeed dd 0
       currentDamage dd 0
       divConst      dd 2.0
-      koeff         dd 1.5  
+      koeff         dd 1.5 
+      epsilon       dd 0.5 
   endl
   
   fld [ct_damageFallSpeed]
@@ -127,15 +128,26 @@ proc getDamage
          
          cmp [UnderWater], 1
          je .water
-         
-             fild [currentSpeed]
-             fdiv [divConst]      
-             fistp [currentDamage]
           
+             mov ecx, [currentSpeed]
+             sub ecx, 1
+             
+             mov eax, 1
+             
+             .damageLoop:
+             cmp ecx, 0
+             je .endLoop  
+                imul eax, 2   
+                
+                dec ecx
+             jmp .damageLoop
+             
+             .endLoop:
+             
+             dec eax
+             
              mov [isDamaged], 1
           
-             mov eax, [currentDamage] 
-         
              sub [currentNumOfHearts], eax
              
              jmp .skip
