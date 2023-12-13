@@ -70,7 +70,7 @@ proc ct_isInWater, playerPos, Field, X, Y, Z
 
     locals
       Pl_pos dd 0, 0, 0
-      playerFeets dd 1.9
+      playerFeets dd 1.6 
     endl
     
     mov esi, [playerPos] 

@@ -84,18 +84,26 @@ proc getDamage
          jmp .skip   
      .damage:
      
-     cmp [UnderWater], 1
+     cmp [ct_inWater], 1
      je .water
-     
-         fild [currentSpeed]
-         fdiv [divConst]      
-         fistp [currentDamage]
+         
+         cmp [UnderWater], 1
+         je .water
+         
+             fild [currentSpeed]
+             fdiv [divConst]      
+             fistp [currentDamage]
           
-         mov eax, [currentDamage] 
+             mov eax, [currentDamage] 
          
-         sub [currentNumOfHearts], eax
-         
+             sub [currentNumOfHearts], eax
+             
+             jmp .skip
+             
      .water:
+     
+     fldz
+     fstp [ct_damageFallSpeed] 
      
   @@:
   
