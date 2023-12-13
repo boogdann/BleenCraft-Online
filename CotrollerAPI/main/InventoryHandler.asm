@@ -62,6 +62,42 @@ proc highlightCurrentCell, wParam
     ret
 endp
 
+proc hpRegeneration
+
+   cmp [currentNumOfHearts], 9
+   jg .skip
+
+   invoke GetTickCount
+   mov edx, eax
+   sub eax, [prev_regen_time]
+   
+   mov [prev_regen_time], edx
+   
+   cmp eax, 100
+   jg .skip
+   
+   add [current_regen_time], eax
+
+   cmp [isDamaged], 1
+   jne @F
+      mov [current_regen_time], 0
+      jmp .skip
+   @@:
+
+   cmp [current_regen_time], 10000
+   jle @F
+      
+      inc [currentNumOfHearts]
+      
+      mov [current_regen_time], 0 
+      
+   @@:
+
+   .skip:
+
+  ret
+endp
+
 proc getDamage
 
   locals
@@ -75,6 +111,8 @@ proc getDamage
   fld [ct_damageFallSpeed]
   fmul [multiplier]
   fistp [currentSpeed]
+  
+  mov [isDamaged], 0
         
   cmp [currentSpeed], 2
   jl @F
@@ -93,6 +131,8 @@ proc getDamage
              fild [currentSpeed]
              fdiv [divConst]      
              fistp [currentDamage]
+          
+             mov [isDamaged], 1
           
              mov eax, [currentDamage] 
          

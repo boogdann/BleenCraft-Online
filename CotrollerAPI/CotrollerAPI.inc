@@ -55,3 +55,8 @@ openMainBag                dd     -1
 blocks_skipFalling         dd     0
 
 ct_inWater                 dd     0
+
+prev_regen_time            dd     0
+current_regen_time         dd     0
+
+isDamaged                  dd     0
