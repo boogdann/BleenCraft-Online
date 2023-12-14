@@ -1,6 +1,7 @@
 include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
 include "Units\Animations\RightHandAnimation.asm"
+include "Units\Animations\blocksAnimation.asm"
 include "Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 include "CotrollerAPI\main\BlocksDrop.asm"
 
@@ -78,9 +79,16 @@ proc RenderScene
     
     cmp [UI_MODE], UI_ESC_MENU
     jz .SkipRenderGameItems
-      stdcall anim_RightHand, PlayerPos, PlayerTurn  
+      cmp [chosenBlockFromInv], 0
+      jne @F
+          stdcall anim_RightHand, PlayerPos, PlayerTurn
+          jmp .animate  
+      @@:
+          stdcall anim_blockInHand, PlayerPos, PlayerTurn
     cmp [App_Mode], GAME_MODE
     jnz .SkipRenderGameItems
+      
+      .animate:
       ;==== Block for ilya ===============
       stdcall renderDestroyedBlocks
       

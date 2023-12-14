@@ -187,8 +187,7 @@ proc ct_destroy_block, cubePos
 
   cmp [UnderWater], 1
   jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
-    jmp .finish
+    jmp .WATER
   @@:
   
   fld dword[edi]
@@ -209,7 +208,7 @@ proc ct_destroy_block, cubePos
   
   cmp [ct_water_around], 1
   jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
+    jmp .WATER
   @@:
   
   ;second check
@@ -221,8 +220,7 @@ proc ct_destroy_block, cubePos
   
   cmp [ct_water_around], 1
   jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
-    jmp .finish
+    jmp .WATER
   @@:
   
   ;third check
@@ -234,8 +232,7 @@ proc ct_destroy_block, cubePos
   
   cmp [ct_water_around], 1
   jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
-    jmp .finish
+    jmp .WATER
   @@:
   
   ;fourth check
@@ -247,8 +244,7 @@ proc ct_destroy_block, cubePos
   
   cmp [ct_water_around], 1
   jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
-    jmp .finish
+    jmp .WATER
   @@:
   
   ;fifth check
@@ -263,8 +259,7 @@ proc ct_destroy_block, cubePos
   
   cmp [ct_water_around], 1
   jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
-    jmp .finish
+    jmp .WATER
   @@:
   
   ;sixth check
@@ -279,8 +274,7 @@ proc ct_destroy_block, cubePos
   
   cmp [ct_water_around], 1
   jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
-    jmp .finish
+    jmp .WATER
   @@:
   
   ;seventh check
@@ -295,8 +289,7 @@ proc ct_destroy_block, cubePos
   
   cmp [ct_water_around], 1
   jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
-    jmp .finish
+    jmp .WATER
   @@:
   
   ;eighth check
@@ -310,12 +303,21 @@ proc ct_destroy_block, cubePos
   stdcall ct_isWaterAround, [Field.Blocks], [WorldLength], [WorldWidth], [tempVector], [tempVector + 8], [tempVector + 4]
   
   cmp [ct_water_around], 1
-  jne @F
-    stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255
-    jmp .finish
+  jne @F   
+    jmp .WATER
   @@:
   
+  .NOT_WATER:
+  
   stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 0  
+  
+  jmp .getDestrBlock
+  
+  .WATER:
+  
+  stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], 255  
+  
+  .getDestrBlock:
   
   mov eax, [block_isDestructible]
   

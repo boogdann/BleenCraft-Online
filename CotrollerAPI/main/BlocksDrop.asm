@@ -45,7 +45,7 @@ proc addBlockToArray, blockPos
     add ebx, 40
     inc ecx
     
-  cmp ecx, 20
+  cmp ecx, 64
   jle .zaloop
   
   .finish:
@@ -92,7 +92,7 @@ proc renderDestroyedBlocks
         add ebx, 40
         inc ecx
         
-    cmp ecx, 20
+    cmp ecx, 64
     jle .zaloop
         
 
@@ -155,7 +155,7 @@ proc pickBlock
         add ebx, 40
         inc ecx
         
-    cmp ecx, 20
+    cmp ecx, 64
     jle .zaloop
     
     .finish:
@@ -237,7 +237,7 @@ proc blockCollisions
         add ebx, 40
         inc ecx
         
-    cmp ecx, 20
+    cmp ecx, 64
     jle .zaloop
   
 
@@ -300,7 +300,7 @@ proc thrownBlocksPhysics
         add ebx, 40
         inc ecx
         
-    cmp ecx, 20
+    cmp ecx, 64
     jle .zaloop
     
     .finish:
@@ -400,7 +400,7 @@ proc throwBlock
         add ebx, 40
         inc ecx
         
-    cmp ecx, 20
+    cmp ecx, 64
     jle .zaloop
   
     .finish:
@@ -440,7 +440,7 @@ proc initializeDestrBlocksHeap
 
   invoke  GetProcessHeap
   mov     [destrHeap], eax    
-  mov     ecx, 200         
+  mov     ecx, 640         
   mov     eax, ecx
   shl     eax, 2     
   invoke  GlobalAlloc, GPTR, eax 
