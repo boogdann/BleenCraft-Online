@@ -98,6 +98,30 @@ proc hpRegeneration
   ret
 endp
 
+proc removeBlock
+
+  locals
+      currentCell dd 27
+  endl
+
+  stdcall Inventory.GetCell, [currentChosenCell]
+
+  cmp edx, 0
+  jz .finish
+  
+    sub edx, 1
+    
+    mov eax, [currentChosenCell]
+    add [currentCell], eax
+    
+    stdcall Inventory.DecCell, [currentCell]
+  
+  .finish:
+  
+
+  ret
+endp
+
 proc getDamage
 
   locals
@@ -117,11 +141,6 @@ proc getDamage
         
   cmp [currentSpeed], 2
   jl @F
-     cmp [currentNumOfHearts], 1
-     jg .damage
-         ;invoke ExitProcess, 0
-         jmp .skip   
-     .damage:
      
      cmp [ct_inWater], 1
      je .water
@@ -149,7 +168,11 @@ proc getDamage
              mov [isDamaged], 1
           
              sub [currentNumOfHearts], eax
-             
+            
+             cmp [currentNumOfHearts], 0
+             jg .skip
+                mov [currentNumOfHearts], 0
+            
              jmp .skip
              
      .water:

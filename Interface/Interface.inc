@@ -18,7 +18,7 @@ Open_text      db   'Open'
 
 TEXT_text      db   'text'
 
-version_text      db   'blincraft v1.0'
+version_text      db   'bleencraft v1.0'
 version_text_len  dd   $ - version_text
 
 num_text         db    ?, ?, ?, ?

@@ -391,6 +391,12 @@ proc ct_build_block, prevCubePos
         
      stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], [chosenBlockFromInv]
   
+     mov eax, 27
+     add eax, [currentChosenCell]
+     stdcall Inventory.DecCell, eax
+  
+     stdcall removeBlock
+  
   @@:
 
   .finish:
