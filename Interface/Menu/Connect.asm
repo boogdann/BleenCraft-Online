@@ -7,6 +7,16 @@ proc ui_renderMenuConnect, WindowRect
   endl
 
   stdcall gf_2D_Render_Start 
+  ;############################################################################
+    stdcall ui_render_input, [WindowRect], -0.4, 0.2, 0.8, 0.15,     10, \
+                                          tcp_port_text, [tcp_port_text_len]
+                                          
+    stdcall ui_render_input, [WindowRect], -0.4, -0.0, 0.8, 0.15,     11, \
+                                          udp_port_text, [udp_port_text_len]
+                                          
+    stdcall ui_render_input, [WindowRect], -0.4, -0.2, 0.8, 0.15,     12, \
+                                          input_ip_text, [input_ip_text_len]
+  ;############################################################################
   
     stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.2,      2, CONNECT_text, 7
     stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,      3, BACK_text, 4

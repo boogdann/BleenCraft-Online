@@ -25,7 +25,14 @@ num_text         db    ?, ?, ?, ?
 
 LABLE_ITEM_TURN   dd    0.0
 
+input_ip_text      db   'server ip..'
+input_ip_text_len  dd   $ - input_ip_text
 
+tcp_port_text          db   'tcp port..'
+tcp_port_text_len      dd   $ - tcp_port_text
+
+udp_port_text          db   'udp port..'
+udp_port_text_len      dd   $ - udp_port_text
 
 
 

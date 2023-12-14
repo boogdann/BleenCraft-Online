@@ -113,6 +113,12 @@ died_text_len    dd        $ - died_text
 
 Respawn_text     db        'Respawn'
 IsPlayerDied     dd        0
+
+
+ConnectionIP_input       db   20   dup  (?)
+ConnectionGroop_input    db   20   dup  (?)
+ConnectionUdpPort_input  db   20   dup  (?)
+ConnectionTcpPort_input  db   20   dup  (?)
 ;===========================================
 
 

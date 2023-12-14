@@ -319,3 +319,117 @@ proc ui_renderText uses esi, WindowRect, text, x, y, size
 
   ret
 endp
+
+
+
+
+
+
+proc ui_render_input uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
+  locals 
+    n_30     dd    30.0
+    n_TEXT   dd    25.0
+    n_2      dd    ?
+    n_2_2    dd    2.0
+    tmp_xy   dd    ?, ?
+    add_xy   dd    0.005, ?
+    
+    isIn     dd    0
+    
+    textSize    dd  ?
+    textWidth   dd  ?
+    textHeight  dd  ?
+    textX       dd  ?
+  endl
+  
+  cmp [textLen], 0
+  jz .SkipText
+        fld [s_y]
+        fdiv [n_TEXT]
+        fstp [textSize]
+        stdcall ui_getTextSizes, [WindowRect], [textLen], [textSize]
+        mov [textWidth], eax
+        mov [textHeight], ecx  
+    
+      fld [x]
+      fld [s_x]
+      fsub [textWidth]
+      fdiv [n_TEXT]
+      faddp
+      fstp [textX]
+      
+      
+      invoke glColor3f, 0.4, 0.4, 0.4
+      stdcall ui_draw_text, [WindowRect], [text], [textLen], [textX], [y], [textSize]
+  .SkipText:
+  
+  
+  
+  stdcall ui_CheckMouseIn, [WindowRect], [x], [y], [s_x], [s_y]
+  cmp eax, 0
+  jz @F
+     mov [isIn], 1
+     mov eax, [id]
+     mov [Selected_ButtonId], eax
+  @@:
+  
+  invoke glColor4f, 0.33, 0.33, 0.33, 1.0
+  cmp [isIn], 1
+  jnz @F
+    invoke glColor4f, 0.55, 0.55, 0.55, 1.0
+  @@:
+  stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y]
+  
+  mov  esi, [WindowRect]
+  fld  [add_xy]
+  fild dword[esi + 8]
+  fild dword[esi + 12]
+  fdivp
+  fmulp 
+  fstp [add_xy + 4]
+  
+  fld [x]
+  fsub [add_xy]
+  fstp [x]
+  fld [s_x]
+  fadd [add_xy]
+  fstp [s_x]
+  fld [s_y]
+  fadd [add_xy + 4]
+  fstp [s_y]
+  
+  invoke glColor4f, 0.28, 0.28, 0.28, 1.0
+  
+  stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y] 
+  
+  fld [x]
+  fadd [add_xy]
+  fstp [x]
+  fld [y]
+  fsub [add_xy + 4]
+  fstp [y]
+  invoke glColor4f, 0.05, 0.05, 0.05, 1.0
+  stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y] 
+  
+  fld [x]
+  fsub [add_xy] 
+  fsub [add_xy]
+  fstp [x]
+  fld [y]
+  fsub [add_xy + 4]
+  fstp [y]
+  fld [s_x]
+  fadd [add_xy]
+  fadd [add_xy]
+  fadd [add_xy]
+  fstp [s_x]
+  fld [s_y]
+  fadd [add_xy + 4]
+  fadd [add_xy + 4]
+  fadd [add_xy + 4]
+  fstp [s_y]
+  invoke glColor4f, 0.0, 0.0, 0.0, 1.0
+  stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y] 
+ 
+  ret
+endp
