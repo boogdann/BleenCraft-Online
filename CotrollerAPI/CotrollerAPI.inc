@@ -60,3 +60,7 @@ prev_regen_time            dd     0
 current_regen_time         dd     0
 
 isDamaged                  dd     0
+
+tmpw                       dd     0 ;прокрутка колёсика мышки
+WHEEL_DELTA                dd     120.0
+curWheelDelta              dd     0

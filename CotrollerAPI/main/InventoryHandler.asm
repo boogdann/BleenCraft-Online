@@ -11,6 +11,39 @@ proc getCurrentBlock, currentCell
     ret
 endp
 
+proc mouseScroll, wParam
+
+  mov eax, [wParam]
+        shr eax, 16
+        
+        mov word[tmpw], ax
+        
+        fild word[tmpw]
+        fmul [WHEEL_DELTA]
+        fchs
+        fistp [curWheelDelta]
+        
+        cmp [curWheelDelta], 0
+        jl .less
+            cmp [currentChosenCell], 8
+            jl .increment
+                mov [currentChosenCell], 0
+                jmp .finish
+            .increment:          
+            inc [currentChosenCell]
+            jmp .finish              
+        .less:
+            cmp [currentChosenCell], 0
+            jg .decrement
+                mov [currentChosenCell], 8
+                jmp .finish
+            .decrement:
+            dec [currentChosenCell] 
+        .finish: 
+
+  ret
+endp
+
 proc highlightCurrentCell, wParam
 
     cmp [wParam], $31

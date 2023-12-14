@@ -82,6 +82,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         case    .Movement,      WM_KEYDOWN 
         case    .MouseDown,     WM_LBUTTONDOWN 
         case    .MouseUp,       WM_LBUTTONUP
+        case    .WheelScroll,   WM_MOUSEWHEEL
         
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
         jmp     .Return
@@ -149,6 +150,12 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         ;
         jmp     .ReturnZero
  
+  .WheelScroll:
+        
+        stdcall mouseScroll, [wParam]
+        
+        jmp     .ReturnZero
+  
   .Destroy:
         ;stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], filename       
         invoke ExitProcess, 1
