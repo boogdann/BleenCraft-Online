@@ -14,17 +14,24 @@ proc Crafting.Initialize uses edi ecx ebx, pSmall, pBig
 endp
 
 proc Crafting.Craft uses edi ecx esi ebx, pCrafting, Size
+     locals
+       prevSize dd ?
+     endl
+     
+     mov    eax, [Size]
+     mov    [prevSize], eax
+     
      mov    eax, [pCrafting]
      mov    dword[eax], 0
       
      mov    ecx, 0
      dec    dword[Size]
-     mov    edi, Crafts
+     mov    edi, Crafts2x2
 .CheckCrafts:
      xor    edx, edx
      mov    eax, Crafting.SIZE_CELL * Crafting.SIZE_CRAFT
      mul    ecx
-     mov    edi, Crafts
+     mov    edi, Crafts2x2
      add    edi, eax
      mov    ebx, edi
      
@@ -54,36 +61,33 @@ proc Crafting.Craft uses edi ecx esi ebx, pCrafting, Size
      mov    ax, word[ebx+2]
      mov    [edi+2], ax
      
-     ;stdcall Crafting.DecCraft, [pCrafting], [Size]
+     ; stdcall Crafting.DecCraft, [pCrafting], [prevSize]
      
      jmp    .Finish
 .Continue:
      inc    ecx
-     cmp    ecx, Crafting.NUM_CRAFTS
+     cmp    ecx, Crafting.NUM_CRAFTS2x2
      jl .CheckCrafts
 
 .Finish:
      ret
 endp
 
-
-proc Crafting.DecCraft uses edi eax ecx, pCrafting, Size
+; input - pointer to craft array
+; size  - size of array
+;
+proc Crafting.DecCraft uses edx edx eax ecx, pCrafting, Size
      mov    edi, [pCrafting]
-     mov    ecx, [Size]
-     add    edi, ecx
-.Clear:
-     cmp    word[edi+2], 0
-     jle    .Continue
-     cmp    word[edi+2], 1
-     jnz    @F
-     mov    dword[edi], 0
-@@:     
-     dec    word[edi+2]
+     add    edi, 4
+     mov    eax, [Size]
+     mov    ecx, 2
+     xor    edx, edx
+     mul    eax
      
-.Continue:
-     sub    edi, 4
-     loop   .Clear
+     xchg   eax, ecx     
      
+     mov    ax, 0
+     rep    stosw
 .Finish:
      ret
 endp

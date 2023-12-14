@@ -141,10 +141,6 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         stdcall ui_drag_end, WindowRect, [Inventory],\      ;9x4
                                          [SmallCraft],\     ;2x2 + 1
                                          [BigCraft]         ;3x3 + 1
-                                         
-        ;
-        stdcall Crafting.Craft, [SmallCraft], 5
-        ;
         jmp     .ReturnZero
  
   .Destroy:
