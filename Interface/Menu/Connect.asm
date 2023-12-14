@@ -9,13 +9,13 @@ proc ui_renderMenuConnect, WindowRect
   stdcall gf_2D_Render_Start 
   ;############################################################################
     stdcall ui_render_input, [WindowRect], -0.4, 0.2, 0.8, 0.15,     10, \
-                                          tcp_port_text, [tcp_port_text_len]
+                             tcp_port_text, [tcp_port_text_len], ConnectionTcpPort_input
                                           
     stdcall ui_render_input, [WindowRect], -0.4, -0.0, 0.8, 0.15,     11, \
-                                          udp_port_text, [udp_port_text_len]
+                             udp_port_text, [udp_port_text_len], ConnectionUdpPort_input 
                                           
     stdcall ui_render_input, [WindowRect], -0.4, -0.2, 0.8, 0.15,     12, \
-                                          input_ip_text, [input_ip_text_len]
+                             input_ip_text, [input_ip_text_len], ConnectionIP_input
   ;############################################################################
   
     stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.2,      2, CONNECT_text, 7
@@ -38,10 +38,15 @@ proc ui_renderMenuConnect, WindowRect
 endp
 
 
-proc ui_MenuConnectController, WindowRect 
+proc ui_MenuConnectController, WindowRect
+  mov [CurFocus], 0
+ 
   switch  [Selected_ButtonId]
   case    .Connect,       2
   case    .Exit,          3
+  case    .IpFocus,       12
+  case    .UdpFocus,      11
+  case    .TcpFocus,      10
   jmp     .Return
   
   .Connect:
@@ -49,7 +54,38 @@ proc ui_MenuConnectController, WindowRect
   jmp .Return   
   .Exit:
     mov [CUR_MENU], UI_MAIN_MENU
-  jmp .Return    
+  jmp .Return 
+  .IpFocus:
+     mov [CurFocus], 12
+  jmp .Return 
+  .UdpFocus:
+     mov [CurFocus], 11
+  jmp .Return  
+  .TcpFocus:
+     mov [CurFocus], 10
+  jmp .Return   
+  
+  .Return:
+  ret
+endp
+
+
+proc ui_ConnectInputController, wParam
+  switch  [CurFocus]
+  case    .IpFocus,       12
+  case    .UdpFocus,      11
+  case    .TcpFocus,      10
+  jmp     .Return
+  
+  .IpFocus:
+     stdcall AddLetterToInput, ConnectionIP_input, [wParam], 1, 1
+  jmp .Return 
+  .UdpFocus:
+     stdcall AddLetterToInput, ConnectionUdpPort_input, [wParam], 0, 1
+  jmp .Return  
+  .TcpFocus:
+     stdcall AddLetterToInput, ConnectionTcpPort_input, [wParam], 0, 1
+  jmp .Return 
   
   .Return:
   ret

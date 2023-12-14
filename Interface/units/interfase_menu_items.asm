@@ -325,7 +325,7 @@ endp
 
 
 
-proc ui_render_input uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
+proc ui_render_input uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen, outData
   locals 
     n_30     dd    30.0
     n_TEXT   dd    25.0
@@ -342,7 +342,14 @@ proc ui_render_input uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
     textX       dd  ?
   endl
   
+  mov esi, [outData]
+  cmp byte[esi], 0
+  jnz .RenderNewtext
+  
   cmp [textLen], 0
+  jz .SkipText
+  mov eax, [id]
+  cmp [CurFocus], eax
   jz .SkipText
         fld [s_y]
         fdiv [n_TEXT]
@@ -351,17 +358,46 @@ proc ui_render_input uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
         mov [textWidth], eax
         mov [textHeight], ecx  
     
-      fld [x]
-      fld [s_x]
-      fsub [textWidth]
-      fdiv [n_TEXT]
-      faddp
-      fstp [textX]
-      
-      
+        fld [x]
+        fld [s_x]
+        fsub [textWidth]
+        fdiv [n_TEXT]
+        faddp
+        fstp [textX]
+    
       invoke glColor3f, 0.4, 0.4, 0.4
       stdcall ui_draw_text, [WindowRect], [text], [textLen], [textX], [y], [textSize]
   .SkipText:
+  
+  mov eax, [id]
+  cmp [CurFocus], eax
+  jnz .SkipFocusOut 
+        .RenderNewtext:
+        mov esi, [outData]
+        movzx eax, byte[esi]
+        cmp eax, 0
+        jz .SkipFocusOut
+        
+        fld [s_y]
+        fdiv [n_TEXT]
+        fstp [textSize]
+        stdcall ui_getTextSizes, [WindowRect], eax, [textSize]
+        mov [textWidth], eax
+        mov [textHeight], ecx  
+    
+        fld [x]
+        fld [s_x]
+        fsub [textWidth]
+        fdiv [n_TEXT]
+        faddp
+        fstp [textX]
+    
+      invoke glColor3f, 0.7, 0.7, 0.7
+      mov esi, [outData]
+      movzx eax, byte[esi]
+      inc esi
+      stdcall ui_draw_text, [WindowRect], esi, eax, [textX], [y], [textSize]
+  .SkipFocusOut:
   
   
   
@@ -374,8 +410,12 @@ proc ui_render_input uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
   @@:
   
   invoke glColor4f, 0.33, 0.33, 0.33, 1.0
+  mov eax, [id]
+  cmp [CurFocus], eax
+  jz .inFocus
   cmp [isIn], 1
   jnz @F
+    .inFocus:
     invoke glColor4f, 0.55, 0.55, 0.55, 1.0
   @@:
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y]
@@ -431,5 +471,83 @@ proc ui_render_input uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
   invoke glColor4f, 0.0, 0.0, 0.0, 1.0
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y] 
  
+  ret
+endp
+
+
+proc AddLetterToInput uses esi edi, input, Letter, AllowLetters, AllowNums 
+
+  mov esi, [input]
+  movzx eax, byte[esi]
+  inc esi
+  add esi, eax
+  ;esi - new letter adress
+  
+  
+  cmp [Letter], VK_BACK
+  jnz @F 
+     mov esi, [input]
+     cmp byte[esi], 0
+     jz .Return
+     dec byte[esi]
+     jmp .Return
+  @@:
+  
+  push esi
+  mov esi, [input]
+  cmp byte[esi], 15
+  pop esi
+  jz .Return   
+  
+  cmp [Letter], 'A'
+  jl @F
+  cmp [Letter], 'Z'
+  jg @F
+  cmp [AllowNums], 1
+  jnz @F     
+     invoke GetKeyState, VK_SHIFT
+     cmp eax, 0
+     jz .LowLetters
+       mov al, byte[Letter]
+       mov byte[esi], al
+       mov esi, [input]
+       inc byte[esi]
+       jmp .Return  
+     .LowLetters:
+       mov al, byte[Letter]
+       sub al, 'A'
+       add al, 'a'
+       mov byte[esi], al
+       mov esi, [input]
+       inc byte[esi]
+       jmp .Return
+  @@:
+  
+  cmp [Letter], 0xBE
+  jnz @F
+  cmp [AllowLetters], 1
+  jnz @F
+     mov byte[esi], '.'
+     mov esi, [input]
+     inc byte[esi]
+     jmp .Return  
+  @@:
+  
+  cmp [Letter], '0'
+  jl @F
+  cmp [Letter], '9'
+  jg @F
+  cmp [AllowNums], 1
+  jnz @F
+     mov al, byte[Letter]
+     mov byte[esi], al
+     mov esi, [input]
+     inc byte[esi]
+     jmp .Return  
+  @@:
+  
+  jmp .Return
+  
+  .Return:
   ret
 endp

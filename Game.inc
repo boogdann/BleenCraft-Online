@@ -36,17 +36,6 @@ BigCraft            dd    ?
 SMALL_CRAFT_SIZE    =     5
 BIG_CRAFT_SIZE      =     10
 
-    ; 0     1     2     3      4
-    ; SmallCraft array example   positions:     
-    ; ======= =======
-    ; =  1  = =  2  =
-    ; =     = =     =         =======
-    ; ======= =======  === >  =  0  =
-    ; ======= =======  === >  =     =
-    ; =  3  = =  4  =         =======
-    ; =     = =     = 
-    ; ======= =======
-                        
 ;=======================================
 ServerIp         db       "127.0.0.1", 0
 ServerPortUDP    dd       9999
@@ -90,6 +79,26 @@ currentNumOfHearts    dd 10
 
 ;=========== UI data ========================
 UI_MODE            dd        UI_GAME
+                     
+bigBag_arr_example dw  1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0,\
+                       1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0,\
+                       1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0,\
+                       1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0   
+                       
+workbench_craf_arr_example  dw   1,1,  0,0,  5,1,  0,0,  10,1,  260,1,  13,1,  0,0,   0,0,   0,0           
+                       
+                       
+bigBag_craft_arr_example  dw   0,0,  1,1,  1,1,  1,1,  1,1
+                              ; 0     1     2     3      4
+               ;       bigBag_craft_arr_example   positions:     
+                        ; ======= =======
+                        ; =  1  = =  2  =
+                        ; =     = =     =         =======
+                        ; ======= =======         =  0  =
+                        ; ======= =======  === >  =     =
+                        ; =  3  = =  4  =         =======
+                        ; =     = =     = 
+                        ; ======= =======
 ;==============================================
 
 ;========== Other ========================
@@ -106,10 +115,9 @@ Respawn_text     db        'Respawn'
 IsPlayerDied     dd        0
 
 
-ConnectionIP_input       db   20   dup  (?)
-ConnectionGroop_input    db   20   dup  (?)
-ConnectionUdpPort_input  db   20   dup  (?)
-ConnectionTcpPort_input  db   20   dup  (?)
+ConnectionIP_input       db   0, 20   dup  (?)
+ConnectionUdpPort_input  db   0, 20   dup  (?)
+ConnectionTcpPort_input  db   0, 20   dup  (?)
 ;===========================================
 
 

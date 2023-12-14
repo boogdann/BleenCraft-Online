@@ -104,7 +104,9 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         cmp [App_Mode], GAME_MODE
         jnz @F
           stdcall ct_on_keyDown, [wParam] 
+          jmp     .ReturnZero
         @@:
+        stdcall ui_on_keyDown, [wParam]
         jmp     .ReturnZero
   .MouseDown:
         switch  [App_Mode]
@@ -141,6 +143,10 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         stdcall ui_drag_end, WindowRect, [Inventory],\      ;9x4
                                          [SmallCraft],\     ;2x2 + 1
                                          [BigCraft]         ;3x3 + 1
+                                         
+        ;
+        stdcall Crafting.Craft, [SmallCraft], 5
+        ;
         jmp     .ReturnZero
  
   .Destroy:

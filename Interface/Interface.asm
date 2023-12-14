@@ -93,6 +93,29 @@ proc ui_onClick, WindowRect
   jmp .Return
   
   .Return:
+  ret
+endp
 
+proc ui_on_keyDown, wParam
+  switch  [CUR_MENU]
+  case    .UI_main,         UI_MAIN_MENU       
+  case    .UI_create,       UI_CREATE_MENU 
+  case    .UI_connect,      UI_CONNECT_MENU 
+  case    .UI_settings,     UI_SETTINGS_MENU
+  
+  .UI_main:
+    ;
+  jmp .Return  
+  .UI_create:
+    ;
+  jmp .Return
+  .UI_connect:
+    stdcall ui_ConnectInputController, [wParam]
+  jmp .Return
+  .UI_settings:
+    ;
+  jmp .Return
+  
+  .Return:
   ret
 endp
