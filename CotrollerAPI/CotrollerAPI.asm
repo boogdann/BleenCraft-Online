@@ -25,6 +25,7 @@ proc ct_move_check, playerPos, playerTurn,\
   stdcall hpRegeneration
   stdcall pickBlock
   stdcall blockCollisions
+  stdcall thrownBlocksPhysics
   stdcall getCurrentBlock, [currentChosenCell]
   ret
 endp    

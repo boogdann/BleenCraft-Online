@@ -38,7 +38,6 @@ proc ct_fall_check, playerPos, Field, X, Y
   sub eax, [prevTime]
   mov [fallTime], eax
   
-  
   mov ecx, [MIN_TICKS_COUNT]
   cmp [fallTime], ecx
   jl .Skip

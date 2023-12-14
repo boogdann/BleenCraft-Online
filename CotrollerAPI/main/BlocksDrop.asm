@@ -36,11 +36,13 @@ proc addBlockToArray, blockPos
       mov eax, [ct_block_index]
       mov dword[esi + ebx + 20], eax 
       
+      mov dword[esi + ebx + 24], 5
+      
       jmp .finish 
       
     @@:
     
-    add ebx, 24
+    add ebx, 40
     inc ecx
     
   cmp ecx, 20
@@ -87,7 +89,7 @@ proc renderDestroyedBlocks
           
         @@:
         
-        add ebx, 24
+        add ebx, 40
         inc ecx
         
     cmp ecx, 20
@@ -150,7 +152,7 @@ proc pickBlock
         
         .dont_pick:
         
-        add ebx, 24
+        add ebx, 40
         inc ecx
         
     cmp ecx, 20
@@ -218,18 +220,191 @@ proc blockCollisions
                 fld dword[esi + ebx + 4]
                 fsub [dropVector]
                 fstp dword[esi + ebx + 4]
+                
+                cmp dword[esi + ebx + 24], 1
+                jne .skip
+                  mov dword[esi + ebx + 28], 0
+                
+                jmp .skip
             @@:
             
+            cmp dword[esi + ebx + 24], 1
+            jne .skip 
+              mov dword[esi + ebx + 28], 1
         
         .skip:
         
-        add ebx, 24
+        add ebx, 40
         inc ecx
         
     cmp ecx, 20
     jle .zaloop
   
 
+  ret
+endp
+
+proc thrownBlocksPhysics
+  
+  locals
+
+    blockPos dd 0.0, 0.0, 0.0
+    tempXOffset dd 0.025
+    
+    PiDegree dd 180.0
+    
+    a dd 0.0
+    b dd 0.0
+    
+    currentTime dd 0
+    
+  endl
+  
+  mov ecx, 0
+  mov ebx, 0
+  
+  mov esi, [arrayOfDroppedBlocks]
+  
+    .zaloop:
+  
+        cmp dword[esi + ebx + 16], 1
+        jne .skip  
+        
+            cmp  dword[esi + ebx + 24], 1
+            jne .skip
+            
+            cmp dword[esi + ebx + 28], 0
+            jne .skip
+                
+                fld dword[esi + ebx]
+                fld dword[esi + ebx + 32]
+                fcos
+                fld dword[esi + ebx + 36]
+                fsin
+                fmulp
+                fmul [tempXOffset]
+                fsubp
+                fstp dword[esi + ebx]
+                fld dword[esi + ebx + 8]
+                fld dword[esi + ebx + 32]
+                fcos
+                fld dword[esi + ebx + 36]
+                fcos
+                fmulp
+                fmul [tempXOffset]
+                faddp
+                fstp dword[esi + ebx + 8]
+            
+        .skip:
+        
+        add ebx, 40
+        inc ecx
+        
+    cmp ecx, 20
+    jle .zaloop
+    
+    .finish:
+
+  ret  
+endp
+
+proc throwBlock
+
+  locals
+  
+    blockPos dd 0.0, 0.0, 0.0
+    tempHeight dd 0.4
+    tempXOffset dd 1.0
+    
+    PiDegree dd 180.0
+    
+    a dd 0.0
+    b dd 0.0
+    
+  endl
+  
+  fldpi
+  fmul [PlayerTurn]
+  fdiv [PiDegree]
+  fstp [a]
+  
+  fldpi
+  fmul [PlayerTurn + 4] 
+  fdiv [PiDegree] 
+  fstp [b]
+  
+  mov esi, [arrayOfDroppedBlocks]  
+  
+  cmp [chosenBlockFromInv], 0
+  je .finish
+  
+  fld [PlayerPos]
+  fld [a]
+  fcos
+  fld [b]
+  fsin
+  fmulp
+  fmul [tempXOffset]
+  fsubp
+  fstp [blockPos]
+  fld [PlayerPos + 4]
+  fsub [tempHeight]
+  fstp [blockPos + 4]
+  fld [PlayerPos + 8]
+  fld [a]
+  fcos
+  fld [b]
+  fcos
+  fmulp
+  fmul [tempXOffset]
+  faddp
+  fstp [blockPos + 8]
+  
+  mov ebx, 0
+  mov ecx, 0
+  
+  .zaloop:
+  
+        cmp dword[esi + ebx + 16], 0
+        jne .skip  
+        
+            fld [blockPos]
+            fstp dword[esi + ebx]
+            fld [blockPos + 4]
+            fstp dword[esi + ebx + 4]
+            fld [blockPos + 8]
+            fstp dword[esi + ebx + 8]
+            
+            mov edi, [chosenBlockFromInv]
+            dec edi
+            imul edi, 4
+            add edi, TextureHandles
+
+            mov dword[esi + ebx + 12], edi
+            
+            mov dword[esi + ebx + 16], 1 
+            
+            mov eax, [chosenBlockFromInv]
+            mov dword[esi + ebx + 20], eax 
+            
+            mov dword[esi + ebx + 24], 1  
+            
+            fld [a]
+            fstp dword[esi + ebx + 32]
+            fld [b]
+            fstp dword[esi + ebx + 36]
+          
+            jmp .finish
+        .skip:
+        
+        add ebx, 40
+        inc ecx
+        
+    cmp ecx, 20
+    jle .zaloop
+  
+    .finish:
+  
   ret
 endp
 
@@ -261,9 +436,11 @@ endp
 
 proc initializeDestrBlocksHeap
 
+  ;Структура: x, y, z, текстура , место занято?, можно ломать?, Бросили?, Упал?
+
   invoke  GetProcessHeap
   mov     [destrHeap], eax    
-  mov     ecx, 120         
+  mov     ecx, 200         
   mov     eax, ecx
   shl     eax, 2     
   invoke  GlobalAlloc, GPTR, eax 

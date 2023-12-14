@@ -33,6 +33,14 @@
   @@:
   
   stdcall highlightCurrentCell, [wParam]
+  
+  cmp [wParam], $51
+  jnz @F
+        mov eax, 27
+        add eax, [currentChosenCell] 
+        stdcall Inventory.DecCell, eax
+        stdcall throwBlock
+  @@:
    
   ;... Другие клавиши
   
