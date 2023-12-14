@@ -114,6 +114,17 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
             stdcall ui_onClick, WindowRect
             jmp .ReturnZero
         .GameController:
+            cmp [IsPlayerDied], 1
+            jnz .SkipDiedScreen
+               cmp [Selected_ButtonId], 1
+               jnz .SkipRespawn
+                  mov [currentNumOfHearts], 10
+                  mov [IsPlayerDied], 0
+                  stdcall Field.GenerateSpawnPoint, PlayerPos
+                  stdcall ct_change_mouse, 0
+               .SkipRespawn:
+               jmp     .ReturnZero
+            .SkipDiedScreen:
             switch  [UI_MODE]
             case    .EscMenuController,    UI_ESC_MENU            
             .UIGameController:

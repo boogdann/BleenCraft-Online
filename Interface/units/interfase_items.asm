@@ -912,8 +912,12 @@ proc ui_render_heart uses esi, WindowRect, x, y, isHealth
   ret
 endp
 
-proc ui_renderShadowEffect
-    invoke glColor4f, 0.0, 0.0, 0.0, 0.4
+proc ui_renderShadowEffect, kostil
+    invoke glColor4f, 0.8, 0.0, 0.0, 0.4
+    cmp [kostil], 1
+    jz @F
+      invoke glColor4f, 0.0, 0.0, 0.0, 0.4
+    @@:
     stdcall ui_draw_rectangle, -1.0, -1.0, 2.0, 2.0
   ret
 endp

@@ -217,7 +217,9 @@ endp
 proc gf_render_LableItem
   locals
     add_turn  dd   0.1
-    mul_tmp   dd   10.0
+    mul_tmp   dd   5.0
+    
+    n_90      dd   -90.0
   endl
 
 
@@ -232,9 +234,14 @@ proc gf_render_LableItem
   stdcall gf_MatrixMultiply, gf_view_matrix, gf_projection_matrix, gf_pr_view_matrix
   invoke glUniform3fv, [gf_CameraPos], 1, ZERO_VEC_3
   
+  fld [n_90]
+  fstp [PLAYER_ITEM_TURN + 4]
   ;=================
-  stdcall gf_renderObj3D, obj.Player.Body.Handle, [tx.Player.Handle], 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.004, 0
+  stdcall gf_renderObj3D, obj.Label.Handle, [gf_block.GoldOre], 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.006, 0
   ;=================
+  
+  fldz
+  fstp [PLAYER_ITEM_TURN + 4]
   
   fld [LABLE_ITEM_TURN]
   fadd [add_turn]

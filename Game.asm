@@ -101,6 +101,21 @@ proc RenderScene
     jnz .SkipUI
     stdcall gf_2D_Render_Start
     
+        ;Died screen
+        cmp [currentNumOfHearts], 0
+        jnz @F
+          mov [IsPlayerDied], 1
+        @@:
+        cmp [IsPlayerDied], 1
+        jnz @F  
+          mov [currentNumOfHearts], 0
+          stdcall ct_change_mouse, 1
+          invoke glColor3f, 1.0, 1.0, 1.0
+          stdcall ui_draw_text, WindowRect, died_text, [died_text_len], -0.3, 0.1, 0.01
+          stdcall ui_drawButton, WindowRect, -0.3, -0.15, 0.6, 0.15, 1, Respawn_text, 7
+          stdcall ui_renderShadowEffect, 1
+        @@:
+    
         ;mov [UI_MODE], UI_MAINBAG
         
         switch  [UI_MODE]
@@ -121,14 +136,14 @@ proc RenderScene
         .UI_pWorkBench:
           stdcall ui_draw_drag, WindowRect
           stdcall ui_renderWorkBench, WindowRect, [Inventory], [BigCraft]
-          stdcall ui_renderShadowEffect
+          stdcall ui_renderShadowEffect, 0
           jmp .UI_RenderEnd
         .UI_pMainBag:
           stdcall ui_draw_drag, WindowRect
           ;36 elements in main bag required!!! 
           ;last 9 elm-s from mini bag!!!
           stdcall ui_renderBigBag, WindowRect, [Inventory], [SmallCraft]
-          stdcall ui_renderShadowEffect
+          stdcall ui_renderShadowEffect, 0
           jmp .UI_RenderEnd
         .UI_pESCMenu:
           stdcall ui_renderMenuSettings, WindowRect

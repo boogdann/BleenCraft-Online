@@ -107,6 +107,13 @@ ZERO_VEC_3       dd        0.0, 0.0, 0.0
 
 blocksTurn       dd        0.0, 0.0, 0.0
 
+;========= Interface ======================
+died_text        db        'You Died...'
+died_text_len    dd        $ - died_text
+
+Respawn_text     db        'Respawn'
+IsPlayerDied     dd        0
+;===========================================
 
 
 
