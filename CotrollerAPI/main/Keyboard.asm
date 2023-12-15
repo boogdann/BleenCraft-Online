@@ -3,6 +3,16 @@
   ;Esc
   cmp [wParam], VK_ESCAPE
   jnz @F
+     
+     cmp [workBench_opened], 1
+     jne .menuOpened
+        mov [dont_open_workbench], 0
+        mov [UI_MODE], UI_GAME
+        stdcall ct_change_mouse, 0
+        mov [workBench_opened], 0
+        jmp .final   
+     .menuOpened:
+     
      cmp [ct_is_mouse], 1
      jz .hide
        mov [UI_MODE], UI_ESC_MENU    
@@ -142,7 +152,7 @@ proc ct_check_moves, CameraPos, CameraTurn
      jmp .lmb_pressed
      
   @@:
-  
+          
   mov [skip_destroying], 1
   
   .lmb_pressed:
@@ -151,7 +161,24 @@ proc ct_check_moves, CameraPos, CameraTurn
   invoke GetAsyncKeyState, $02
   cmp eax, 0
   jz @F
-          
+     
+     stdcall Inventory.SetCell, 1, Block.CraftingTable, 1
+      
+     cmp [workBench_opened], 1
+     je .Skip
+     
+     cmp [ct_block_index], Block.CraftingTable
+     jne  .build_common_block 
+        cmp [WorkBenchBuilded], 0
+          jne .build_common_block
+          mov [UI_MODE], UI_WORKBENCH
+          mov [workBench_opened], 1
+          stdcall ct_change_mouse, 1
+          jmp .rbm_pressed
+     .build_common_block: 
+     
+     mov [WorkBenchBuilded], 0
+     
      cmp [flag], 1
      jne .skipBuilding
         

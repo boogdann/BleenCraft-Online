@@ -388,6 +388,11 @@ proc ct_build_block, prevCubePos
   cmp [build_is_prohibited], 1
   je @F
      
+     cmp [chosenBlockFromInv], Block.CraftingTable
+     jne .notTable
+          mov [WorkBenchBuilded], 1
+     .notTable:
+     
      cmp [chosenBlockFromInv], 0
      je .finish
         

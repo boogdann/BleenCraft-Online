@@ -87,6 +87,7 @@ proc RenderScene
       stdcall gf_RenderSelectObj3D, selectCubeData, 1.0
     @@:      
     
+     
     cmp [UI_MODE], UI_ESC_MENU
     jz .SkipRenderGameItems
       cmp [chosenBlockFromInv], 0
