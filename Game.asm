@@ -38,7 +38,8 @@ proc GameStart
   stdcall Field.GenerateClouds, ecx, filenameSky
   stdcall Field.SetCloudValues, SkyLand, SkyLength, SkyWidth 
   
-  ;stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]            
+  ;stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]    
+  ;stdcall Client.GetWorld, Field.Blocks, WorldLength, WorldWidth, WorldHeight                    
   ;=================================================
   
   ;Position initialize

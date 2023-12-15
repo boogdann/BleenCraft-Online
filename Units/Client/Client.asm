@@ -61,7 +61,7 @@ proc Client.SendWorld uses edx ecx ebx edi, pWorld, SizeX, SizeY, SizeZ
      stdcall Client.GetMessage, [Client.MSGStartSendWorld], Client.Secret, [Client.SizeSecret], \
                                 [Client.GroupID], [Client.Number], [buffer], 0, [msgAddr] 
                                 
-     stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], [msgAddr], eax
+     stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], [msgAddr], Client.HEADER_SIZE 
 
      mov     edi, [written]
 .SendWorld: 
@@ -142,12 +142,15 @@ proc Client.GetWorld uses edx edi esi, pWorld, pSizeX, pSizeY, pSizeZ
      mov     edi, [buffer]
      mov     ebx, 0     
 .GetWorld:
-     push    edi ecx
-     stdcall ws_socket_get_msg_tcp, [Client.hTCPSock], [msgAddr], [sizeMsg]
-     pop     ecx edi
+     stdcall Client.GetNumberOfBytesTCP, [Client.hTCPSock], [msgAddr], [sizeMsg]
      
      xchg    eax, ecx
      stdcall Client.GetType, [msgAddr], eax
+
+     cmp     eax, [Client.MSGEndSendWorld]
+     jnz     @F
+     mov     ebx, ebx
+@@:
      
      cmp     eax, [Client.MSGEndSendWorld]
      jz      .EndSendWorld
@@ -171,6 +174,33 @@ proc Client.GetWorld uses edx edi esi, pWorld, pSizeX, pSizeY, pSizeZ
      jmp .GetWorld
 .EndSendWorld:
      stdcall Client.UnmarshalWorld, [buffer], ebx, [pWorld], [pSizeX], [pSizeY], [pSizeZ]
+.Finish:
+     ret
+endp
+
+proc Client.GetNumberOfBytesTCP uses edx ecx edi esi ebx, hSock, msgAddr, sizeMsg
+     locals
+         recievedBytes  dd   0
+         addres         dd   ?
+     endl
+
+     mov     ebx, [msgAddr]
+     mov     [addres],  ebx
+.GetMsg:
+     
+     mov     eax, [recievedBytes]
+     mov     ebx, [sizeMsg]
+     sub     ebx, eax
+     
+     add     [msgAddr], eax
+     
+     cmp     ebx, 0
+     jle     .Finish
+         
+     stdcall ws_socket_get_msg_tcp, [Client.hTCPSock], [msgAddr], [sizeMsg]
+     add     [recievedBytes], eax
+     jmp     .GetMsg
+     
 .Finish:
      ret
 endp

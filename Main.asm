@@ -43,12 +43,12 @@ Start:
   ;================================================  
   
   ;==== Start settings ======  
-  ;mov [App_Mode], GAME_MODE
-  ;stdcall GameStart 
+  mov [App_Mode], GAME_MODE
+  stdcall GameStart 
   
   
-  mov [App_Mode], MENU_MODE
-  stdcall ui_InterfaceInit
+  ;mov [App_Mode], MENU_MODE
+  ;stdcall ui_InterfaceInit
   
   ;========================== 
   
