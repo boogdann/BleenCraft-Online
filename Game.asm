@@ -14,6 +14,7 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;mov [UI_MODE], CONST
 
 proc GameStart
+  stdcall Blocks.GetDestroyTime,1,1
   stdcall Field.GetAllWorlds, FileNames
   mov     [FileCount], ecx
 
@@ -21,10 +22,10 @@ proc GameStart
 
   stdcall Inventory.Initialize, Inventory, InventorySize
   
-  stdcall Inventory.SetCell, 1, 1, 1
-  stdcall Inventory.SetCell, 2, 1, 1
-  stdcall Inventory.SetCell, 3, 1, 1
-  stdcall Inventory.SetCell, 4, 1, 1
+  stdcall Inventory.SetCell, 1, 1, 60
+  stdcall Inventory.SetCell, 2, 23, 60
+  stdcall Inventory.SetCell, 3, 4, 60
+  stdcall Inventory.SetCell, 4, 2, 60
   
   stdcall Crafting.Initialize, SmallCraft, BigCraft
   
@@ -95,7 +96,7 @@ proc RenderScene
           stdcall anim_RightHand, PlayerPos, PlayerTurn
           jmp .animate  
       @@:
-          stdcall anim_blockInHand, PlayerPos, PlayerTurn
+          stdcall anim_RightHand, PlayerPos, PlayerTurn
     cmp [App_Mode], GAME_MODE
     jnz .SkipRenderGameItems
       

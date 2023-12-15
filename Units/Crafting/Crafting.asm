@@ -5,7 +5,7 @@ proc Crafting.Initialize uses edi ecx ebx, pSmall, pBig
      mov    edi, [pSmall]
      mov    dword[edi], eax
      
-     invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, Crafting.SMALL_SIZE * Crafting.SIZE_CELL  
+     invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, Crafting.BIG_SIZE * Crafting.SIZE_CELL  
      mov    edi, [pBig]
      mov    dword[edi], eax     
      
@@ -18,6 +18,25 @@ proc Crafting.Craft uses edi ecx esi ebx, pCrafting, Size
        prevSize dd ?
      endl
      
+     cmp    dword[Size], 5
+     jnz    @F
+     stdcall Crafting.CraftFull, [pCrafting], [Size], Crafts2x2, Crafting.SIZE_CELL * Crafting.SIZE_SMALL_CRAFT, Crafting.NUM_CRAFTS2x2
+@@:
+    cmp     dword[Size], 10
+    jnz     @F
+    stdcall Crafting.CraftFull, [pCrafting], [Size], Crafts3x3, Crafting.SIZE_CELL * Crafting.SIZE_BIG_CRAFT, Crafting.NUM_CRAFTS3x3
+@@:
+    mov     eax, -1
+     
+.Finish:
+     ret
+endp
+
+proc Crafting.CraftFull uses edi ecx esi ebx, pCrafting, Size, StartCrafts, SizeLine, NumCrafts
+     locals
+         prevSize dd ?
+     endl
+     
      mov    eax, [Size]
      mov    [prevSize], eax
      
@@ -26,12 +45,12 @@ proc Crafting.Craft uses edi ecx esi ebx, pCrafting, Size
       
      mov    ecx, 0
      dec    dword[Size]
-     mov    edi, Crafts2x2
+     mov    edi, [StartCrafts]
 .CheckCrafts:
      xor    edx, edx
-     mov    eax, Crafting.SIZE_CELL * Crafting.SIZE_SMALL_CRAFT
+     mov    eax, [SizeLine]
      mul    ecx
-     mov    edi, Crafts2x2
+     mov    edi, [StartCrafts]
      add    edi, eax
      mov    ebx, edi
      
@@ -61,17 +80,14 @@ proc Crafting.Craft uses edi ecx esi ebx, pCrafting, Size
      mov    ax, word[ebx+2]
      mov    [edi+2], ax
      
-     ; stdcall Crafting.DecCraft, [pCrafting], [prevSize]
-     
      jmp    .Finish
 .Continue:
      inc    ecx
-     cmp    ecx, Crafting.NUM_CRAFTS2x2
+     cmp    ecx, [NumCrafts]
      jl .CheckCrafts
-
 .Finish:
      ret
-endp
+endp 
 
 ; input - pointer to craft array
 ; size  - size of array
