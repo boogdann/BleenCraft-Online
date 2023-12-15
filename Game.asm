@@ -53,9 +53,12 @@ proc GameStart
   mov [DAYLY_SPEED], 10
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
+  
+  ;YOU CAN EDIT START VALUE TO "RENDER_RADIUS" in /Game.inc file
   ;Set radius of block rendering       (x,  y,  z)
   stdcall Set_GF_RENDER_BLOCKS_RADIUS,  [RENDER_RADIUS], [RENDER_RADIUS], [RENDER_RADIUS]
   ;SerRenderRadiusText!!!
+  stdcall SetNumInInput, [RENDER_RADIUS], RenderRadius_input
   ;===========================================================
   
   ;========== Controller params ==========

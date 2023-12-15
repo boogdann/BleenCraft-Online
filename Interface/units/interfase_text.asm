@@ -183,3 +183,64 @@ proc ui_draw_letter uses esi edi, WindowRect, LetterArr, LetterIndex, Size, X, Y
   
   ret
 endp
+
+proc SetNumInInput uses esi edi eax, num, input
+  locals
+    count   dd   0
+  endl        
+           
+  mov ecx, 10
+  mov edi, [input]
+  mov eax, [num]
+
+  .len_loop:
+    xor edx, edx
+    div ecx
+    inc [count]
+    test eax, eax
+    jnz .len_loop
+    
+  mov edi, [input]
+  mov eax, [num]
+  add edi, [count]
+  inc edi
+  .convert_loop:
+    xor edx, edx
+    div ecx
+    add dl, '0'
+    dec edi
+    mov [edi], dl
+    inc [count]
+    test eax, eax
+    jnz .convert_loop
+    
+  mov eax, [count]
+  mov edi, [input]
+  mov byte[edi], al
+
+  
+  
+  ret
+endp
+
+proc GetNumFromInput uses esi edi ecx edx, input 
+  mov esi, [input]
+  movzx ecx, byte[esi] 
+  inc esi
+  xor eax, eax 
+  
+  cmp ecx, 0
+  jz .Return
+  .convert_loop:
+    movzx edx, byte[esi] 
+    sub edx, '0'          
+    imul eax, 10        
+    add eax, edx         
+
+    inc esi             
+    dec ecx       
+  jnz .convert_loop 
+    
+  .Return:
+  ret
+endp

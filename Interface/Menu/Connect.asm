@@ -111,10 +111,14 @@ proc ui_ConnectInputController, wParam
      stdcall AddLetterToInput, ConnectionIP_input, [wParam], 1, 1
   jmp .Return 
   .UdpFocus:
+     mov [MAX_LEN_INPUT], 5
      stdcall AddLetterToInput, ConnectionUdpPort_input, [wParam], 0, 1
+     mov [MAX_LEN_INPUT], 15
   jmp .Return  
   .TcpFocus:
+     mov [MAX_LEN_INPUT], 5
      stdcall AddLetterToInput, ConnectionTcpPort_input, [wParam], 0, 1
+     mov [MAX_LEN_INPUT], 15
   jmp .Return 
   
   .Return:

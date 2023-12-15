@@ -116,7 +116,7 @@ IsPlayerDied     dd        0
 
 set_radius_text  db        'Set the render radius'
 set_radius_text_len dd     $ - set_radius_text
-RenderRadius_input  db   1,  '0', 19   dup  (?)
+RenderRadius_input  db   0,  20   dup  (?)
 
 
 ConnectionIP_input       db   0, 20   dup  (?)
