@@ -81,6 +81,7 @@ proc ui_MenuSettingsController, WindowRect
   .Exit:
     mov [UI_MODE], UI_GAME
     mov [App_Mode], MENU_MODE
+    mov [UnderWater], 0
     stdcall ui_InterfaceInit
     jmp .Return 
   .Host:

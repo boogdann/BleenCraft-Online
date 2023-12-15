@@ -72,6 +72,8 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         ;The physical module only works in game mode (kastil)
         cmp [App_Mode], GAME_MODE
         jnz @F
+        cmp [UI_MODE], UI_ESC_MENU
+        jz @F
           stdcall ct_move_check, PlayerPos, PlayerTurn,\
                                  [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]  
         @@:   
@@ -107,6 +109,10 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
           cmp [UI_MODE], UI_ESC_MENU
           jnz .SkipMenuEsc
             stdcall ui_EscMenuInputController, [wParam]
+            cmp [wParam], VK_ESCAPE
+            jnz .ReturnZero
+            mov [UI_MODE], UI_GAME
+            stdcall ct_change_mouse, 0
             jmp     .ReturnZero
           .SkipMenuEsc:
           stdcall ct_on_keyDown, [wParam] 
