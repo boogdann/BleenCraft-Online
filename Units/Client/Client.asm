@@ -77,7 +77,6 @@ proc Client.SendWorld uses edx ecx ebx edi, pWorld, SizeX, SizeY, SizeZ
                                 [Client.GroupID], [Client.Number], [buffer], edx, [msgAddr] 
      add     dword[buffer], edx 
      
-     
      mov     esi, [msgAddr]
      add     esi, eax
      
@@ -192,12 +191,18 @@ proc Client.GetNumberOfBytesTCP uses edx ecx edi esi ebx, hSock, msgAddr, sizeMs
      mov     ebx, [sizeMsg]
      sub     ebx, eax
      
-     add     [msgAddr], eax
+     cmp    eax, 0
+     jnl    @F
+     invoke ExitProcess, 1
+@@:
+     
+     mov     edi, [addres]
+     add     edi, eax
      
      cmp     ebx, 0
      jle     .Finish
          
-     stdcall ws_socket_get_msg_tcp, [Client.hTCPSock], [msgAddr], [sizeMsg]
+     stdcall ws_socket_get_msg_tcp, [Client.hTCPSock], edi, ebx 
      add     [recievedBytes], eax
      jmp     .GetMsg
      

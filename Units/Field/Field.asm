@@ -385,7 +385,7 @@ proc Field.GenerateSpawnPoint uses edi, resAddr
     mov    edi, [resAddr]
     mov    [edi], eax
     
-    ;mov    eax, 100.0
+    ;mov    eax, 75.0
     mov    eax, [Field.SpawnPoint+4]
     mov    edi, [resAddr]
     mov    [edi+4], eax

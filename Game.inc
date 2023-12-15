@@ -37,7 +37,7 @@ SMALL_CRAFT_SIZE    =     5
 BIG_CRAFT_SIZE      =     10
 
 ;=======================================
-ServerIp         db       "127.0.0.1", 0
+ServerIp         db       "192.168.43.41", 0
 ServerPortUDP    dd       9999
 ServerPortTCP    dd       10000
 ;=======================================
