@@ -36,12 +36,18 @@ tcp_port_text_len      dd   $ - tcp_port_text
 udp_port_text          db   'udp port..'
 udp_port_text_len      dd   $ - udp_port_text
 
+input_radius_text      db   'radius..'
+input_radius_text_len  dd   $ - input_radius_text
+
 HOST_text db 'Host'
 
 
 start_host_text     db   'Starting multiplayer game'
 start_host_text_len dd   $ - start_host_text
 
+
+MAX_LEN_INPUT      dd  15
+MIN_LEN_INPUT      dd  0
 
 
 

@@ -483,11 +483,11 @@ proc AddLetterToInput uses esi edi, input, Letter, AllowLetters, AllowNums
   add esi, eax
   ;esi - new letter adress
   
-  
   cmp [Letter], VK_BACK
   jnz @F 
      mov esi, [input]
-     cmp byte[esi], 0
+     mov dl, 0
+     cmp byte[esi], dl
      jz .Return
      dec byte[esi]
      jmp .Return
@@ -497,17 +497,25 @@ proc AddLetterToInput uses esi edi, input, Letter, AllowLetters, AllowNums
   mov esi, [input]
   cmp byte[esi], 15
   pop esi
+  jz .Return  
+  
+  mov dl, byte[MAX_LEN_INPUT]
+  push esi
+  mov esi, [input]
+  cmp byte[esi], dl
+  pop esi
   jz .Return   
+  
   
   cmp [Letter], 'A'
   jl @F
   cmp [Letter], 'Z'
   jg @F
-  cmp [AllowNums], 1
+  cmp [AllowLetters], 1
   jnz @F     
      invoke GetKeyState, VK_SHIFT
      cmp eax, 0
-     jz .LowLetters
+     jnz .LowLetters
        mov al, byte[Letter]
        mov byte[esi], al
        mov esi, [input]

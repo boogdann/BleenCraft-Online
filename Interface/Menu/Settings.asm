@@ -51,6 +51,13 @@ proc ui_renderMenuSettings, WindowRect
     .SkipErrorText:
     ;=========================================
     
+    invoke glColor3f, 1.0, 1.0, 1.0
+    stdcall ui_draw_text, [WindowRect], set_radius_text, [set_radius_text_len], -0.4, -0.45, 0.006
+    
+    stdcall ui_render_input, [WindowRect], -0.4, -0.65, 0.8, 0.15,     13, \
+                             input_radius_text, [input_radius_text_len], RenderRadius_input
+    
+    
 
     stdcall ui_drawButton, [WindowRect], 0.45, -0.95, 0.5, 0.15,      2, Continue_text, 8
     stdcall ui_drawButton, [WindowRect], -0.95, -0.95, 0.5, 0.15,     3, Menu_text, 4
@@ -72,16 +79,19 @@ proc ui_MenuSettingsController, WindowRect
   case    .IpFocus,       12
   case    .UdpFocus,      11
   case    .TcpFocus,      10
+  case    .RadiusFocus,   13
   jmp     .Return
   
   .Continue:
     mov [UI_MODE], UI_GAME
+    ;RENDER_RADIUS <-- set
     stdcall ct_change_mouse, 0
   jmp .Return   
   .Exit:
     mov [UI_MODE], UI_GAME
     mov [App_Mode], MENU_MODE
     mov [UnderWater], 0
+    ;RENDER_RADIUS <-- set
     stdcall ui_InterfaceInit
     jmp .Return 
   .Host:
@@ -98,6 +108,8 @@ proc ui_MenuSettingsController, WindowRect
   jmp .Return  
   .TcpFocus:
      mov [CurFocus], 10
+  .RadiusFocus:
+     mov [CurFocus], 13
   jmp .Return      
   
   .Return:
@@ -110,6 +122,7 @@ proc ui_EscMenuInputController, wParam
   case    .IpFocus,       12
   case    .UdpFocus,      11
   case    .TcpFocus,      10
+  case    .RadiusFocus,   13
   jmp     .Return
   
   .IpFocus:
@@ -120,6 +133,13 @@ proc ui_EscMenuInputController, wParam
   jmp .Return  
   .TcpFocus:
      stdcall AddLetterToInput, ConnectionTcpPort_input, [wParam], 0, 1
+  jmp .Return 
+  .RadiusFocus:
+     mov [MIN_LEN_INPUT], 1
+     mov [MAX_LEN_INPUT], 2
+     stdcall AddLetterToInput, RenderRadius_input, [wParam], 0, 1
+     mov [MAX_LEN_INPUT], 15
+     mov [MIN_LEN_INPUT], 0
   jmp .Return 
   
   .Return:

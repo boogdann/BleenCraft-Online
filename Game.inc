@@ -114,6 +114,10 @@ died_text_len    dd        $ - died_text
 Respawn_text     db        'Respawn'
 IsPlayerDied     dd        0
 
+set_radius_text  db        'Set the render radius'
+set_radius_text_len dd     $ - set_radius_text
+RenderRadius_input  db   1,  '0', 19   dup  (?)
+
 
 ConnectionIP_input       db   0, 20   dup  (?)
 ConnectionUdpPort_input  db   0, 20   dup  (?)
@@ -128,6 +132,8 @@ connect_error_len dd   0 ;<-- len of text
 not_implemented_text  db 'not implemented yet..'
 not_implemented_text_len  dd  $ - not_implemented_text
 ;===========================================
+
+RENDER_RADIUS   dd  20
 
 
 
