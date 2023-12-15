@@ -118,6 +118,15 @@ IsPlayerDied     dd        0
 ConnectionIP_input       db   0, 20   dup  (?)
 ConnectionUdpPort_input  db   0, 20   dup  (?)
 ConnectionTcpPort_input  db   0, 20   dup  (?)
+
+host_error       dd   0 ;<-- adress to text  (0 - without text)
+host_error_len   dd   0 ;<-- len of text 
+
+connect_error     dd   0 ;<-- adress to text  (0 - without text)
+connect_error_len dd   0 ;<-- len of text 
+
+not_implemented_text  db 'not implemented yet..'
+not_implemented_text_len  dd  $ - not_implemented_text
 ;===========================================
 
 

@@ -4,6 +4,13 @@ proc ui_renderMenuConnect, WindowRect
 
   locals
     curBackgroundAdd   dd   ? 
+    
+      n_TEXT             dd    25.0
+      n_2                dd   2.0
+      err_text_size      dd   0.005
+      textWidth          dd   ?
+      textHeight         dd   ?
+      textX              dd   ?
   endl
 
   stdcall gf_2D_Render_Start 
@@ -17,6 +24,26 @@ proc ui_renderMenuConnect, WindowRect
     stdcall ui_render_input, [WindowRect], -0.4, -0.2, 0.8, 0.15,     12, \
                              input_ip_text, [input_ip_text_len], ConnectionIP_input
   ;############################################################################
+  
+      ;=========== Error Text ==================
+    cmp [connect_error], 0 
+    jz .SkipErrorText   
+        fld [n_2]
+        fdiv [n_TEXT]
+        fstp [err_text_size]
+        stdcall ui_getTextSizes, [WindowRect], [connect_error_len], [err_text_size]
+        mov [textWidth], eax
+        mov [textHeight], ecx  
+    
+        fld [n_2]
+        fsub [textWidth]
+        fdiv [n_TEXT]
+        fstp [textX]
+        
+       invoke glColor3f, 1.0, 0.3, 0.3
+       stdcall ui_draw_text, [WindowRect], [connect_error], [connect_error_len], [textX], -0.6, 0.005
+    .SkipErrorText:
+    ;=========================================
   
     stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.2,      2, CONNECT_text, 7
     stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,      3, BACK_text, 4
@@ -51,6 +78,9 @@ proc ui_MenuConnectController, WindowRect
   
   .Connect:
     ;Connect
+    mov [connect_error], not_implemented_text
+    mov eax, [not_implemented_text_len]
+    mov [connect_error_len], eax
   jmp .Return   
   .Exit:
     mov [CUR_MENU], UI_MAIN_MENU

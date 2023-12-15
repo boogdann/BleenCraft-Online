@@ -104,6 +104,11 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
   .Movement:
         cmp [App_Mode], GAME_MODE
         jnz @F
+          cmp [UI_MODE], UI_ESC_MENU
+          jnz .SkipMenuEsc
+            stdcall ui_EscMenuInputController, [wParam]
+            jmp     .ReturnZero
+          .SkipMenuEsc:
           stdcall ct_on_keyDown, [wParam] 
           jmp     .ReturnZero
         @@:

@@ -18,7 +18,9 @@ proc ui_renderMenu_Main, WindowRect
   
   stdcall ui_drawButton, [WindowRect], -0.4, 0.0, 0.8, 0.15,      1, PLAY_text, 4  
   stdcall ui_drawButton, [WindowRect], -0.4, -0.2, 0.8, 0.15,     2, CONNECT_text, 7
-  stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.15,    3, EXIT_text, 4                  
+  stdcall ui_drawButton, [WindowRect], -0.3, -0.45, 0.6, 0.15,    3, EXIT_text, 4  
+  
+              
                                                                      
   stdcall gf_2D_Render_End
   

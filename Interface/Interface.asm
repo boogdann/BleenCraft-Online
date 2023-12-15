@@ -113,7 +113,7 @@ proc ui_on_keyDown, wParam
     stdcall ui_ConnectInputController, [wParam]
   jmp .Return
   .UI_settings:
-    ;
+    stdcall ui_EscMenuInputController, [wParam]
   jmp .Return
   
   .Return:
