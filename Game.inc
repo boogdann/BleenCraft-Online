@@ -13,6 +13,11 @@ WorldHeight      dd      150
 SizeWorld        dd      ?
 ;=============================
 
+FileNames        dd      ?
+FileCount        dd      ?
+ChosenFile       dd      ?
+
+
 ;==== Water params ===========
 WaterLvl         dd      60 
 ;=============================

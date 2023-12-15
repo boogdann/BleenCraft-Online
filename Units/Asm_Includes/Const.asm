@@ -1,7 +1,7 @@
 include "../Blocks/Blocks.const"
 include "../Blocks/BlocksIndexes.const"
-include "../Field/Field.const"
 include "../Tools/Tools.const"
+include "../Field/Field.const"
 include "../Client/socket/socket_data.inc"
 include "../Client/tcp/tcp_client.inc"
 include "../Client/udp/udp_client.inc"

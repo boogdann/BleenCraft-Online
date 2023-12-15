@@ -29,7 +29,7 @@ proc Crafting.Craft uses edi ecx esi ebx, pCrafting, Size
      mov    edi, Crafts2x2
 .CheckCrafts:
      xor    edx, edx
-     mov    eax, Crafting.SIZE_CELL * Crafting.SIZE_CRAFT
+     mov    eax, Crafting.SIZE_CELL * Crafting.SIZE_SMALL_CRAFT
      mul    ecx
      mov    edi, Crafts2x2
      add    edi, eax
@@ -78,6 +78,7 @@ endp
 ;
 proc Crafting.DecCraft uses edx edx eax ecx, pCrafting, Size
      mov    edi, [pCrafting]
+     
      add    edi, 4
      mov    eax, [Size]
      mov    ecx, 2

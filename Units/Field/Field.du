@@ -9,7 +9,13 @@ Field.Matrix       dd       ?
 Field.TmpMatrix    dd       ?
 Field.TmpSeed      dd       ?
 Tmp                dd       ?
-Field.MaxNumMinesOnChank dd ?
+Field.MaxNumMinesOnChank dd ? 
+
+Field.NameFiles     dd       ?
+Field.FindFileData  WIN32_FIND_DATA 0
+Field.hFind         dd              ?
+
+Field.PathToWorldDir     db "Worlds/*.*", 0
 
 Field.FileBuffer   dd       ?, ?, ?, ?
 Field.SizeBuffer   dd       5

@@ -14,6 +14,9 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;mov [UI_MODE], CONST
 
 proc GameStart
+  stdcall Field.GetAllWorlds, FileNames
+  mov     [FileCount], ecx
+
   ;stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
 
   stdcall Inventory.Initialize, Inventory, InventorySize
@@ -24,6 +27,8 @@ proc GameStart
   stdcall Inventory.SetCell, 4, 1, 1
   
   stdcall Crafting.Initialize, SmallCraft, BigCraft
+  
+  stdcall Crafting.Craft, [SmallCraft], 5
   
   ;stdcall Crafting.Craft, [SmallCraft], 5
     

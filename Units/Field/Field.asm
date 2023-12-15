@@ -541,7 +541,7 @@ proc Field.TestBounds uses ebx, X, Y, Z
      jnl    .Error
 
      mov    eax, [Field.Height]
-     cmp    [Z], Field.Height
+     cmp    [Z], eax
      jnl    .Error
 
      cmp    [X], 0
@@ -1366,3 +1366,54 @@ proc Field.Ore uses eax ebx ecx edx, x, y, maxPosZ, typeOre
 .Finish:
      ret
 endp 
+
+proc Field.GetAllWorlds uses edx edi esi, pRes
+     locals
+         fileCount dd 0
+         hHeap     dd ?
+     endl
+     
+     invoke GetProcessHeap
+     mov    [hHeap], eax
+    
+     invoke HeapAlloc, eax, HEAP_ZERO_MEMORY, 100*4
+     mov    [Field.NameFiles], eax
+    
+     invoke FindFirstFile, Field.PathToWorldDir, Field.FindFileData
+     mov    [Field.hFind], eax
+     cmp    eax, INVALID_HANDLE_VALUE
+     jz     .Error
+     
+     mov    ecx, 0
+.GetFiles:    
+     mov    eax, [Field.FindFileData + WIN32_FIND_DATA.dwFileAttributes]
+     test   eax, FILE_ATTRIBUTE_DIRECTORY
+     jnz    .NotDirectory
+    
+     invoke lstrlen, Field.FindFileData.cFileName
+     
+     invoke HeapAlloc, [hHeap], HEAP_ZERO_MEMORY, eax
+    
+     mov    ecx, [fileCount]
+     mov    edi, [Field.NameFiles]
+     mov    [edi + ecx*4], eax
+     invoke lstrcpy, eax, Field.FindFileData.cFileName
+     inc    dword[fileCount]
+.NotDirectory:
+     invoke FindNextFile, [Field.hFind], Field.FindFileData
+     cmp    eax, 0
+     jz     .Finish
+     jmp    .GetFiles     
+
+     jmp    .Finish
+.Error:
+     mov    ecx, 0
+     mov    eax, -1
+.Finish:
+     mov    edi, [pRes]
+     mov    eax, [Field.NameFiles]
+     mov    [edi], eax
+     invoke FindClose, [Field.hFind]
+     mov    ecx, [fileCount]
+     ret
+endp
