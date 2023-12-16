@@ -68,6 +68,7 @@ flag             dd       0
 Anim_Hand_Position dd     0.0, 0.0, 0.0
 Anim_Hand_Turn     dd     0.0, 0.0, 0.0
 XAxisMuliplier     dd     0.1
+animate            dd     1
 ;============================================== 
 
 ;== Global variables for destroyed blocks =====

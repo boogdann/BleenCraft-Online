@@ -1,5 +1,8 @@
 proc anim_RightHand, playerPos, playerTurn
 
+  cmp [animate], 1
+  jne .finish
+
   locals
     YVector       dd 0.11  ;0.65
     MAX_DY        dd 0.1
@@ -86,6 +89,9 @@ proc anim_RightHand, playerPos, playerTurn
   
   stdcall gf_renderObj3D, obj.Player.LHand.Handle, [tx.Player.Handle], 0,\
                                 Anim_Hand_Position, Anim_Hand_Turn, 0.05, 0
+                                
+  .finish:
+  
   ret
 endp 
 

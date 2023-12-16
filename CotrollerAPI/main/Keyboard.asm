@@ -6,6 +6,7 @@
      
      cmp [workBench_opened], 1
      jne .menuOpened
+        mov [animate], 1
         mov [UI_MODE], UI_GAME
         stdcall ct_change_mouse, 0
         mov [workBench_opened], 0
@@ -14,11 +15,12 @@
      
      cmp [ct_is_mouse], 1
      jz .hide
-       mov [UI_MODE], UI_ESC_MENU    
+       mov [UI_MODE], UI_ESC_MENU 
        stdcall ct_change_mouse, 1
        jmp .skip
      .hide:
        mov [UI_MODE], UI_GAME
+       mov [animate], 1
        stdcall ct_change_mouse, 0
      .skip:
      jmp .final
@@ -36,9 +38,11 @@
      jne .hideBag
         stdcall ct_change_mouse, 1
         mov [UI_MODE], UI_MAINBAG
+        mov [animate], 0
         jmp .showBag
      .hideBag:
         stdcall ct_change_mouse, 0
+        mov [animate], 1
         mov [UI_MODE], UI_GAME
      .showBag:
      
@@ -171,6 +175,7 @@ proc ct_check_moves, CameraPos, CameraTurn
      
      cmp [ct_block_index], Block.CraftingTable
      jne  .build_common_block 
+          mov [animate], 0
           mov [UI_MODE], UI_WORKBENCH
           mov [workBench_opened], 1
           stdcall ct_change_mouse, 1
