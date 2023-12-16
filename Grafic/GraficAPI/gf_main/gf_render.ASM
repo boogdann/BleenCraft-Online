@@ -237,11 +237,11 @@ proc gf_render_LableItem
 
 
   ;=================
-  stdcall grafic.GetToolsObjHandles, Blocks.Stick 
-  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.006, 0
+  stdcall grafic.GetToolsObjHandles, 240
+  ;stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
   
   ;testing obj's
-  ;stdcall gf_renderObj3D, obj.Sword.Handle, [tx.Sword.Diamond.Handle], 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
+  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
   ;=================
   
   fldz
@@ -271,16 +271,30 @@ endp
 ;ebx - *(addr) to obj handle structure
 ;eax - [value] of texture handle
 proc grafic.GetToolsObjHandles, index
+  locals 
+    divisor  dd  5
+  endl
 
   mov eax, [index]
   sub eax, Tools.MinValueTool
   inc eax
-  
   push eax
-  imul eax, 8
-  add eax, ToolsObjAddr
-  mov ebx, ToolsObjAddr
   
+  
+  cmp eax, 0
+  jnz .SkipStick
+    mov ebx, ToolsObjAddr
+    jmp .ReadyObj
+  .SkipStick:
+    dec eax
+    div dword[divisor]
+    imul eax, 8
+    mov ebx, eax
+    
+    add ebx, ToolsObjAddr
+    add ebx, 8
+
+  .ReadyObj:
   pop eax
   imul eax, 4
   add eax, ToolsTxAddr
