@@ -11,4 +11,4 @@ include "../Client/socket/socket_funcs.asm"
 include "../Client/socket/socket_main.asm"
 include "../Client/tcp/tcp_client.asm"
 include "../Client/udp/udp_client.asm"
-
+include "../Client/Blocks.asm"

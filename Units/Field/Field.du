@@ -1,3 +1,8 @@
+FIONBIO = 0x8004667E
+
+ERROR_OUT_OF_BOUND = -1
+      one            dd 1
+
 Field.SpawnPoint   dd       0.0, 0.0, 0.0
 Field.Blocks       dd       ?  
 Field.hHeap        dd       ?
@@ -9,7 +14,9 @@ Field.Matrix       dd       ?
 Field.TmpMatrix    dd       ?
 Field.TmpSeed      dd       ?
 Tmp                dd       ?
-Field.MaxNumMinesOnChank dd ? 
+Field.MaxNumMinesOnChank dd ?
+
+Field.IsGenerated   dd       0
 
 Field.NameFiles     dd       ?
 Field.FindFileData  WIN32_FIND_DATA 0

@@ -1,12 +1,3 @@
-Field.HEIGHT       =     20
-Field.LENGTH       =     50
-Field.WIDTH        =     50
-Field.CAPACITY     =     Field.HEIGHT * Field.LENGTH * Field.WIDTH
 
-Triangle.FIRST     =     0
-Triangle.SECOND    =     1
-Triangle.THIRD     =     2
-Triangle.NUM_VERTEX=     3
 
-ERROR_OUT_OF_BOUND =     -1
 

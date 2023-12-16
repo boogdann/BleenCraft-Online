@@ -1,29 +1,63 @@
 proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
   stdcall ws_soket_init 
   
+  invoke  CreateThread, 0, 0, Client.SendToServerThread, Client.hUDPSock, 0, 0
+
   stdcall ws_new_socket, WS_UDP
+;  cmp     eax, -1
+;  jz      .Error
+  
   mov     dword[Client.hUDPSock], eax
   
   stdcall ws_new_connection_structure, [serverIp], [serverPortUDP]
   mov     dword[Client.sockAddrUDP], eax
   
-  stdcall ws_socket_send_msg_udp, [Client.hUDPSock], [Client.sockAddrUDP], Client.Secret, [Client.SizeSecret]  
+  stdcall ws_socket_send_msg_udp, [Client.hUDPSock], [Client.sockAddrUDP], Client.Secret, [Client.SizeSecret] 
+;  cmp     eax, 0
+;  jz      .Error   
 
   stdcall ws_socket_get_msg_udp, [Client.hUDPSock], Client.ReadBuffer, [Client.SizeBuffer]
-    
-  stdcall ws_new_socket, WS_TCP
-  mov     dword[Client.hTCPSock], eax
+;  cmp     eax, 0
+;  jz      .Error
   
+  stdcall ws_new_socket, WS_TCP
+;  cmp     eax, -1
+;  jz      .Error
+  
+  mov     dword[Client.hTCPSock], eax  
   stdcall ws_new_connection_structure, [serverIp], [serverPortTCP]
   mov     dword[Client.sockAddrTCP], eax  
   
   stdcall ws_tcp_connect, [Client.hTCPSock], [Client.sockAddrTCP]
+;  cmp     eax, -1
+;  jz      .Error
   
   stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], Client.Secret, [Client.SizeSecret]  
-  
+;  cmp     eax, 0
+;  jz      .Error
   stdcall ws_socket_get_msg_tcp, [Client.hTCPSock], Client.ReadBuffer, [Client.SizeBuffer]
-.Skip:
+;  cmp     eax, 0
+;  jz      .Error
+
+;  mov    dword[one], 1
+;  invoke ioctlsocket, dword[Client.hTCPSock], FIONBIO, one
+;  cmp    eax, 0
+;  jz     @F
+;  invoke ExitProcess, 1
+;@@:
+    
+  ; queue for work with threads     
+  stdcall ws_new_socket, WS_TCP  
+  mov     dword[Client.hTCPQueueClient], eax
+
+  stdcall ws_new_connection_structure, Client.YourIP, [Client.YourPort]
+  mov     dword[Client.sockAddrTCPQueueClient], eax  
   
+  stdcall ws_tcp_connect, [Client.hTCPQueueClient], [Client.sockAddrTCPQueueClient]
+  
+  jmp     .Finish
+.Error:
+  mov     eax, -1
 .Finish:
      ret
 endp
@@ -202,10 +236,17 @@ proc Client.GetNumberOfBytesTCP uses edx ecx edi esi ebx, hSock, msgAddr, sizeMs
      cmp     ebx, 0
      jle     .Finish
          
-     stdcall ws_socket_get_msg_tcp, [Client.hTCPSock], edi, ebx 
+     stdcall ws_socket_get_msg_tcp, [hSock], edi, ebx 
+     cmp     eax, -1
+     jl      .Error
+     
      add     [recievedBytes], eax
      jmp     .GetMsg
      
+     jmp     .Finish
+.Error:
+     invoke  ExitProcess, 1
+     mov     eax, -1
 .Finish:
      ret
 endp

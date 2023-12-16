@@ -3,6 +3,8 @@
 
 ;       Кирки
 
+Tools.Stick             =      23
+
 Tools.MinValueTool    =       235
 
 Tools.WoodPickaxe     =       235

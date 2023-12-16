@@ -1,3 +1,6 @@
+Client.YourIP    db '127.0.0.1', 0
+Client.YourPort  dd 11111
+
 HOST   = 0
 PLAYER = 1
 Client.OffsetNumber = 6
@@ -33,12 +36,17 @@ Client.IPPROTO_TCP = 6
 Client.INADDR_ANY  = 0
 Client.INVALID_SOCKET     = -1
 
-Client.WSAData  WSADATA
-Client.hTCPSock dd ?
-Client.hUDPSock dd ?
+Client.WSAData   WSADATA
+Client.hTCPSock  dd ?
+Client.hUDPSock  dd ?
 
+Client.hTCPQueueClient dd ?
+Client.hTCPQueueServer dd ?
 
 Client.sockAddrUDP       sockaddr_in
 Client.sockAddrTCP       sockaddr_in
+
+Client.sockAddrTCPQueueClient  sockaddr_in
+Client.sockAddrTCPQueueServer  sockaddr_in
 
 Client.maxConn  dd 5

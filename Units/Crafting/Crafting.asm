@@ -88,12 +88,13 @@ proc Crafting.CraftFull uses edi ecx esi ebx, pCrafting, Size, StartCrafts, Size
 .Finish:
      ret
 endp 
-
+                                                       
 ; input - pointer to craft array
 ; size  - size of array
 ;
 proc Crafting.DecCraft uses edx edx eax ecx, pCrafting, Size
      mov    edi, [pCrafting]
+     mov    dword[edi], 0
      
      add    edi, 4
      mov    eax, [Size]

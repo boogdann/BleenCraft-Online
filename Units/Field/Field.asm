@@ -312,7 +312,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     stdcall Field.GenerateOre, [sizeChanc], [numChanc], [power]
      
 .EndSetWorld:
-    
+    mov     dword[Field.IsGenerated], 1 
     stdcall Field.GenerateBedrock
     ret
 endp
@@ -489,7 +489,7 @@ endp
 ;
 proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X, Y, Z, BlockIndex
      xor    eax, eax
-
+     
      stdcall Field.TestBounds, [X], [Y], [Z]
      cmp     eax, ERROR_OUT_OF_BOUND
      jz      .Finish
@@ -519,6 +519,11 @@ proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X, Y, Z, BlockIndex
      xchg   eax, edi
      movzx  eax, byte[BlockIndex]
      mov    byte[edi], al
+
+     cmp     dword[Field.IsGenerated], 1
+     jnz     @F
+     stdcall Client.SendBlock, [X], [Y], [Z], [BlockIndex]
+@@:
 
      jmp    .Finish
 .Finish:
