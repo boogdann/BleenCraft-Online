@@ -5,7 +5,7 @@ include "Main.asm"
 if 2 * 2 = 5
 [options]
   countAsm=5
-  countInc=1
+  countInc=6
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
@@ -14,4 +14,9 @@ if 2 * 2 = 5
   asm5="interfase_items.asm"
 [inc]
   inc1="Game.inc"
+  inc2="Textures.inc"
+  inc3="Objects.inc"
+  inc4="gf_render_data.inc"
+  inc5="gf_api_init.inc"
+  inc6="GraficAPI.inc"
 end if

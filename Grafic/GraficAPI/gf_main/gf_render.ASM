@@ -237,7 +237,7 @@ proc gf_render_LableItem
 
 
   ;=================
-  stdcall gf_renderObj3D, obj.Pickaxe.Handle, [tx.Pickaxe.Handle], 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.006, 0
+  stdcall gf_renderObj3D, obj.Pickaxe.Handle, [tx.Pickaxe.Gold.Handle], 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.006, 0
   ;=================
   
   fldz
