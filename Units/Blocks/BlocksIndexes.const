@@ -42,5 +42,5 @@ Block.GoldOre            =      19
 Block.CoalOre            =      20
 Block.DiamondOre         =      21
 Block.Leaves             =      22 
-Blocks.Stick             =      23
+Blocks.Stick             =      234
 

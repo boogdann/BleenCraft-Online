@@ -237,7 +237,11 @@ proc gf_render_LableItem
 
 
   ;=================
-  stdcall gf_renderObj3D, obj.Pickaxe.Handle, [tx.Pickaxe.Gold.Handle], 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.006, 0
+  stdcall grafic.GetToolsObjHandles, Blocks.Stick 
+  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.006, 0
+  
+  ;testing obj's
+  ;stdcall gf_renderObj3D, obj.Sword.Handle, [tx.Sword.Diamond.Handle], 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
   ;=================
   
   fldz
@@ -263,6 +267,27 @@ proc gf_2D_Render_End
   invoke  glPopMatrix
   ret
 endp 
+
+;ebx - *(addr) to obj handle structure
+;eax - [value] of texture handle
+proc grafic.GetToolsObjHandles, index
+
+  mov eax, [index]
+  sub eax, Tools.MinValueTool
+  inc eax
+  
+  push eax
+  imul eax, 8
+  add eax, ToolsObjAddr
+  mov ebx, ToolsObjAddr
+  
+  pop eax
+  imul eax, 4
+  add eax, ToolsTxAddr
+  mov eax, [eax]
+  
+  ret
+endp
 
 
 proc gf_RenderEnd   

@@ -13,7 +13,11 @@ ObjectsNames:
             ;                         db     "texture.mbmw", 0
             ;...
             ;=====================================
+            obj.Stick.Name            db      "Axe.mobj", 0
             obj.Pickaxe.Name          db      "Pickaxe.mobj", 0
+            obj.Axe.Name              db      "Axe.mobj", 0
+            obj.Showel.Name           db      "Sword.mobj", 0 
+            obj.Sword.Name            db      "Sword.mobj", 0
             db      0
         
 ObjectsHandles:
@@ -31,7 +35,11 @@ ObjectsHandles:
                   ;obj.YouObj.Handle         dd     ?, ?
                   ;...
                   ;=====================================
-ToolsObjAddr:     obj.Pickaxe.Handle         dd     ?, ?
+ToolsObjAddr:     obj.Stick.Handle           dd     ?, ?
+                  obj.Pickaxe.Handle         dd     ?, ?
+                  obj.Axe.Handle             dd     ?, ?
+                  obj.Showel.Handle          dd     ?, ?
+                  obj.Sword.Handle           dd     ?, ?
                   obj_EOF:
 
 
