@@ -60,11 +60,25 @@ proc ui_draw_drag uses esi edi, WindowRect
       fchs
       fstp [size_xy + 4]
       
+      
+      mov dx, Tools.MinValueTool
+      dec dx
+      
       mov ax, word[ui_drag_item]
       cmp ax, 0
       jz .readyRender
-      cmp ax, 255
-      jle .cubes
+      cmp ax, dx
+      jl .cubes
+         mov dx, ax
+         movzx eax, dx
+         stdcall grafic.GetToolsTextureIndex, eax    ;eax - texture index
+         add eax, ToolsTxAddr ;!!!!!!!!!!!!!!!!!!
+         push eax
+          invoke glEnable, GL_TEXTURE_2D
+         pop eax 
+         invoke glBindTexture, GL_TEXTURE_2D, [eax]
+         stdcall ui_draw_rectangle_textured_obj, [size_xy], [size_xy + 4], [big_bag_slot_size_xy], [big_bag_slot_size_xy+4]
+         invoke glDisable, GL_TEXTURE_2D
          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
          ;other elements case
         jmp .readyRender
@@ -164,7 +178,7 @@ proc ui_draw_slot uses esi edi ecx, x, y, s_x, s_y, elm_info
      mov dx, ax
      movzx eax, dx
      stdcall grafic.GetToolsTextureIndex, eax    ;eax - texture index
-     add eax, ToolsTxAddr
+     add eax, ToolsTxAddr  ;!!!!!!!!!!!!!!!!!!
      push eax
       invoke glEnable, GL_TEXTURE_2D
      pop eax 
