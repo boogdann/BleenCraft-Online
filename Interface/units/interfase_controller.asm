@@ -78,7 +78,21 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
     stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data, 36 
     cmp eax, 1
     jnz .SkipBigBagCheck 
-       stdcall MoveElement, [bigBag_arr], ebx, 64
+       stdcall MoveElement, [bigBag_arr], ebx, 64 
+       
+       ;Big bag case: 
+       mov eax, [bigBag_craft_arr]
+       cmp [ui_drag_array_out], eax 
+       jnz .SkipRecraftbigBag_craft_arr
+           stdcall Crafting.Craft, [bigBag_craft_arr], SMALL_CRAFT_SIZE
+       .SkipRecraftbigBag_craft_arr:
+       ;WorkBench case:
+       mov eax, [workbench_craft_arr]
+       cmp [ui_drag_array_out], eax 
+       jnz .SkipRecraftworkbench_craft_arr
+           stdcall Crafting.Craft, [workbench_craft_arr], BIG_CRAFT_SIZE
+       .SkipRecraftworkbench_craft_arr:
+       
        ;Big bag case:
        cmp [ui_drag_index_out], 0
        jnz .SkipBigBagCheck
@@ -106,6 +120,12 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
       jnz @F  
         cmp ebx, 0
         jz @F
+          mov edx, [bigBag_craft_arr] 
+          cmp [ui_drag_array_out], edx
+          jnz .SkipDragSimpleCheckbigBag_craft
+              cmp [ui_drag_index_out], 0
+              jz @F
+          .SkipDragSimpleCheckbigBag_craft: 
           stdcall MoveElement, [bigBag_craft_arr], ebx, 1
           stdcall Crafting.Craft, [bigBag_craft_arr], SMALL_CRAFT_SIZE
         @@:
@@ -118,6 +138,12 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
       jnz @F  
         cmp ebx, 0
         jz @F
+          mov edx, [workbench_craft_arr] 
+          cmp [ui_drag_array_out], edx
+          jnz .SkipDragSimpleCheckworkbench_craft_arr
+              cmp [ui_drag_index_out], 0
+              jz @F
+          .SkipDragSimpleCheckworkbench_craft_arr:
           stdcall MoveElement, [workbench_craft_arr], ebx, 1
           stdcall Crafting.Craft, [workbench_craft_arr], BIG_CRAFT_SIZE
         @@:
