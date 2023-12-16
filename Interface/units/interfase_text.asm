@@ -200,6 +200,7 @@ proc SetNumInInput uses esi edi eax, num, input
     test eax, eax
     jnz .len_loop
     
+  push [count]
   mov edi, [input]
   mov eax, [num]
   add edi, [count]
@@ -214,6 +215,7 @@ proc SetNumInInput uses esi edi eax, num, input
     test eax, eax
     jnz .convert_loop
     
+  pop [count]
   mov eax, [count]
   mov edi, [input]
   mov byte[edi], al

@@ -135,7 +135,6 @@ proc ui_EscMenuInputController, wParam
      stdcall AddLetterToInput, ConnectionTcpPort_input, [wParam], 0, 1
   jmp .Return 
   .RadiusFocus:
-     mov [MIN_LEN_INPUT], 1
      mov [MAX_LEN_INPUT], 2
      stdcall AddLetterToInput, RenderRadius_input, [wParam], 0, 1
      stdcall GetNumFromInput, RenderRadius_input
@@ -143,10 +142,13 @@ proc ui_EscMenuInputController, wParam
      jge @F
         mov eax, 5
      @@:
+     cmp eax, 100
+     jle @F
+        mov eax, 100
+     @@:
      mov [RENDER_RADIUS], eax
      stdcall Set_GF_RENDER_BLOCKS_RADIUS,  [RENDER_RADIUS], [RENDER_RADIUS], [RENDER_RADIUS]
      mov [MAX_LEN_INPUT], 15
-     mov [MIN_LEN_INPUT], 0
   jmp .Return 
   
   .Return:

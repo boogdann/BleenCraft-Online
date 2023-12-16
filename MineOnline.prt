@@ -4,7 +4,7 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=5
+  countAsm=7
   countInc=6
 [asm]
   asm1="Main.asm"
@@ -12,6 +12,8 @@ if 2 * 2 = 5
   asm3="interfase_controller.asm"
   asm4="Create.asm"
   asm5="interfase_items.asm"
+  asm6="Settings.asm"
+  asm7="interfase_text.asm"
 [inc]
   inc1="Game.inc"
   inc2="Textures.inc"
