@@ -237,11 +237,11 @@ proc gf_render_LableItem
 
 
   ;=================
-  stdcall grafic.GetToolsObjHandles, 240
-  ;stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
+  stdcall grafic.GetToolsObjHandles, Tools.IronPickaxe
+  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.006, 0
   
   ;testing obj's
-  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
+  ;stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
   ;=================
   
   fldz
@@ -299,6 +299,20 @@ proc grafic.GetToolsObjHandles, index
   imul eax, 4
   add eax, ToolsTxAddr
   mov eax, [eax]
+  
+  ret
+endp
+
+proc grafic.GetToolsTextureIndex, index
+  locals 
+    divisor  dd  5
+  endl
+
+  mov eax, [index]
+  sub eax, Tools.MinValueTool
+  inc eax
+
+  imul eax, 4
   
   ret
 endp

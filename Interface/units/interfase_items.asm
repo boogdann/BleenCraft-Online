@@ -153,11 +153,24 @@ proc ui_draw_slot uses esi edi ecx, x, y, s_x, s_y, elm_info
   faddp
   fstp[y]  
           
+  mov dx, Tools.MinValueTool
+  dec dx
+  
   mov ax, word[elm_info]
   cmp ax, 0
   jz .readyRender
-  cmp ax, 255
-  jle .cubes
+  cmp ax, dx
+  jl .cubes
+     mov dx, ax
+     movzx eax, dx
+     stdcall grafic.GetToolsTextureIndex, eax    ;eax - texture index
+     add eax, ToolsTxAddr
+     push eax
+      invoke glEnable, GL_TEXTURE_2D
+     pop eax 
+     invoke glBindTexture, GL_TEXTURE_2D, [eax]
+     stdcall ui_draw_rectangle_textured_obj, [x], [y], [s_x], [s_y]
+     invoke glDisable, GL_TEXTURE_2D
      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
      ;other elements case
     jmp .readyRender
@@ -779,6 +792,37 @@ proc ui_draw_rectangle_textured_block, x, y, x_sz, y_sz
   ret
 endp
 
+proc ui_draw_rectangle_textured_obj, x, y, x_sz, y_sz
+               ;f 12 13 5 14
+  invoke glEnable, GL_LIGHTING
+  invoke glEnable, GL_LIGHT0
+  invoke glBegin, GL_QUADS
+    invoke glTexCoord2f, 0.000, 0.000000; 
+    invoke glVertex2f, [x], [y]
+    fld [x]
+    fadd [x_sz]
+    fstp [x]
+    invoke glTexCoord2f,  1.00, 0.000000;
+   
+    invoke glVertex2f, [x], [y]   
+    fld [y]
+    fadd [y_sz]
+    fstp [y]
+    invoke glTexCoord2f, 1.00, 1.0000; 
+    invoke glVertex2f, [x], [y] 
+    fld [x]
+    fsub [x_sz]
+    fstp [x]    
+    invoke glTexCoord2f, 0.000, 1.00000
+    invoke glVertex2f, [x], [y]        
+  invoke glEnd;  
+  invoke glDisable, GL_LIGHTING
+  invoke glDisable, GL_LIGHT0
+
+  ret
+endp
+
+                       
 
 proc ui_draw_rectangle_textured_block_v2, x, y, x_sz, y_sz
                ;f 12 13 5 14
