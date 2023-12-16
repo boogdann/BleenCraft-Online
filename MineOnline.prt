@@ -4,13 +4,14 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=4
+  countAsm=5
   countInc=1
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
   asm3="interfase_controller.asm"
   asm4="Create.asm"
+  asm5="interfase_items.asm"
 [inc]
   inc1="Game.inc"
 end if

@@ -754,23 +754,23 @@ proc ui_draw_rectangle_textured_block, x, y, x_sz, y_sz
   invoke glEnable, GL_LIGHTING
   invoke glEnable, GL_LIGHT0
   invoke glBegin, GL_QUADS
-    invoke glTexCoord2f, 0.001000, 0.500000; 
+    invoke glTexCoord2f, 0.673000, 0.500000; 
     invoke glVertex2f, [x], [y]
     fld [x]
     fadd [x_sz]
     fstp [x]
-    invoke glTexCoord2f,  0.343333, 0.500000;
+    invoke glTexCoord2f,  1.0, 0.500000;
    
     invoke glVertex2f, [x], [y]   
     fld [y]
     fadd [y_sz]
     fstp [y]
-    invoke glTexCoord2f, 0.343333, 0.750000; 
+    invoke glTexCoord2f, 1.0, 0.750000; 
     invoke glVertex2f, [x], [y] 
     fld [x]
     fsub [x_sz]
     fstp [x]    
-    invoke glTexCoord2f, 0.001000, 0.750000
+    invoke glTexCoord2f, 0.673000, 0.750000
     invoke glVertex2f, [x], [y]        
   invoke glEnd;  
   invoke glDisable, GL_LIGHTING
