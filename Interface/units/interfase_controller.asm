@@ -82,19 +82,21 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
        ;Big bag case:
        cmp [ui_drag_index_out], 0
        jnz .SkipBigBagCheck
-       mov eax, [bigBag_craft_arr]
-       cmp [ui_drag_array_out], eax
-       jnz .SkipBigBagDecCase
-          stdcall Crafting.DecCraft, [bigBag_craft_arr], SMALL_CRAFT_SIZE
-          jmp .SkipBigBagCheck 
-       .SkipBigBagDecCase:
-       ;WorkBench case:
-       mov eax, [workbench_craft_arr]
-       cmp [ui_drag_array_out], eax
-       jnz .SkipWorkbenchDecCase
-          stdcall Crafting.DecCraft, [workbench_craft_arr], BIG_CRAFT_SIZE
-          jmp .SkipBigBagCheck 
-       .SkipWorkbenchDecCase:
+       cmp [ui_drag_item], 0
+       jz .SkipBigBagCheck
+         mov eax, [bigBag_craft_arr]
+         cmp [ui_drag_array_out], eax
+         jnz .SkipBigBagDecCase
+            stdcall Crafting.DecCraft, [bigBag_craft_arr], SMALL_CRAFT_SIZE
+            jmp .SkipBigBagCheck 
+         .SkipBigBagDecCase:
+         ;WorkBench case:
+         mov eax, [workbench_craft_arr]
+         cmp [ui_drag_array_out], eax
+         jnz .SkipWorkbenchDecCase  
+            stdcall Crafting.DecCraft, [workbench_craft_arr], BIG_CRAFT_SIZE
+            jmp .SkipBigBagCheck 
+         .SkipWorkbenchDecCase:
     .SkipBigBagCheck:
     
     cmp [UI_MODE], UI_MAINBAG

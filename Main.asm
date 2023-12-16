@@ -43,14 +43,14 @@ Start:
   ;================================================  
   
   ;==== Start settings ======  
-  mov [App_Mode], GAME_MODE
-  stdcall GameStart 
+  ;mov [App_Mode], GAME_MODE
+  ;stdcall GameStart 
   
   
-  ;mov [App_Mode], MENU_MODE
-  ;stdcall ui_InterfaceInit
+  mov [App_Mode], MENU_MODE
+  stdcall ui_InterfaceInit
   
-  ;================================================ 
+  ;========================== 
   
   ;================ Main app cycle =====================
   .AppCycle:
@@ -157,7 +157,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
                                          [BigCraft]         ;3x3 + 1
                                          
         ;
-        ;stdcall Crafting.Craft, [SmallCraft], 5
+        stdcall Crafting.Craft, [SmallCraft], 5
         ;
         jmp     .ReturnZero
  
