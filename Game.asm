@@ -50,7 +50,7 @@ proc GameStart
   ;================ Grafic params ===========================
   ;Day/night params
   mov [Dayly_Kof], 10000   ;0 - 65535
-  mov [DAYLY_SPEED], 10
+  mov [DAYLY_SPEED], 2
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
   

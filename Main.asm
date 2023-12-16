@@ -43,12 +43,12 @@ Start:
   ;================================================  
   
   ;==== Start settings ======  
-  ;mov [App_Mode], GAME_MODE
-  ;stdcall GameStart 
+  mov [App_Mode], GAME_MODE
+  stdcall GameStart 
   
   
-  mov [App_Mode], MENU_MODE
-  stdcall ui_InterfaceInit
+  ;mov [App_Mode], MENU_MODE
+  ;stdcall ui_InterfaceInit
   
   ;========================== 
   
@@ -84,6 +84,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         case    .Movement,      WM_KEYDOWN 
         case    .MouseDown,     WM_LBUTTONDOWN 
         case    .MouseUp,       WM_LBUTTONUP
+        case    .RMouseUp,      WM_RBUTTONUP
         case    .WheelScroll,   WM_MOUSEWHEEL
         
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
@@ -158,6 +159,15 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         ;
         jmp     .ReturnZero
  
+  .RMouseUp:
+        cmp [App_Mode], GAME_MODE
+        jnz .SkipRMouseUp
+        cmp [UI_MODE], UI_GAME
+        jnz .SkipRMouseUp
+        stdcall OpenWorckBranch
+  
+        .SkipRMouseUp:
+        jmp     .ReturnZero
   .WheelScroll:
         
         stdcall mouseScroll, [wParam]

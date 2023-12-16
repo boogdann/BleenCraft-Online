@@ -26,11 +26,15 @@
      jmp .final
   @@:
       
-  cmp [wParam], $49
+  cmp [wParam], 'I' 
   jnz @F
-     
-     cmp [workBench_opened], 0
-     jne .final
+     cmp [workBench_opened], 1
+     jne .SkipWorkbranchCheck
+        mov [workBench_opened], 0
+        mov [animate], 1
+        mov [UI_MODE], UI_GAME 
+        jmp .final
+     .SkipWorkbranchCheck:
      
      neg [openMainBag]
      
@@ -45,7 +49,6 @@
         mov [animate], 1
         mov [UI_MODE], UI_GAME
      .showBag:
-     
   @@:
   
   stdcall highlightCurrentCell, [wParam]
@@ -63,6 +66,19 @@
 
   
   .final:  
+  ret
+endp
+
+
+proc OpenWorckBranch    
+     cmp [ct_block_index], Block.CraftingTable
+     jne  .build_common_block 
+          mov [animate], 0
+          mov [UI_MODE], UI_WORKBENCH
+          mov [workBench_opened], 1
+          stdcall ct_change_mouse, 1
+    .build_common_block: 
+  
   ret
 endp
 
@@ -170,17 +186,17 @@ proc ct_check_moves, CameraPos, CameraTurn
   cmp eax, 0
   jz @F
     
-     cmp [workBench_opened], 1
-     je .Skip
+     ;cmp [workBench_opened], 1
+;     je .Skip
      
-     cmp [ct_block_index], Block.CraftingTable
-     jne  .build_common_block 
-          mov [animate], 0
-          mov [UI_MODE], UI_WORKBENCH
-          mov [workBench_opened], 1
-          stdcall ct_change_mouse, 1
-          jmp .rbm_pressed
-     .build_common_block: 
+     ;cmp [ct_block_index], Block.CraftingTable
+;     jne  .build_common_block 
+;          mov [animate], 0
+;          mov [UI_MODE], UI_WORKBENCH
+;          mov [workBench_opened], 1
+;          stdcall ct_change_mouse, 1
+;          jmp .rbm_pressed
+;     .build_common_block: 
      
      cmp [flag], 1
      jne .skipBuilding
