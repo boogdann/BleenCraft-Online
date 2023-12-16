@@ -132,10 +132,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
             jnz .SkipDiedScreen
                cmp [Selected_ButtonId], 1
                jnz .SkipRespawn
-                  mov [currentNumOfHearts], 10
-                  mov [IsPlayerDied], 0
-                  stdcall Field.GenerateSpawnPoint, PlayerPos
-                  stdcall ct_change_mouse, 0
+                  stdcall ResetGameData
                .SkipRespawn:
                jmp     .ReturnZero
             .SkipDiedScreen:

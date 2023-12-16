@@ -214,14 +214,11 @@ proc SetNumInInput uses esi edi eax, num, input
     inc [count]
     test eax, eax
     jnz .convert_loop
-    
   pop [count]
   mov eax, [count]
   mov edi, [input]
   mov byte[edi], al
 
-  
-  
   ret
 endp
 
