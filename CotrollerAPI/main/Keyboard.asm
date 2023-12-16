@@ -215,9 +215,10 @@ proc ct_check_moves, CameraPos, CameraTurn
           
           add [building_time], eax      
              
-          cmp [building_time], 500
+          mov eax, [global_building_time]
+          cmp [building_time], eax
           jl .not_ready
-          
+            mov [global_building_time], 500
             mov [flag], 0
             mov [building_time], 0
             

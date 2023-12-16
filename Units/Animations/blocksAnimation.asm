@@ -1,87 +1,166 @@
-proc anim_blockInHand, playerPos, playerTurn
+proc anim_blockInHand uses esi edi, playerPos, playerTurn
+  mov esi, [playerTurn]
+  cmp dword[esi], 0
+  jle @F
+     stdcall anim_blockInHand_up, [playerPos], [playerTurn]
+     jmp .Return
+  @@:
+  stdcall anim_blockInHand_down, [playerPos], [playerTurn]
 
-  cmp [animate], 1
-  jne .finish
+  .Return:
+  ret
+endp
+
+proc anim_blockInHand_down uses esi edi, playerPos, playerTurn
 
   locals
-    YVector       dd 0.05  ;0.65
-    MAX_DY        dd 0.1
-    
-    PiDegree      dd 180.0
-    
-    angleX        dd 110.0
-    
     a dd 0.0        
     b dd 0.0
+    PiDegree    dd 180.0
+    len         dd 0.11
+    n_05        dd 1.3
+    pos_sub      dd 0.05
+    pos_sub_base dd 0.06
     
-    angleY        dd 20.0
+    result_pos  dd ?, ?, ?
     
-    XVector       dd 0
-  
-    tmp           dd 0.13
+    tmp_x_turn  dd ?
     
+    addTurn_A   dd 35.0 
+    addTurn_A_tmp dd  22.0  ;radian
   endl
+  
+  cmp [animate], 1
+  jne .finish
+  
 
   mov esi, [playerTurn]
   mov edi, [playerPos]
   
+  ;fld dword[esi]
+  ;fstp [Anim_Hand_Turn]
+  fld dword[esi + 4]
+  fstp [Anim_Hand_Turn + 4]
+  
+  push dword[edi + 4]
+  push edi
+  
   fldpi
   fmul dword[esi]
-  fdiv [PiDegree]
+  fdiv [PiDegree] 
   fstp [a]
+  
+  fld dword[edi + 4]
+  fld [pos_sub]
+  fld [a]
+  fsin
+  fmulp
+  faddp
+  fsub [pos_sub_base]
+  fstp dword[edi + 4]
+  
+  fld [addTurn_A]
+  fld [a]   ;no
+  fsin
+  fld [addTurn_A_tmp]
+  fmulp
+  faddp    
+  fstp [addTurn_A]
+  
   
   fldpi
   fmul dword[esi + 4]
   fdiv [PiDegree]
+  fldpi
+  fmul [addTurn_A] 
+  fdiv [PiDegree]
+  faddp
   fstp [b]
   
-  ;cameraPos[1]
-  fld dword[edi]
-  fld [a]
-  fcos 
-  fld [b]
+  fld dword[edi + 0]
+  fld [b] 
   fsin
-  fmulp
-  fmul [XAxisMuliplier]
-  fsubp 
-  fstp [Anim_Hand_Position]
-  
-  ;cameraPos[2]
+  fmul [len]
+  fsubp
+  fstp [Anim_Hand_Position + 0]
+    
   fld dword[edi + 4]
-  fld [a]
-  fmul [YVector]
+  fld [a]      ;no
+  fsin
+  fmul [len]
   faddp
-  fstp [Anim_Hand_Position + 4] 
-                                
-  ;cameraPos[3]
+  fstp [Anim_Hand_Position + 4]
+  
   fld dword[edi + 8]
-  fld [a]
+  fld [b] 
   fcos
-  fld [b]
-  fcos
-  fmulp
-  fmul [XAxisMuliplier]
-  faddp 
+  fmul [len]
+  faddp
   fstp [Anim_Hand_Position + 8]
   
-  fld dword[esi]
-  fstp [Anim_Hand_Turn]
-  fld dword[esi + 4]
-  fstp [Anim_Hand_Turn + 4]
-  fld dword[esi + 8]
-  fadd [angleY]
-  fstp [Anim_Hand_Turn + 8]
+  fldpi
+  fmul dword[esi + 4]
+  fdiv [PiDegree]
+  fldpi
+  fmul [addTurn_A]
+  fdiv [PiDegree]
+  fsubp
+  fstp [b]
+  
+  ;len_2
+  fld [a]  ;no
+  fsin
+  fmul [len]
+  fmul [n_05]
+  fstp [len]
+  
+  fld dword[Anim_Hand_Position + 0]
+  fld [b] 
+  fsin
+  fmul [len]
+  fsubp
+  fstp [result_pos + 0]
+    
+    
+  fld dword[Anim_Hand_Position + 4]
+  fld [a] ;!
+  fsin
+  fmul [len]
+  faddp
+  fstp [result_pos + 4]
+  
+  fld dword[Anim_Hand_Position + 8]
+  fld [b] 
+  fcos
+  fmul [len]
+  faddp
+  fstp [result_pos + 8]
+
+  
   
   mov edi, [chosenBlockFromInv]
   dec edi
   imul edi, 4
   add edi, TextureHandles
   
+  lea esi, [result_pos]
   stdcall gf_renderObj3D, obj.Cube.Handle, dword[edi], 0,\
-                                Anim_Hand_Position, Anim_Hand_Turn, 0.05, 0
+                                esi, Anim_Hand_Turn, 0.04, 0
+                                
+  pop edi
+  pop dword[edi + 4]
  
   .finish:
   
+  
   ret
 endp 
+
+
+
+proc anim_blockInHand_up uses esi edi, playerPos, playerTurn
+
+
+  ret
+endp
 

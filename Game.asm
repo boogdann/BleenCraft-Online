@@ -25,6 +25,8 @@ proc GameStart
   stdcall Inventory.SetCell, 3, 1, 1
   stdcall Inventory.SetCell, 4, 1, 1
   
+  stdcall Inventory.SetCell, 27, 1, 1
+  
   stdcall Crafting.Initialize, SmallCraft, BigCraft
   
   ;stdcall Crafting.Craft, [SmallCraft], 5

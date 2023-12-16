@@ -142,4 +142,7 @@ not_implemented_text_len  dd  $ - not_implemented_text
 RENDER_RADIUS   dd  20
 
 
+global_building_time  dd  1000
+
+
 

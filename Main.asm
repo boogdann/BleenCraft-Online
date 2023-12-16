@@ -85,6 +85,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         case    .MouseDown,     WM_LBUTTONDOWN 
         case    .MouseUp,       WM_LBUTTONUP
         case    .RMouseUp,      WM_RBUTTONUP
+        case    .RMouseDown,    WM_RBUTTONDOWN
         case    .WheelScroll,   WM_MOUSEWHEEL
         
         invoke  DefWindowProc, [hWnd], [uMsg], [wParam], [lParam]
@@ -165,8 +166,20 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         cmp [UI_MODE], UI_GAME
         jnz .SkipRMouseUp
         stdcall OpenWorckBranch
+        ;stdcall ct_build_block, prevCubePos
   
         .SkipRMouseUp:
+        jmp     .ReturnZero
+        
+  .RMouseDown:
+        cmp [App_Mode], GAME_MODE
+        jnz .SkipRMouseDown
+        cmp [UI_MODE], UI_GAME
+        jnz .SkipRMouseDown
+        mov [global_building_time], 1000
+        stdcall ct_build_block, prevCubePos
+        
+        .SkipRMouseDown:
         jmp     .ReturnZero
   .WheelScroll:
         

@@ -334,7 +334,7 @@ proc ct_destroy_block, cubePos
 .finish:
 
   ret
-endp                
+endp              
 
 proc ct_build_block, prevCubePos
 

@@ -4,7 +4,7 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=9
+  countAsm=13
   countInc=2
 [asm]
   asm1="Main.asm"
@@ -16,6 +16,10 @@ if 2 * 2 = 5
   asm7="Interface.asm"
   asm8="Settings.asm"
   asm9="Connect.asm"
+  asm10="blocksAnimation.asm"
+  asm11="gf_math.ASM"
+  asm12="gf_api_init.ASM"
+  asm13="BlocksHighlighting.asm"
 [inc]
   inc1="Game.inc"
   inc2="gf_render_data.inc"
