@@ -68,5 +68,3 @@ curWheelDelta              dd     0
 workBench_opened           dd     0
 
 WorkBenchBuilded           dd     0
-
-dont_open_workbench        dd     0

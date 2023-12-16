@@ -343,7 +343,10 @@ proc ct_build_block, prevCubePos
     tempVector dd 0, 0, 0
     playerCurPos dd 0, 0, 0
   endl
-
+  
+  cmp [workBench_opened], 1
+  je .finish
+  
   mov edi, [prevCubePos]
   
   fld dword[edi]
@@ -387,12 +390,7 @@ proc ct_build_block, prevCubePos
 
   cmp [build_is_prohibited], 1
   je @F
-     
-     cmp [chosenBlockFromInv], Block.CraftingTable
-     jne .notTable
-          mov [WorkBenchBuilded], 1
-     .notTable:
-     
+  
      cmp [chosenBlockFromInv], 0
      je .finish
         

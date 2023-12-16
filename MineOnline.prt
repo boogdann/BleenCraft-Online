@@ -4,21 +4,15 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=7
-  countInc=6
+  countAsm=5
+  countInc=2
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
-  asm3="interfase_controller.asm"
-  asm4="Create.asm"
-  asm5="interfase_items.asm"
-  asm6="Settings.asm"
-  asm7="interfase_text.asm"
+  asm3="InventoryHandler.asm"
+  asm4="Keyboard.asm"
+  asm5="BlocksHighlighting.asm"
 [inc]
   inc1="Game.inc"
-  inc2="Textures.inc"
-  inc3="Objects.inc"
-  inc4="gf_render_data.inc"
-  inc5="gf_api_init.inc"
-  inc6="GraficAPI.inc"
+  inc2="CotrollerAPI.inc"
 end if
