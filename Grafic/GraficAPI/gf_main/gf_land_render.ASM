@@ -368,6 +368,9 @@ proc gf_frastrum_check uses esi edi ecx edx, obj_pos
     distance    dd     ? 
     ObjRadius   dd     -2.0 
   endl
+  
+  mov eax, [GLOBAL_OBJ_RADIUS_RENDER]
+  mov [ObjRadius], eax
 
   ;Check frastrum
   lea esi, [gf_frastrum_planes]

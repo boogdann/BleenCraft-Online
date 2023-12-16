@@ -108,6 +108,7 @@ proc ui_MenuSettingsController, WindowRect
   jmp .Return  
   .TcpFocus:
      mov [CurFocus], 10
+     jmp .Return 
   .RadiusFocus:
      mov [CurFocus], 13
   jmp .Return      
@@ -129,10 +130,14 @@ proc ui_EscMenuInputController, wParam
      stdcall AddLetterToInput, ConnectionIP_input, [wParam], 1, 1
   jmp .Return 
   .UdpFocus:
+     mov [MAX_LEN_INPUT], 5
      stdcall AddLetterToInput, ConnectionUdpPort_input, [wParam], 0, 1
+     mov [MAX_LEN_INPUT], 15
   jmp .Return  
   .TcpFocus:
+     mov [MAX_LEN_INPUT], 5
      stdcall AddLetterToInput, ConnectionTcpPort_input, [wParam], 0, 1
+     mov [MAX_LEN_INPUT], 15
   jmp .Return 
   .RadiusFocus:
      mov [MAX_LEN_INPUT], 2

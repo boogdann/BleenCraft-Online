@@ -28,7 +28,7 @@ proc ui_InterfaceInit
   mov [PlayerTurn + 4], 30.0 
   mov [PlayerTurn], -10.0 
   
-
+  mov [GLOBAL_OBJ_RADIUS_RENDER], 1.0
   ret
 endp
 

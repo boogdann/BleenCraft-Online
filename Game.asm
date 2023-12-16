@@ -14,6 +14,8 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;mov [UI_MODE], CONST
 
 proc GameStart
+  mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
+
   ;stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
 
   stdcall Inventory.Initialize, Inventory, InventorySize
