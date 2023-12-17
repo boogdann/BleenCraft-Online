@@ -2,8 +2,6 @@ IS_ONLINE    dd FALSE
 IS_HOST      dd FALSE
 IS_GENERATED dd FALSE
 
-_IS_SERVER_DEBUD dd FALSE
-
 ;========= Grafic params =============== 
 Dayly_Kof        dw     0  
 LightsCount      db     1 ;Byte [0-15] 
@@ -59,7 +57,7 @@ BIG_CRAFT_SIZE      =     10
     ; ======= =======
 
 ;=======================================
-ServerIp         db       "192.168.100.33", 0
+ServerIp         db       "192.168.0.101", 0
 ServerPortUDP    dd       9999
 ServerPortTCP    dd       10000
 ;=======================================
@@ -140,6 +138,8 @@ RENDER_RADIUS   dd  20
 
 
 global_building_time  dd  1000
+
+_IS_SERVER_DEBUD  dd   1
 
 
 

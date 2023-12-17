@@ -293,7 +293,7 @@ endp
 
 ;ebx - *(addr) to obj handle structure
 ;eax - [value] of texture handle
-proc grafic.GetToolsObjHandles, index
+proc grafic.GetToolsObjHandles uses edx, index
   locals 
     divisor  dd  5
   endl
@@ -309,6 +309,7 @@ proc grafic.GetToolsObjHandles, index
     mov ebx, ToolsObjAddr
     jmp .ReadyObj
   .SkipStick:
+    xor edx, edx
     dec eax
     div dword[divisor]
     imul eax, 8
@@ -318,6 +319,7 @@ proc grafic.GetToolsObjHandles, index
     add ebx, 8
 
   .ReadyObj:
+  
   pop eax
   imul eax, 4
   add eax, ToolsTxAddr

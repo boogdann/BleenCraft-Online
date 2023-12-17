@@ -20,19 +20,38 @@ proc anim_blockInHand uses esi edi, playerPos, playerTurn
   fldz
   fstp [Anim_Hand_Turn + 8]
   
+  
+  mov edi, [chosenBlockFromInv]
+  inc edi  
+  cmp edi, Tools.MinValueTool
+  jl @F
+      dec edi
+      stdcall grafic.GetToolsObjHandles, edi
+      jmp .Render
+  @@:  
+  dec edi
+  dec edi
+  imul edi, 4
+  add edi, TextureHandles
+  
+  mov ebx, obj.Cube.Handle
+  mov eax, dword[edi]
+  .Render:  
+  ;eax - tx | ebx - obj*
+  
   mov esi, [playerTurn]
   cmp dword[esi], 0
   jle @F
-     stdcall anim_blockInHand_up, [playerPos], [playerTurn]
+     stdcall anim_blockInHand_up, [playerPos], [playerTurn], ebx, eax
      jmp .Return
   @@:
-  stdcall anim_blockInHand_down, [playerPos], [playerTurn]
+  stdcall anim_blockInHand_down, [playerPos], [playerTurn], ebx, eax
 
   .Return:
   ret
 endp  
 
-proc anim_blockInHand_down uses esi edi, playerPos, playerTurn
+proc anim_blockInHand_down uses esi edi, playerPos, playerTurn, obj, tx
 
   locals
     a dd 0.0        
@@ -157,27 +176,9 @@ proc anim_blockInHand_down uses esi edi, playerPos, playerTurn
   faddp
   fstp [result_pos + 8]
   
-  
-  mov edi, [chosenBlockFromInv]
-  inc edi  
-  cmp edi, Tools.MinValueTool
-  jl @F
-      dec edi
-      stdcall grafic.GetToolsObjHandles, edi
-      jmp .Render
-  @@:
-  dec edi
-  dec edi
-  imul edi, 4
-  add edi, TextureHandles
-  
-  mov ebx, obj.Cube.Handle
-  mov eax, dword[edi]
-  
-  .Render:
-  
+
   lea esi, [result_pos]
-  stdcall gf_renderObj3D, ebx, eax, 0,\
+  stdcall gf_renderObj3D, [obj], [tx], 0,\
                                 esi, Anim_Hand_Turn, 0.04, 0
                                 
   pop edi
@@ -191,7 +192,7 @@ endp
 
 
 
-proc anim_blockInHand_up uses esi edi, playerPos, playerTurn
+proc anim_blockInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   
   locals
     a dd 0.0        
@@ -316,29 +317,9 @@ proc anim_blockInHand_up uses esi edi, playerPos, playerTurn
   fmul [len]
   faddp
   fstp [result_pos + 8]
-
-  
-  
- mov edi, [chosenBlockFromInv]
-  inc edi  
-  cmp edi, Tools.MinValueTool
-  jl @F
-      dec edi
-      stdcall grafic.GetToolsObjHandles, edi
-      jmp .Render
-  @@:
-  dec edi
-  dec edi
-  imul edi, 4
-  add edi, TextureHandles
-  
-  mov ebx, obj.Cube.Handle
-  mov eax, dword[edi]
-  
-  .Render:
   
   lea esi, [result_pos]
-  stdcall gf_renderObj3D, ebx, eax, 0,\
+  stdcall gf_renderObj3D, [obj], [tx], 0,\
                                 esi, Anim_Hand_Turn, 0.04, 0
                                 
   pop edi
