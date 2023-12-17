@@ -72,7 +72,22 @@ proc client.Serve_PlayerData, udp_socket_handle, udp_soket_data_addr, playerId, 
   ret
 endp
 
+proc client.InitUdpPlayerConnection uses esi, msg, len
+  cmp [len], 0
+  jl .Error
+  
+  mov esi, [msg]
+  add esi, [Client.SizeSecret]
+  add esi, 4 + 4 ;type + groopId
+  mov eax, dword[esi]
+  mov [cl_curPlayerID], eax
+  
+  .Error:
+  ret
+endp
+
 proc client.StopServe_PlayerData
   mov [cl_isCanServingPlayerData], 0
+  mov [cl_curPlayerID], 0
   ret
 endp

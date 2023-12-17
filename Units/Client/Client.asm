@@ -30,6 +30,7 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
 ;  jz      .Error   
 
   stdcall ws_socket_get_msg_udp, [Client.hUDPSock], Client.ReadBuffer, [Client.SizeBuffer]
+  stdcall client.InitUdpPlayerConnection, Client.ReadBuffer, eax
 ;  cmp     eax, 0
 ;  jz      .Error
 
@@ -42,8 +43,8 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
   stdcall client.Subscribe_PlayerData, PlayerPos, PlayerTurn, PlayerPos, PlayerTurn
 
   ;Then you can start serving data:
-  ;last parametr (5-n) - time of ("invoke Sleep") in every loop iteration  |     [PlId],           [GrId]         (Sleep)
-  stdcall client.Serve_PlayerData, [Client.hUDPSock], [Client.sockAddrUDP], [Client.GroupID], [Client.Number],     300
+  ;last parametr (5-n) - time of ("invoke Sleep") in every loop iteration  |     [PlId],           [GrId],       (Sleep)
+  stdcall client.Serve_PlayerData, [Client.hUDPSock], [Client.sockAddrUDP], [cl_curPlayerID], [Client.GroupID],    100
 
   ;To kill this flow you can use: (not implemented yet)
   ;stdcall client.StopServe_PlayerData

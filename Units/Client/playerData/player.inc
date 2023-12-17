@@ -16,4 +16,6 @@ cl_PlayerDataMsg       db   100   dup  (?)
 cl_playerData          dd   8     dup  (?)
 cl_playerData_len      dd   $ - cl_playerData  
 
-cl_isCanServingPlayerData dd   ?          
+cl_isCanServingPlayerData dd   ?  
+
+cl_curPlayerID         dd   ?        

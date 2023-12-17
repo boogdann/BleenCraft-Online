@@ -241,6 +241,7 @@ endp
 ;     cmp     dword[IS_ONLINE], FALSE
 ;     jz      .Finish
 ;     stdcall Client.Destroy
+;     stdcall client.StopServe_PlayerData 
 ;     
 ;.Finish:
 ;     mov     dword[IS_GENERATED], FALSE
