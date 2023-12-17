@@ -45,7 +45,7 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
   ;Then you can start serving data:
   ;last parametr (5-n) - time of ("invoke Sleep") in every loop iteration  |     [PlId],           [GrId],       (Sleep)
   stdcall client.Serve_PlayerData, [Client.hUDPSock], [Client.sockAddrUDP], [cl_curPlayerID], [Client.GroupID],    100
-  stdcall client.Start_UdpHadler, [Client.hUDPSock], [Client.sockAddrUDP], [cl_curPlayerID]
+  stdcall client.Start_UdpHadler,  [Client.hUDPSock], [Client.sockAddrUDP], [cl_curPlayerID]
 
   ;To kill this flow you can use: (not implemented yet)
   ;stdcall client.StopServe_PlayerData

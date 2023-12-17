@@ -8,7 +8,7 @@ proc ws_socket_send_msg_tcp, socket, msg, msg_len
   ret
 endp
 
-proc ws_socket_get_msg_udp, socket, buf, buf_len 
+proc ws_socket_get_msg_udp uses esi edi, socket, buf, buf_len 
   locals
     ws_server_addr_len   dd   sizeof.sockaddr 
   endl 

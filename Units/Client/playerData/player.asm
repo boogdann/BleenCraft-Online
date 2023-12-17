@@ -1,5 +1,27 @@
 include 'player_services.asm'
 
+proc client.SendPlayersToRender uses esi edi ecx edx eax
+  mov esi, [cl_all_players_data_addr]
+  mov ecx, 0
+  .SearchPlayersCircle:
+      cmp dword[esi], 0
+      jz @F
+          add esi, 4
+          ;=============================
+          mov edi, esi
+          add edi, 12
+          stdcall renderPlayer, esi, edi
+          ;=============================
+          sub esi, 4
+      @@:
+      add esi, [cl_player_data_len]
+  inc ecx
+  cmp ecx, [MAX_PLAYERS_COUNT]
+  jnz .SearchPlayersCircle
+  
+  ret
+endp
+
 proc client.Subscribe_PlayerData, posAddr, turnAddr, HandItemAddr, PlayerState
 
   ;Init addreses
@@ -87,7 +109,9 @@ proc _client.StartHandler_UdpData uses esi edi, args
           cmp dword[cl_UdpMsgBuffer], Client.msg.PlayerData
           jnz @F
              mov eax, dword[cl_UdpMsgBuffer + 4 + 5 + 4]
-             stdcall _cl_users_dataUpdate, eax, cl_UdpMsgBuffer + 4 + 5 + 4 + 4
+             mov edi, cl_UdpMsgBuffer
+             add edi, 4 + 5 + 4 + 4
+             stdcall _cl_users_dataUpdate, eax, edi 
              jmp .SkipMessge
           @@:
           ;cmp dword[cl_UdpMsgBuffer], Client.msg.Chat
@@ -127,6 +151,16 @@ proc client.InitUdpPlayerConnection uses esi, msg, len
   cmp [len], 0
   jl .Error
   
+  ;Allocate memory for users data:
+  mov eax, [MAX_PLAYERS_COUNT]
+  imul eax, [cl_player_data_len]
+  mov esi, eax
+  invoke GetProcessHeap
+  invoke HeapAlloc, eax, 8, esi
+  mov [cl_all_players_data_addr], eax
+  mov dword[eax], 1
+  
+  ;Get user id
   mov esi, [msg]
   add esi, [Client.SizeSecret]
   add esi, 4 + 4 ;type + groopId
@@ -135,11 +169,12 @@ proc client.InitUdpPlayerConnection uses esi, msg, len
   
   .Error:
   ret
-endp
+endp                
 
 proc client.StopServe_PlayerData
   mov [cl_isCanServingPlayerData], 0
   mov [cl_isCanHandleUdp], 0
   mov [cl_curPlayerID], 0
+  ;mov [cl_all_players_data_addr], 0
   ret
 endp

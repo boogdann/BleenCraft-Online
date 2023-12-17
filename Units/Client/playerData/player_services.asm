@@ -117,11 +117,62 @@ proc _client.CmpPlayerData uses esi edi
 endp
 
 
-proc _cl_users_dataUpdate, userId, userData
-  cmp [userId], 1
-  jnz @F
-    invoke ExitProcess, 0
-  @@:
+proc _cl_users_dataUpdate uses esi edi, userId, userData
+  locals 
+      userDataAddr   dd   ?
+  endl
+  ;MAX_PLAYERS_COUNT
+  ;[cl_all_players_data_addr] = *addr
+  ;cl_player_data_len 
   
+  ;Find user with cur id
+  mov esi, [cl_all_players_data_addr]
+  mov ecx, 0
+  .SearchIdCircle:
+      mov eax, [userId]
+      cmp dword[esi], eax
+      jnz @F
+          mov [userDataAddr], esi
+          jmp .AddrFound
+      @@:
+      add esi, [cl_player_data_len]
+  inc ecx
+  cmp ecx, [MAX_PLAYERS_COUNT]
+  jnz .SearchIdCircle
+  
+  ;Find space to add new user
+  mov esi, [cl_all_players_data_addr]
+  mov ecx, 0
+  .SearchSpaceCircle:
+      mov eax, 0
+      cmp dword[esi], eax
+      jnz @F
+          mov [userDataAddr], esi
+          jmp .AddrFound
+      @@:
+      add esi, [cl_player_data_len]
+  inc ecx
+  cmp ecx, [MAX_PLAYERS_COUNT]
+  jnz .SearchSpaceCircle
+  jmp .SkipUploadingInfo
+  
+  .AddrFound:
+  ;[userDataAddr] <- [userData] | [cl_player_data_len] bytes
+  mov esi, [userDataAddr]
+  mov eax, [userId]
+  mov dword[esi], eax
+  add esi, 4
+  mov edi, [userData]
+  mov ecx, 0
+  .WriteDataLoop:
+      mov eax, dword[edi]
+      mov dword[esi], eax
+      add edi, 4
+      add esi, 4
+  add ecx, 4
+  cmp ecx, [cl_player_data_len]
+  jnz .WriteDataLoop
+  
+  .SkipUploadingInfo:
   ret
 endp

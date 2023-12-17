@@ -1,6 +1,7 @@
 include "Units\Asm_Includes\Const.asm"
 include "Units\Asm_Includes\Code.asm"
 include "Units\Animations\RightHandAnimation.asm"
+include "Units\Animations\playerAnimation.asm"
 include "Units\Animations\blocksAnimation.asm"
 include "Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 include "CotrollerAPI\main\BlocksDrop.asm"
@@ -78,9 +79,11 @@ proc RenderScene
       .animate:
       ;==== Block for ilya ===============
       stdcall renderDestroyedBlocks
-      
+      stdcall client.SendPlayersToRender
       ;===================================
     .SkipRenderGameItems:
+    
+    
     
     ;Landscape rendering                        
     stdcall gf_RenderMineLand, [Field.Blocks], [WorldLength], [WorldWidth],\

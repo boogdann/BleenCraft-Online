@@ -209,9 +209,11 @@ section '.data' data readable writeable
          ;=================================================== 
          
          ;Menu/Game mode
-         MENU_MODE       =     1
-         GAME_MODE       =     2
-         App_Mode        dd    ?
+         MENU_MODE           =    1
+         GAME_MODE           =    2
+         App_Mode            dd   ?
+         
+         MAX_PLAYERS_COUNT   dd   9
          
          ;obj.Cube.Handle - CUBE
          
