@@ -36,8 +36,8 @@ proc GameStart
   ;===========================================================
   
   stdcall Inventory.SetCell, 1, 235, 1
-  stdcall Inventory.SetCell, 2, 1, 1
-  stdcall Inventory.SetCell, 3, 1, 1
+  stdcall Inventory.SetCell, 2, 2, 64
+  stdcall Inventory.SetCell, 3, 4, 1
   stdcall Inventory.SetCell, 4, 1, 1
   
   ;========== Controller params ==========
@@ -173,8 +173,8 @@ proc ResetGameData
 endp
 
 proc InitWorld
-     cmp     dword[IS_GENERATED], TRUE
-     jz      .EndSet
+;     cmp     dword[IS_GENERATED], TRUE
+;     jz      .EndSet
      
      cmp     dword[IS_ONLINE], TRUE
      jz      .SetOnline
@@ -187,7 +187,7 @@ proc InitWorld
      stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
      cmp     eax, -1
      jz      .Error
-     
+          
      cmp     dword[IS_HOST], TRUE
      jz      .SetHost
      ; not host
@@ -204,9 +204,10 @@ proc InitWorld
      stdcall Client.StartTCPServer
      cmp     eax, -1
      jz      .Error
-     jmp     .Finish
      
+     jmp     .Finish
 .Error:
+     invoke  ExitProcess, 1
      mov     eax, -1   
      jmp     .EndSet
        
@@ -226,18 +227,18 @@ proc InitWorld
      ret    
 endp
 
-proc DestroyWorld
-     cmp     dword[IS_GENERATED], FALSE
-     jz      .Finish
-     
-     stdcall Field.DestroyWorld
-     stdcall Field.DestroyClouds
-     
-     cmp     dword[IS_ONLINE], FALSE
-     jz      .Finish
-     stdcall Client.Destroy
-     
-.Finish:
-     mov     dword[IS_GENERATED], FALSE
-     ret
-endp
+;proc DestroyWorld
+;     cmp     dword[IS_GENERATED], FALSE
+;     jz      .Finish
+;     
+;     stdcall Field.DestroyWorld
+;     stdcall Field.DestroyClouds
+;     
+;     cmp     dword[IS_ONLINE], FALSE
+;     jz      .Finish
+;     stdcall Client.Destroy
+;     
+;.Finish:
+;     mov     dword[IS_GENERATED], FALSE
+;     ret
+;endp

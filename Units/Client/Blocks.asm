@@ -4,7 +4,7 @@ proc Client.SendBlock uses edi ecx ebx esi, X, Y, Z, BlockIndex
        toSend  dd ?
        dataMsg dd ?
      endl
-     
+          
      invoke GetProcessHeap
      mov     [hHeap], eax     
 
@@ -117,7 +117,7 @@ proc Client.SendToServerThread, params
 .Error:
      mov eax, -1  
 .Finish:
-     ;invoke  ExitProcess, 1
+     invoke  ExitProcess, 1
      ret
 endp
 
@@ -147,6 +147,7 @@ proc Client.GetFromServer, params
      jmp     .GetMsg
        
 .Finish:
+     invoke  ExitProcess, 1 
      ret
 endp
 

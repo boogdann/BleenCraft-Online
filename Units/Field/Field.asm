@@ -413,7 +413,9 @@ proc Field.InitData uses eax, Length, Width, Height
      mov     [Field.Width], eax
      
      mov     eax, [Height]
-     mov     [Field.Height], eax     
+     mov     [Field.Height], eax   
+     
+     mov     [Field.IsGenerated], TRUE  
 .Finish:
      ret
 endp
@@ -477,18 +479,18 @@ proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
      mov    dword[Field.IsSpawnPointGenerated], TRUE
      
 .Finish:
-     ;mov   eax, 500.0
-     mov    eax, [Field.SpawnPoint]
+     mov   eax, 500.0
+     ;mov    eax, [Field.SpawnPoint]
      mov    edi, [resAddr]
      mov    [edi], eax
     
-     ;mov    eax, 75.0
-     mov    eax, [Field.SpawnPoint+4]
+     mov    eax, 75.0
+     ;mov    eax, [Field.SpawnPoint+4]
      mov    edi, [resAddr]
      mov    [edi+4], eax
     
-     ;mov    eax, 900.0
-     mov    eax, [Field.SpawnPoint+8]
+     mov    eax, 900.0
+     ;mov    eax, [Field.SpawnPoint+8]
      mov    edi, [resAddr]
      mov    [edi+8], eax   
     ret

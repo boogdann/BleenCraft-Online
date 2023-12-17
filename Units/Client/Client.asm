@@ -78,6 +78,7 @@ proc Client.StartTCPServer
      jmp     .Finish
 .Error:
      mov     eax, -1
+     invoke  ExitProcess, 1
 .Finish:
      ret
 endp
@@ -261,7 +262,7 @@ proc Client.GetNumberOfBytesTCP uses edx ecx edi esi ebx, hSock, msgAddr, sizeMs
          
      stdcall ws_socket_get_msg_tcp, [hSock], edi, ebx 
      cmp     eax, -1
-     jl      .Error
+     jz      .Error
      
      add     [recievedBytes], eax
      jmp     .GetMsg
