@@ -1,11 +1,9 @@
 proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
   stdcall ws_soket_init 
   
-  invoke  CreateThread, 0, 0, Client.SendToServerThread, Client.hUDPSock, 0, 0
-
   stdcall ws_new_socket, WS_UDP
-;  cmp     eax, -1
-;  jz      .Error
+  cmp     eax, -1
+  jz      .Error
   
   mov     dword[Client.hUDPSock], eax
   
@@ -21,8 +19,8 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
 ;  jz      .Error
   
   stdcall ws_new_socket, WS_TCP
-;  cmp     eax, -1
-;  jz      .Error
+  cmp     eax, -1
+  jz      .Error
   
   mov     dword[Client.hTCPSock], eax  
   stdcall ws_new_connection_structure, [serverIp], [serverPortTCP]
@@ -45,19 +43,32 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
 ;  jz     @F
 ;  invoke ExitProcess, 1
 ;@@:
-    
-  ; queue for work with threads     
-  stdcall ws_new_socket, WS_TCP  
-  mov     dword[Client.hTCPQueueClient], eax
-
-  stdcall ws_new_connection_structure, Client.YourIP, [Client.YourPort]
-  mov     dword[Client.sockAddrTCPQueueClient], eax  
-  
-  stdcall ws_tcp_connect, [Client.hTCPQueueClient], [Client.sockAddrTCPQueueClient]
-  
+      
   jmp     .Finish
 .Error:
   mov     eax, -1
+.Finish:
+     ret
+endp
+
+proc Client.StartTCPServer
+     invoke  CreateThread, 0, 0, Client.SendToServerThread, Client.hUDPSock, 0, 0
+
+     ;socket for work with threads     
+     stdcall ws_new_socket, WS_TCP  
+     mov     dword[Client.hTCPQueueClient], eax
+     cmp     eax, -1
+     jz      .Error
+  
+     stdcall ws_new_connection_structure, Client.YourIP, [Client.YourPort]
+     mov     dword[Client.sockAddrTCPQueueClient], eax  
+  
+     stdcall ws_tcp_connect, [Client.hTCPQueueClient], [Client.sockAddrTCPQueueClient]
+
+     invoke  CreateThread, 0, 0, Client.GetFromServer, Client.hUDPSock, 0, 0
+     jmp     .Finish
+.Error:
+     mov     eax, -1
 .Finish:
      ret
 endp
@@ -171,12 +182,16 @@ proc Client.GetWorld uses edx edi esi, pWorld, pSizeX, pSizeY, pSizeZ
      stdcall Client.GetMessage, [Client.MSGGetWorld], Client.Secret, [Client.SizeSecret], \
                                 [Client.GroupID], [Client.Number], [buffer], 0, [msgAddr] 
      stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], [msgAddr], eax
+     cmp     eax, -1
+     jz      .Error
      
      mov     edi, [buffer]
      mov     ebx, 0     
 .GetWorld:
      stdcall Client.GetNumberOfBytesTCP, [Client.hTCPSock], [msgAddr], [sizeMsg]
-     
+     cmp     eax, -1
+     jz      .Error
+          
      xchg    eax, ecx
      stdcall Client.GetType, [msgAddr], eax
 
@@ -205,8 +220,12 @@ proc Client.GetWorld uses edx edi esi, pWorld, pSizeX, pSizeY, pSizeZ
      rep movsb
 .Continue:
      jmp .GetWorld
+     
 .EndSendWorld:
      stdcall Client.UnmarshalWorld, [buffer], ebx, [pWorld], [pSizeX], [pSizeY], [pSizeZ]
+     jmp     .Finish
+.Error:
+     mov     eax, -1 
 .Finish:
      ret
 endp
@@ -224,12 +243,7 @@ proc Client.GetNumberOfBytesTCP uses edx ecx edi esi ebx, hSock, msgAddr, sizeMs
      mov     eax, [recievedBytes]
      mov     ebx, [sizeMsg]
      sub     ebx, eax
-     
-     cmp    eax, 0
-     jnl    @F
-     invoke ExitProcess, 1
-@@:
-     
+          
      mov     edi, [addres]
      add     edi, eax
      
@@ -245,7 +259,6 @@ proc Client.GetNumberOfBytesTCP uses edx ecx edi esi ebx, hSock, msgAddr, sizeMs
      
      jmp     .Finish
 .Error:
-     invoke  ExitProcess, 1
      mov     eax, -1
 .Finish:
      ret

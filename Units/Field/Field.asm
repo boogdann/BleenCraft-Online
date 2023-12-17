@@ -260,7 +260,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     cmp    ecx, [numChanc]
     jl     .IterateChancs   
     
-    mov    ecx, 10000
+    mov    ecx, 100000
     
 ._SetSpawnPoint:
     push   ecx
@@ -312,7 +312,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     stdcall Field.GenerateOre, [sizeChanc], [numChanc], [power]
      
 .EndSetWorld:
-    mov     dword[Field.IsGenerated], 1 
+    mov     dword[Field.IsGenerated], TRUE 
+    mov     dword[Field.IsSpawnPointGenerated], TRUE
+     
     stdcall Field.GenerateBedrock
     ret
 endp
@@ -379,21 +381,92 @@ proc Field.GenerateBedrock uses ecx eax edx edi
      ret
 endp
 
-proc Field.GenerateSpawnPoint uses edi, resAddr
-    ;mov    eax, 500.0
-    mov    eax, [Field.SpawnPoint]
-    mov    edi, [resAddr]
-    mov    [edi], eax
+proc Field.InitData uses eax, Length, Width, Height
+     mov     eax, [Length]
+     mov     [Field.Length], eax
+     
+     mov     eax, [Width]
+     mov     [Field.Width], eax
+     
+     mov     eax, [Height]
+     mov     [Field.Height], eax     
+.Finish:
+     ret
+endp
+
+proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
+     locals
+         x dd 100
+         y dd 100
+         z dd 100
+     endl
+     
+     cmp    dword[Field.IsSpawnPointGenerated], TRUE
+     jz     .Finish
+     
+     stdcall Random.Initialize
+     
+     mov    ecx, 10000    
+._SetSpawnPoint:
+     push   ecx
     
-    ;mov    eax, 75.0
-    mov    eax, [Field.SpawnPoint+4]
-    mov    edi, [resAddr]
-    mov    [edi+4], eax
+     mov    ebx, [Field.Length]
+     dec    ebx
+     stdcall Random.GetInt, 1, ebx 
+     mov    dword[x], eax
     
-    ;mov    eax, 900.0
-    mov    eax, [Field.SpawnPoint+8]
-    mov    edi, [resAddr]
-    mov    [edi+8], eax   
+     stdcall Random.GetInt, 1, ebx
+     mov    dword[y], eax
+    
+     mov    dword[z], 40
+.Iterate_Z:
+     stdcall Field.GetBlockIndex, [x], [y], [z]
+     cmp     eax, Block.Water
+     jz      .Continue
+     
+     cmp    eax, Block.Air
+     jz     ._Break  
+
+.Continue:
+     push   eax
+     mov    eax, [Field.Height]
+     sub    eax, 20
+     inc    dword[z]
+     cmp    [z], eax
+     pop    eax
+
+     jl     .Iterate_Z
+         
+     pop    ecx
+     loop   ._SetSpawnPoint
+
+._Break:
+     fild   dword[x]
+     fstp   dword[Field.SpawnPoint]
+    
+     fild   dword[z]
+     fstp   dword[Field.SpawnPoint+4]
+    
+     fild   dword[y]
+     fstp   dword[Field.SpawnPoint+8]   
+
+     mov    dword[Field.IsSpawnPointGenerated], TRUE
+     
+.Finish:
+     ;mov   eax, 500.0
+     mov    eax, [Field.SpawnPoint]
+     mov    edi, [resAddr]
+     mov    [edi], eax
+    
+     ;mov    eax, 75.0
+     mov    eax, [Field.SpawnPoint+4]
+     mov    edi, [resAddr]
+     mov    [edi+4], eax
+    
+     ;mov    eax, 900.0
+     mov    eax, [Field.SpawnPoint+8]
+     mov    edi, [resAddr]
+     mov    [edi+8], eax   
     ret
 endp
 

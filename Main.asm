@@ -23,7 +23,6 @@ include "Assets\Blocks_textures.inc"
 include "Assets\Objects.inc"
 ;==============================================
 
-
 section '.text' code readable executable     
 
 Start:   
@@ -33,7 +32,7 @@ Start:
   ;Attention! Dangerous dependencies with /assets 
   stdcall gf_LoadTextures
   stdcall gf_2D_Render_Start 
-    stdcall ui_renderBackground, WindowRect, 0.0
+  stdcall ui_renderBackground, WindowRect, 0.0
   stdcall gf_2D_Render_End
   invoke SwapBuffers, [hdc]
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT

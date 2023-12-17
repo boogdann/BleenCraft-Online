@@ -15,39 +15,10 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 
 proc GameStart
   mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
-
-  ;stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
-
-  stdcall Inventory.Initialize, Inventory, InventorySize
   
-  stdcall Inventory.SetCell, 1, 1, 1
-  stdcall Inventory.SetCell, 2, 1, 1
-  stdcall Inventory.SetCell, 3, 1, 1
-  stdcall Inventory.SetCell, 4, 1, 1
-  
-  stdcall Inventory.SetCell, 27, 1, 1
-  
-  stdcall Crafting.Initialize, SmallCraft, BigCraft
-  
-  ;stdcall Crafting.Craft, [SmallCraft], 5
-    
+  stdcall InitWorld 
+      
   stdcall initializeDestrBlocksHeap
-  
-  ;================World initialize=================
-  stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], filename
-  stdcall Field.SetValues, Field.Blocks, WorldLength, WorldWidth, WorldHeight, SizeWorld  
-    
-  mov     ecx, [WorldPower]
-  sub     ecx, 1
-  stdcall Field.GenerateClouds, ecx, filenameSky
-  stdcall Field.SetCloudValues, SkyLand, SkyLength, SkyWidth 
-  
-  ;stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]    
-  ;stdcall Client.GetWorld, Field.Blocks, WorldLength, WorldWidth, WorldHeight                    
-  ;=================================================
-  
-  ;Position initialize
-  stdcall Field.GenerateSpawnPoint, PlayerPos
   
   mov [UI_MODE], UI_GAME
   
@@ -56,7 +27,6 @@ proc GameStart
   mov [Dayly_Kof], 10000   ;0 - 65535
   mov [DAYLY_SPEED], 2
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
-  
   
   ;YOU CAN EDIT START VALUE TO "RENDER_RADIUS" in /Game.inc file
   ;Set radius of block rendering       (x,  y,  z)
@@ -186,7 +156,6 @@ proc RenderScene
   ret
 endp
 
-
 ;Respawn data reset
 proc ResetGameData
     mov [currentNumOfHearts], 10
@@ -196,4 +165,54 @@ proc ResetGameData
     stdcall ct_change_mouse, 0
 
   ret
+endp
+
+proc InitWorld
+     cmp     dword[IS_ONLINE], TRUE
+     jz      .SetOnline
+     ; offline
+     stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], [ChosenFile]
+     stdcall Field.SetValues, Field.Blocks, WorldLength, WorldWidth, WorldHeight, SizeWorld  
+    
+     jmp     .Finish
+.SetOnline:
+     stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
+     cmp     eax, -1
+     jz      .Error
+     
+     cmp     dword[IS_HOST], TRUE
+     jz      .SetHost
+     ; not host
+     stdcall Client.GetWorld, Field.Blocks, WorldLength, WorldWidth, WorldHeight
+     stdcall Field.InitData, [WorldLength], [WorldWidth], [WorldHeight] 
+     jmp     .StartTCPServer
+     
+.SetHost:
+     stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], [ChosenFile]
+     stdcall Field.SetValues, Field.Blocks, WorldLength, WorldWidth, WorldHeight, SizeWorld
+     stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
+
+.StartTCPServer:
+     stdcall Client.StartTCPServer
+     cmp     eax, -1
+     jz      .Error
+     jmp     .Finish
+     
+.Error:
+     mov     eax, -1   
+     jmp     .EndSet
+       
+.Finish:
+     mov     ecx, [WorldPower]
+     sub     ecx, 1
+     stdcall Field.GenerateClouds, ecx, filenameSky
+     stdcall Field.SetCloudValues, SkyLand, SkyLength, SkyWidth 
+     
+     stdcall Field.GenerateSpawnPoint, PlayerPos
+     
+     stdcall Inventory.Initialize, Inventory, InventorySize
+    
+     stdcall Crafting.Initialize, SmallCraft, BigCraft
+.EndSet:
+     ret    
 endp
