@@ -115,3 +115,13 @@ proc _client.CmpPlayerData uses esi edi
   .Return:
   ret
 endp
+
+
+proc _cl_users_dataUpdate, userId, userData
+  cmp [userId], 1
+  jnz @F
+    invoke ExitProcess, 0
+  @@:
+  
+  ret
+endp
