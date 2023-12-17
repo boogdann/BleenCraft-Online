@@ -11,7 +11,7 @@ proc Blocks.GetDestroyTime uses edi ecx, IndexBlock, IndexTool
         multiplyDestr     dd ?
         multiplyPriorTool dd ?
     endl
-    
+            
     stdcall Blocks.IndexDestr, [IndexBlock], [IndexTool]
     mov     [indexDestr], eax
     
@@ -31,26 +31,28 @@ proc Blocks.GetDestroyTime uses edi ecx, IndexBlock, IndexTool
 .SkipDiv: 
     
     cmp     dword[indexDestr], 0
-    jnle    .SkipSet
+    ja      .SkipSet
     mov     edx, Blocks.IS_DESTRUCTIBLE
-    jmp     .SkipNotSet    
+    jmp     .Finish   
 .SkipSet:
     mov     edx, Blocks.IS_NOT_DESTRUCTIBLE
-.SkipNotSet:
   
 .Finish:
+
+
     ret
 endp
 
-proc Blocks.IndexDestr uses edi edx, IndexBlock, IndexTool
+proc Blocks.IndexDestr uses edi edx ecx, IndexBlock, IndexTool
      locals
          idxMaterialTool dd ?
          NUM_5           dd 5
      endl
      
+     
      cmp    [IndexTool], Tools.MinValueTool
      jl     .SetZeroMaterial
-     
+          
      xor    edx, edx
      mov    eax, [IndexTool]
      div    dword[NUM_5]
@@ -58,32 +60,34 @@ proc Blocks.IndexDestr uses edi edx, IndexBlock, IndexTool
      cmp    edx, 0
      jnz    .Skip1
      mov    [idxMaterialTool], Blocks.MaterialWood
+     jmp    .GetIdx
           
 .Skip1:
      cmp    edx, 1
      jnz    .Skip2
      mov    [idxMaterialTool], Blocks.MaterialStone
-          
+     jmp    .GetIdx     
 .Skip2:
      cmp    edx, 2
      jnz    .Skip3
      mov    [idxMaterialTool], Blocks.MaterialIron
-          
+     jmp    .GetIdx     
 .Skip3:
      cmp    edx, 3
      jnz    .Skip4
      mov    [idxMaterialTool], Blocks.MaterialGold
-          
+     jmp    .GetIdx     
 .Skip4:
      cmp    edx, 4
      jnz    .Skip5
      mov    [idxMaterialTool], Blocks.MaterialDiamond
-          
+     jmp    .GetIdx     
 .Skip5:
      
 .SetZeroMaterial:
      mov    [idxMaterialTool], Blocks.MaterialEmpty
-      
+
+.GetIdx: 
      mov    edi, Blocks.IndexDestruction
      add    edi, [IndexBlock]
      movzx  eax, byte[edi] 
