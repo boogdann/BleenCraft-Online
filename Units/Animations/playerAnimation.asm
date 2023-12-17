@@ -1,4 +1,4 @@
-proc renderPlayer uses esi edi ecx edx eax, pos, turn
+proc renderPlayer uses esi edi ecx edx eax, pos, turn, handItem, State
   locals
     playerScale   dd   0.4
   endl

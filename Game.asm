@@ -79,7 +79,10 @@ proc RenderScene
       .animate:
       ;==== Block for ilya ===============
       stdcall renderDestroyedBlocks
-      stdcall client.SendPlayersToRender
+      cmp [IS_ONLINE], TRUE
+      jnz .Skip_RenderOtherUsers
+          stdcall client.SendPlayersToRender
+      .Skip_RenderOtherUsers:
       ;===================================
     .SkipRenderGameItems:
     

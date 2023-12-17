@@ -10,7 +10,7 @@ proc client.SendPlayersToRender uses esi edi ecx edx eax
           ;=============================
           mov edi, esi
           add edi, 12
-          stdcall renderPlayer, esi, edi
+          stdcall renderPlayer, esi, edi, dword[edi + 12], dword[edi + 16]
           ;=============================
           sub esi, 4
       @@:
@@ -158,7 +158,6 @@ proc client.InitUdpPlayerConnection uses esi, msg, len
   invoke GetProcessHeap
   invoke HeapAlloc, eax, 8, esi
   mov [cl_all_players_data_addr], eax
-  mov dword[eax], 1
   
   ;Get user id
   mov esi, [msg]
