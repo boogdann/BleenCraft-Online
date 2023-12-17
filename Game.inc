@@ -1,6 +1,8 @@
-IS_ONLINE    dd TRUE
+IS_ONLINE    dd FALSE
 IS_HOST      dd FALSE
 IS_GENERATED dd FALSE
+
+_IS_SERVER_DEBUD dd FALSE
 
 ;========= Grafic params =============== 
 Dayly_Kof        dw     0  

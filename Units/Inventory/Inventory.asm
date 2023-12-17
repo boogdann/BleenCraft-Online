@@ -94,7 +94,7 @@ proc Inventory.IncCell uses edi, idxInv
 
      mov    dx, word[edi+2]
      cmp    dx, 64
-     jnl    .Error
+     jae    .Error
 
      inc    word[edi+2]  
      jmp    .Finish
@@ -153,7 +153,7 @@ proc Inventory.AddElement uses edi ecx, idxElem
      jnz    .Continue
      
      cmp    word[edi+2], 64
-     jnle   .Continue 
+     jae    .Continue 
      
      inc    word[edi+2]
      jmp    .Finish    

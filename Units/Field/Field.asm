@@ -479,18 +479,31 @@ proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
      mov    dword[Field.IsSpawnPointGenerated], TRUE
      
 .Finish:
+     mov    eax, [Field.SpawnPoint]
+     
+     cmp   dword[_IS_SERVER_DEBUD], FALSE
+     jz    @F
      mov   eax, 500.0
-     ;mov    eax, [Field.SpawnPoint]
+@@:
      mov    edi, [resAddr]
      mov    [edi], eax
     
-     mov    eax, 75.0
-     ;mov    eax, [Field.SpawnPoint+4]
+     mov    eax, [Field.SpawnPoint+4]
+     cmp   dword[_IS_SERVER_DEBUD], FALSE
+     jz    @F
+     mov   eax, 70.0
+@@:
+
      mov    edi, [resAddr]
      mov    [edi+4], eax
     
-     mov    eax, 900.0
-     ;mov    eax, [Field.SpawnPoint+8]
+     mov    eax, [Field.SpawnPoint+8]
+     
+     cmp   dword[_IS_SERVER_DEBUD], FALSE
+     jz    @F
+     mov   eax, 900.0
+@@:
+     
      mov    edi, [resAddr]
      mov    [edi+8], eax   
     ret
