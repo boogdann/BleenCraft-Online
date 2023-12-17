@@ -237,8 +237,8 @@ proc gf_render_LableItem
 
 
   ;=================
-  stdcall grafic.GetToolsObjHandles, Tools.IronPickaxe
-  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.006, 0
+  stdcall grafic.GetToolsObjHandles, Tools.IronSword
+  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
   
   ;testing obj's
   ;stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0

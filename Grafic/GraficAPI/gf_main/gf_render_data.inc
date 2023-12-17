@@ -177,7 +177,7 @@ DAYLY_SPEED     dw     0
 
 GRAFIC_TMP_VEC_3 dd    0.025, 0.025, 0.1
 GRAFIC_TMP_2_VEC_3 dd    0.0, 0.03, 0.1
-PLAYER_ITEM_TURN  dd    0.0, 180.0, 0.0 
+PLAYER_ITEM_TURN  dd    90.0, 180.0, 0.0 
 tmp_SunPosition  dd    0.0, 0.0, -1.0
 
 GLOBAL_OBJ_RADIUS_RENDER  dd  -2.0

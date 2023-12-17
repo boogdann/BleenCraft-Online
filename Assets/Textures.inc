@@ -6,7 +6,7 @@ AddictionalTextureNames:
               ;db     "texture.mbmw", 0
               ;...
               ;=====================================
-              db      "LowQuality\Axe\Axe_Diamond.mbmw", 0
+              db      "LowQuality\Pickaxe\Wood_32.mbmw", 0
               
               db      "LowQuality\Pickaxe\Wood_32.mbmw", 0
               db      "LowQuality\Pickaxe\Stone_32.mbmw", 0
@@ -14,23 +14,23 @@ AddictionalTextureNames:
               db      "LowQuality\Pickaxe\Gold_32.mbmw", 0
               db      "LowQuality\Pickaxe\Diamond_32.mbmw", 0
               
-              db      "LowQuality\Axe\Axe_Diamond.mbmw", 0
-              db      "LowQuality\Axe\Axe_Diamond.mbmw", 0
-              db      "LowQuality\Axe\Axe_Diamond.mbmw", 0
-              db      "LowQuality\Axe\Axe_Diamond.mbmw", 0
+              db      "LowQuality\Axe\AxeWood.mbmw", 0     
+              db      "LowQuality\Axe\AxeStone.mbmw", 0
+              db      "LowQuality\Axe\AxeIron.mbmw", 0
+              db      "LowQuality\Axe\AxeGold.mbmw", 0
               db      "LowQuality\Axe\Axe_Diamond.mbmw", 0
               
-              db      "LowQuality\Pickaxe\Wood_32.mbmw", 0
-              db      "LowQuality\Pickaxe\Stone_32.mbmw", 0
-              db      "LowQuality\Pickaxe\Iron_32.mbmw", 0
-              db      "LowQuality\Pickaxe\Gold_32.mbmw", 0
-              db      "LowQuality\Pickaxe\Diamond_32.mbmw", 0
+              db      "LowQuality\Pickaxe\Wood_32.mbmw", 0    ;SHOWEL!!!!
+              db      "LowQuality\Pickaxe\Stone_32.mbmw", 0    ;SHOWEL!!!!
+              db      "LowQuality\Pickaxe\Iron_32.mbmw", 0     ;SHOWEL!!!!
+              db      "LowQuality\Pickaxe\Gold_32.mbmw", 0     ;SHOWEL!!!!
+              db      "LowQuality\Pickaxe\Diamond_32.mbmw", 0   ;SHOWEL!!!!
               
-              db      "LowQuality\Sword\Sword_Diamond.mbmw",0
-              db      "LowQuality\Sword\Sword_Diamond.mbmw",0
-              db      "LowQuality\Sword\Sword_Diamond.mbmw",0
-              db      "LowQuality\Sword\Sword_Diamond.mbmw",0
-              db      "LowQuality\Sword\Sword_Diamond.mbmw",0
+              db      "HighQuality\Sword\SwordWood.mbmw",0
+              db      "HighQuality\Sword\SwordStone.mbmw",0
+              db      "HighQuality\Sword\SwordIron.mbmw",0
+              db      "HighQuality\Sword\SwordGold.mbmw",0
+              db      "HighQuality\Sword\Sword_Diamond.mbmw",0
               db      0
         
 AddictionalTextureHandles:    
