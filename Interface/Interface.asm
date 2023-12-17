@@ -20,7 +20,7 @@ proc ui_InterfaceInit
   mov [CUR_MENU], UI_MAIN_MENU
   
   stdcall GameStart
-  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  40, 40, 30
+  stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 30
   stdcall ct_change_mouse, 1
   mov [Dayly_Kof], 5000 
   
@@ -28,7 +28,7 @@ proc ui_InterfaceInit
   mov [PlayerTurn + 4], 30.0 
   mov [PlayerTurn], -10.0 
   
-  mov [GLOBAL_OBJ_RADIUS_RENDER], 1.0
+  mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
   ret
 endp
 

@@ -23,7 +23,29 @@ proc gf_RenderBegin, CameraPos, CameraTurn
 endp
 
 proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
-                               PosV, TurnV, Scale, dectroyMode                      
+                               PosV, TurnV, Scale, dectroyMode  
+  locals 
+     n_10  dd  4.0
+     turn  dd  90.0
+     turn2  dd 180.0
+  endl  
+  mov esi, [TurnV]
+  push dword[esi]  
+  push dword[esi + 4] 
+  push esi
+                               
+  cmp [Obj3D_Handle], obj.Stick.Handle
+  jnz @F
+    fld [Scale]
+    fmul [n_10] 
+    fstp [Scale]
+    fld dword[esi]
+    fsub [turn] 
+    fstp dword[esi]
+    fld dword[esi + 4]
+    fsub [turn2] 
+    fstp dword[esi + 4]
+  @@:                                               
   cmp [tx_Handle], 0
   jnz @F
       invoke glUniform3fv, [gf_ObjColor], 1, [tx_color]
@@ -72,6 +94,10 @@ proc  gf_renderObj3D uses esi eax, Obj3D_Handle, tx_Handle, tx_color,\
   jz @F
      invoke glUniform1i, [gf_isTex2Enable], 0
   @@:
+  
+  pop esi
+  pop dword[esi + 4] 
+  pop dword[esi]
   
   ret
 endp
@@ -237,11 +263,8 @@ proc gf_render_LableItem
 
 
   ;=================
-  stdcall grafic.GetToolsObjHandles, 234
-  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.01, 0
-  
-  ;testing obj's
-  ;stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.001, 0
+  stdcall grafic.GetToolsObjHandles, Tools.IronPickaxe 
+  stdcall gf_renderObj3D, ebx, eax, 0, GRAFIC_TMP_2_VEC_3, PLAYER_ITEM_TURN, 0.007, 0
   ;=================
   
   fldz
