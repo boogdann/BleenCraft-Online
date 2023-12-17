@@ -15,6 +15,8 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;mov [UI_MODE], CONST
 
 proc GameStart
+  stdcall Blocks.GetDestroyTime, 13, 236
+
   mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
   
   stdcall InitWorld 
@@ -38,12 +40,13 @@ proc GameStart
   
   stdcall Inventory.SetCell, 36, Tools.WoodPickaxe, 1
   stdcall Inventory.SetCell, 26, Tools.Stick, 64
-  ;stdcall Inventory.SetCell, 27, Block.Planks, 64
-  stdcall Inventory.SetCell, 28, 236, 64
-  stdcall Inventory.SetCell, 29, Block.Stone, 64
-  stdcall Inventory.SetCell, 30, Block.IronOre, 64
-  stdcall Inventory.SetCell, 31, Block.GoldOre, 64
-  stdcall Inventory.SetCell, 32, Block.DiamondOre, 64
+  stdcall Inventory.SetCell, 27, Block.Planks, 64
+  stdcall Inventory.SetCell, 28, 235, 64
+  stdcall Inventory.SetCell, 29, 236, 64
+  stdcall Inventory.SetCell, 30, Block.Stone, 64
+  stdcall Inventory.SetCell, 31, Block.IronOre, 64
+  stdcall Inventory.SetCell, 32, Block.GoldOre, 64
+  stdcall Inventory.SetCell, 33, Block.DiamondOre, 64
     
   ;========== Controller params ==========
   stdcall ct_change_mouse, 0

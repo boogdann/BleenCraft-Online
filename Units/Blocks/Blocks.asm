@@ -18,25 +18,19 @@ proc Blocks.GetDestroyTime uses edi ecx, IndexBlock, IndexTool
     stdcall Blocks.MultDestr, [IndexBlock]
     mov     [multiplyDestr], eax
     
-    stdcall Blocks.PriorTool, [IndexBlock]
-    mov     [multiplyPriorTool], eax
+;    stdcall Blocks.PriorTool, [IndexBlock]
+;    mov     [multiplyPriorTool], eax
     
     xor     edx, edx
     mov     eax, [Blocks.START_DESTROY_TIME]
     mul     dword[multiplyDestr]
     
-    cmp     dword[multiplyPriorTool], 0
-    jz      .SkipDiv
-    div     dword[multiplyPriorTool]
+;    cmp     dword[multiplyPriorTool], 0
+;    jz      .SkipDiv
+;    div     dword[multiplyPriorTool]
 .SkipDiv: 
     
-    cmp     dword[indexDestr], 0
-    ja      .SkipSet
-    mov     edx, Blocks.IS_DESTRUCTIBLE
-    jmp     .Finish   
-.SkipSet:
-    mov     edx, Blocks.IS_NOT_DESTRUCTIBLE
-  
+     mov     edx, [indexDestr]
 .Finish:
 
 
@@ -48,10 +42,22 @@ proc Blocks.IndexDestr uses edi edx ecx, IndexBlock, IndexTool
          idxMaterialTool dd ?
          NUM_5           dd 5
      endl
-     
-     
+          
      cmp    [IndexTool], Tools.MinValueTool
      jl     .SetZeroMaterial
+     
+     stdcall Blocks.PriorTool, [IndexBlock]
+     xchg    eax, ebx
+     
+     cmp     ebx, 0
+     jz      @F
+
+     stdcall Blocks.GetIndexTool, [IndexTool]
+     xchg    eax, ecx
+     
+     cmp     ecx, ebx
+     jnz     .SetZeroMaterial
+@@:
           
      xor    edx, edx
      mov    eax, [IndexTool]
@@ -83,17 +89,22 @@ proc Blocks.IndexDestr uses edi edx ecx, IndexBlock, IndexTool
      mov    [idxMaterialTool], Blocks.MaterialDiamond
      jmp    .GetIdx     
 .Skip5:
-     
+                                                    
 .SetZeroMaterial:
      mov    [idxMaterialTool], Blocks.MaterialEmpty
 
 .GetIdx: 
      mov    edi, Blocks.IndexDestruction
      add    edi, [IndexBlock]
-     movzx  eax, byte[edi] 
+     movzx  ebx, byte[edi] 
+     
 
 .Finish:
-     sub    eax, dword[idxMaterialTool]
+     mov    eax, Blocks.IS_NOT_DESTRUCTIBLE
+     cmp    ebx, dword[idxMaterialTool]
+     ja     @F
+     mov    eax, Blocks.IS_DESTRUCTIBLE 
+@@:           
      ret
 endp
 
@@ -107,12 +118,34 @@ proc Blocks.MultDestr uses edi, IndexTool
 endp
 
 ; not now
-proc Blocks.PriorTool uses edi, IndexTool 
+proc Blocks.PriorTool uses edi, IndexBlock 
      mov    edi, Blocks.PriorirityTool
-     add    edi, [IndexTool]
+     add    edi, [IndexBlock]
      movzx  eax, byte[edi] 
      
 .Finish:
-     mov    eax, 0
+     ret
+endp
+
+proc Blocks.GetIndexTool uses edi ebx, IndexTool
+     xor    eax, eax
+     
+     mov    ebx, [IndexTool]
+     cmp    ebx, Tools.MinValueTool
+     jl     .Finish
+     
+     mov    eax, 1
+     cmp    ebx, Tools.DiamondPickaxe
+     jle    .Finish
+     
+     mov    eax, 2
+     cmp    ebx, Tools.DiamondAxe
+     jle    .Finish     
+
+     mov    eax, 3
+     cmp    ebx, Tools.DiamondShowel
+     jle    .Finish   
+
+.Finish:
      ret
 endp

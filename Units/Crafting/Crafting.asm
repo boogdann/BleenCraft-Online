@@ -4,11 +4,23 @@ proc Crafting.Initialize uses edi ecx ebx, pSmall, pBig
      invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, Crafting.SMALL_SIZE * Crafting.SIZE_CELL  
      mov    edi, [pSmall]
      mov    dword[edi], eax
+     mov    dword[Crafting.Small], eax
      
      invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, Crafting.BIG_SIZE * Crafting.SIZE_CELL  
      mov    edi, [pBig]
-     mov    dword[edi], eax     
+     mov    dword[edi], eax  
+     mov    dword[Crafting.Big], eax   
      
+.Finish:
+     ret
+endp
+
+proc Crafting.Destroy uses ecx ebx eax
+     invoke GetProcessHeap
+     xchg   ebx, eax
+     
+     invoke HeapFree, ebx, dword[Crafting.Small] 
+     invoke HeapFree, ebx, dword[Crafting.Big]
 .Finish:
      ret
 endp

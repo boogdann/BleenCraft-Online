@@ -2,6 +2,9 @@ Crafting.SMALL_SIZE = 5
 Crafting.BIG_SIZE   = 10
 Crafting.SIZE_CELL  = 4
 
+Crafting.Small     dd ?
+Crafting.Big       dd ?
+
 Crafting.NUM_CRAFTS2x2     = 4
 Crafting.SIZE_SMALL_CRAFT  = 5
 Crafting.NUM_CRAFTS3x3     = 27

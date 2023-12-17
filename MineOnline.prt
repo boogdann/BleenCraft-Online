@@ -4,20 +4,11 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=9
-  countInc=3
+  countAsm=2
+  countInc=1
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
-  asm3="player.asm"
-  asm4="player_services.asm"
-  asm5="Client.asm"
-  asm6="blocksAnimation.asm"
-  asm7="gf_render.ASM"
-  asm8="playerAnimation.asm"
-  asm9="socket_funcs.asm"
 [inc]
   inc1="Game.inc"
-  inc2="player.inc"
-  inc3="Client.inc"
 end if
