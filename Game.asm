@@ -15,7 +15,7 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;mov [UI_MODE], CONST
 
 proc GameStart
-  stdcall Blocks.GetDestroyTime, 13, 236
+  stdcall Blocks.GetDestroyTime, 21, 236
 
   mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
   

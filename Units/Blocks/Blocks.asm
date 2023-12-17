@@ -1,15 +1,16 @@
 proc Blocks.SetStartTime, Time
      mov eax, [Time]
-     mov dword[Blocks.START_DESTROY_TIME]
+     mov dword[Blocks.START_DESTROY_TIME], eax
 .Finish:
      ret
 endp
 
-proc Blocks.GetDestroyTime uses edi ecx, IndexBlock, IndexTool
+proc Blocks.GetDestroyTime uses edi ecx ebx, IndexBlock, IndexTool
     locals
         indexDestr        dd ?
         multiplyDestr     dd ?
         multiplyPriorTool dd ?
+        time              dd ?
     endl
             
     stdcall Blocks.IndexDestr, [IndexBlock], [IndexTool]
@@ -17,23 +18,38 @@ proc Blocks.GetDestroyTime uses edi ecx, IndexBlock, IndexTool
     
     stdcall Blocks.MultDestr, [IndexBlock]
     mov     [multiplyDestr], eax
-    
-;    stdcall Blocks.PriorTool, [IndexBlock]
-;    mov     [multiplyPriorTool], eax
-    
+        
     xor     edx, edx
     mov     eax, [Blocks.START_DESTROY_TIME]
     mul     dword[multiplyDestr]
+    mov     [time], eax
     
-;    cmp     dword[multiplyPriorTool], 0
-;    jz      .SkipDiv
-;    div     dword[multiplyPriorTool]
+    stdcall Blocks.GetIndexTool, [IndexTool]
+    xchg    ebx, eax
+    
+    cmp     eax, 0
+    jz      .SkipDiv
+    
+    stdcall Blocks.PriorTool, [IndexBlock]
+    
+    cmp     eax, ebx
+    jnz     .SkipDiv
+    
+    stdcall Blocks.GetMaterialTool, [IndexTool]
+    xchg    ebx, eax
+    add     ebx, 1
+    
+    mov     eax, [time]
+    xor     edx, edx
+    div     ebx
+    xor     edx, edx
+    
+    mov     edx, [indexDestr]
+    jmp     .Finish
 .SkipDiv: 
-    
+     mov     eax, [time]
      mov     edx, [indexDestr]
 .Finish:
-
-
     ret
 endp
 
@@ -59,36 +75,8 @@ proc Blocks.IndexDestr uses edi edx ecx, IndexBlock, IndexTool
      jnz     .SetZeroMaterial
 @@:
           
-     xor    edx, edx
-     mov    eax, [IndexTool]
-     div    dword[NUM_5]
-     
-     cmp    edx, 0
-     jnz    .Skip1
-     mov    [idxMaterialTool], Blocks.MaterialWood
-     jmp    .GetIdx
-          
-.Skip1:
-     cmp    edx, 1
-     jnz    .Skip2
-     mov    [idxMaterialTool], Blocks.MaterialStone
-     jmp    .GetIdx     
-.Skip2:
-     cmp    edx, 2
-     jnz    .Skip3
-     mov    [idxMaterialTool], Blocks.MaterialIron
-     jmp    .GetIdx     
-.Skip3:
-     cmp    edx, 3
-     jnz    .Skip4
-     mov    [idxMaterialTool], Blocks.MaterialGold
-     jmp    .GetIdx     
-.Skip4:
-     cmp    edx, 4
-     jnz    .Skip5
-     mov    [idxMaterialTool], Blocks.MaterialDiamond
-     jmp    .GetIdx     
-.Skip5:
+     stdcall Blocks.GetMaterialTool, [IndexTool]
+     mov     [idxMaterialTool], eax
                                                     
 .SetZeroMaterial:
      mov    [idxMaterialTool], Blocks.MaterialEmpty
@@ -147,5 +135,46 @@ proc Blocks.GetIndexTool uses edi ebx, IndexTool
      jle    .Finish   
 
 .Finish:
+     ret
+endp
+
+proc Blocks.GetMaterialTool uses edx, IndexTool
+     locals
+         idxMaterialTool dd ?
+         NUM_5           dd 5
+     endl
+         
+     xor    edx, edx
+     mov    eax, [IndexTool]
+     div    dword[NUM_5]
+     
+     cmp    edx, 0
+     jnz    .Skip1
+     mov    [idxMaterialTool], Blocks.MaterialWood
+     jmp    .Finish
+          
+.Skip1:
+     cmp    edx, 1
+     jnz    .Skip2
+     mov    [idxMaterialTool], Blocks.MaterialStone
+     jmp    .Finish     
+.Skip2:
+     cmp    edx, 2
+     jnz    .Skip3
+     mov    [idxMaterialTool], Blocks.MaterialIron
+     jmp    .Finish     
+.Skip3:
+     cmp    edx, 3
+     jnz    .Skip4
+     mov    [idxMaterialTool], Blocks.MaterialGold
+     jmp    .Finish     
+.Skip4:
+     cmp    edx, 4
+     jnz    .Skip5
+     mov    [idxMaterialTool], Blocks.MaterialDiamond
+     jmp    .Finish     
+.Skip5:
+.Finish:
+     mov    eax, [idxMaterialTool]
      ret
 endp
