@@ -53,6 +53,8 @@ proc Client.SendToServerThread, params
      
   stdcall ws_new_socket, WS_TCP  
   mov     dword[Client.hTCPQueueServer], eax
+  cmp     eax, -1
+  jz      .Error
      
   stdcall ws_new_connection_structure, Client.YourIP, [Client.YourPort]
   mov     dword[Client.sockAddrTCPQueueServer], eax  
@@ -70,6 +72,8 @@ proc Client.SendToServerThread, params
   stdcall Client.GetNumberOfBytesTCP, [Client.hTCPQueueServer], [msg1], [sizeMsg1]
 
   stdcall ws_socket_send_msg_tcp, [Client.hTCPSock], [Client.ServerMsgAddr], Client.SERVER_MSG_SIZE
+  cmp     eax, -1
+  jz      .Error
 
 ;  mov     eax, [recievedBytes1]
 ;  mov     ebx, [sizeMsg1]
@@ -110,6 +114,8 @@ proc Client.SendToServerThread, params
 ;  add     [recievedBytes2], eax
     
   jmp    .GetMsg
+.Error:
+     mov eax, -1  
 .Finish:
      ;invoke  ExitProcess, 1
      ret
@@ -129,9 +135,7 @@ proc Client.GetFromServer, params
 .GetMsg:
      stdcall ws_socket_get_msg_tcp, [Client.hTCPSock], [msg], [sizeMsg]
      cmp     eax, -1
-     jnz     @F
-     invoke  ExitProcess, 1
-@@: 
+     jz      .Finish
      ; stdcall Client.GetNumberOfBytesTCP, [Client.hTCPSock], [msg], [sizeMsg]
      
 ;     stdcall Client.GetType, [msg], eax

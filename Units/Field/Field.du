@@ -16,8 +16,10 @@ Field.TmpSeed      dd       ?
 Tmp                dd       ?
 Field.MaxNumMinesOnChank dd ?
 
-Field.IsGenerated           dd   0
-Field.IsSpawnPointGenerated dd   0
+Field.IsGenerated           dd   FALSE
+Field.IsCloudsGenerated     dd   FALSE
+Field.IsSpawnPointGenerated dd   FALSE
+
 
 Field.NameFiles     dd       ?
 Field.FindFileData  WIN32_FIND_DATA 0

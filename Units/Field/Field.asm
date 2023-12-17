@@ -23,6 +23,8 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     mov   dword[tmpBase], eax
     sub   dword[tmpBase], 5
     
+    mov   dword[Field.IsGenerated], 0
+    
     stdcall Random.Initialize
     
 ;    stdcall Field.ReadFromFiles, [filename]
@@ -317,6 +319,28 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
      
     stdcall Field.GenerateBedrock
     ret
+endp
+
+proc Field.DestroyWorld uses ecx edx eax
+     cmp     dword[Field.IsGenerated], TRUE
+     jz      .SkipDestroyWorld
+     invoke  HeapFree, [Field.hHeap], 0, [Field.Blocks]
+     mov     dword[Field.IsGenerated], FALSE
+.SkipDestroyWorld:
+     mov     dword[Field.IsSpawnPointGenerated], FALSE
+     
+.Finish:
+     ret
+endp
+
+proc Field.DestroyClouds uses ecx edx eax 
+     cmp     dword[Field.IsCloudsGenerated], TRUE
+     jz      .SkipDestroyClouds
+     invoke  HeapFree, [Field.hHeap], 0, [Field.Sky]
+     cmp     dword[Field.IsCloudsGenerated], FALSE
+.SkipDestroyClouds:
+.Finish:
+     ret
 endp
 
 proc Field.SetValues uses edi eax edx, pWorld, pSizeX, pSizeY, pSizeZ, pFullSize
@@ -1220,6 +1244,7 @@ proc Field.GenerateClouds uses ebx edi esi edx, power, filename
     jl     .IterateChancs    
 
 .Finish:
+     mov    dword[Field.IsCloudsGenerated], TRUE
      mov    eax, [resAddr]
      ret
 endp

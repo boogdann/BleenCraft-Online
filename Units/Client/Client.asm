@@ -51,6 +51,15 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
      ret
 endp
 
+proc Client.Destroy
+     invoke closesocket, [Client.hTCPSock]
+     invoke closesocket, [Client.hUDPSock]
+     invoke closesocket, [Client.hTCPQueueClient]
+     invoke closesocket, [Client.hTCPQueueServer]
+.Finish:
+     ret
+endp
+
 proc Client.StartTCPServer
      invoke  CreateThread, 0, 0, Client.SendToServerThread, Client.hUDPSock, 0, 0
 

@@ -37,6 +37,7 @@ Client.INADDR_ANY  = 0
 Client.INVALID_SOCKET     = -1
 
 Client.WSAData   WSADATA
+
 Client.hTCPSock  dd ?
 Client.hUDPSock  dd ?
 

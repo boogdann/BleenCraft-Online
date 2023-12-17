@@ -168,6 +168,9 @@ proc ResetGameData
 endp
 
 proc InitWorld
+     cmp     dword[IS_GENERATED], TRUE
+     jz      .EndSet
+     
      cmp     dword[IS_ONLINE], TRUE
      jz      .SetOnline
      ; offline
@@ -213,6 +216,23 @@ proc InitWorld
      stdcall Inventory.Initialize, Inventory, InventorySize
     
      stdcall Crafting.Initialize, SmallCraft, BigCraft
+     mov     dword[IS_GENERATED], TRUE
 .EndSet:
      ret    
+endp
+
+proc DestroyWorld
+     cmp     dword[IS_GENERATED], FALSE
+     jz      .Finish
+     
+     stdcall Field.DestroyWorld
+     stdcall Field.DestroyClouds
+     
+     cmp     dword[IS_ONLINE], FALSE
+     jz      .Finish
+     stdcall Client.Destroy
+     
+.Finish:
+     mov     dword[IS_GENERATED], FALSE
+     ret
 endp
