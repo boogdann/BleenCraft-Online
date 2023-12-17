@@ -1,0 +1,18 @@
+Random.wPrevNumber      dd      ?, ?
+Random.wPrevNumber2      dd      ?, ?
+Random.ToInc            dd      ?
+Random.NumRandom        dd      ?
+Random.MaxNumRandom     dd      ?
+
+MT dd 0 
+index dd 0 
+
+N dd 624 
+M dd 397 
+A dd 0x9908B0DF 
+U dd 11 
+S dd 7 
+B dd 0x9D2C5680 
+T dd 15 
+C dd 0xEFC60000 
+L dd 18 
