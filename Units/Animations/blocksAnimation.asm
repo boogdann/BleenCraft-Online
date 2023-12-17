@@ -12,6 +12,14 @@ endp
 
 
 proc anim_blockInHand uses esi edi, playerPos, playerTurn
+  
+  fldz
+  fstp [Anim_Hand_Turn]
+  fldz
+  fstp [Anim_Hand_Turn + 4]
+  fldz
+  fstp [Anim_Hand_Turn + 8]
+  
   mov esi, [playerTurn]
   cmp dword[esi], 0
   jle @F
@@ -148,15 +156,28 @@ proc anim_blockInHand_down uses esi edi, playerPos, playerTurn
   fmul [len]
   faddp
   fstp [result_pos + 8]
-
+  
   
   mov edi, [chosenBlockFromInv]
+  inc edi  
+  cmp edi, Tools.MinValueTool
+  jl @F
+      dec edi
+      stdcall grafic.GetToolsObjHandles, edi
+      jmp .Render
+  @@:
+  dec edi
   dec edi
   imul edi, 4
   add edi, TextureHandles
   
+  mov ebx, obj.Cube.Handle
+  mov eax, dword[edi]
+  
+  .Render:
+  
   lea esi, [result_pos]
-  stdcall gf_renderObj3D, obj.Cube.Handle, dword[edi], 0,\
+  stdcall gf_renderObj3D, ebx, eax, 0,\
                                 esi, Anim_Hand_Turn, 0.04, 0
                                 
   pop edi
@@ -298,13 +319,26 @@ proc anim_blockInHand_up uses esi edi, playerPos, playerTurn
 
   
   
-  mov edi, [chosenBlockFromInv]
+ mov edi, [chosenBlockFromInv]
+  inc edi  
+  cmp edi, Tools.MinValueTool
+  jl @F
+      dec edi
+      stdcall grafic.GetToolsObjHandles, edi
+      jmp .Render
+  @@:
+  dec edi
   dec edi
   imul edi, 4
   add edi, TextureHandles
   
+  mov ebx, obj.Cube.Handle
+  mov eax, dword[edi]
+  
+  .Render:
+  
   lea esi, [result_pos]
-  stdcall gf_renderObj3D, obj.Cube.Handle, dword[edi], 0,\
+  stdcall gf_renderObj3D, ebx, eax, 0,\
                                 esi, Anim_Hand_Turn, 0.04, 0
                                 
   pop edi

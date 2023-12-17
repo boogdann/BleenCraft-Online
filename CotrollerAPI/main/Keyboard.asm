@@ -157,7 +157,7 @@ proc ct_check_moves, CameraPos, CameraTurn
           
           mov edx, 0
           
-          stdcall Blocks.GetDestroyTime, [ct_block_index], 1
+          stdcall Blocks.GetDestroyTime, [ct_block_index], [chosenBlockFromInv]
            
      
           cmp [destruction_time], eax
