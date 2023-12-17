@@ -51,3 +51,6 @@ Client.sockAddrTCPQueueClient  sockaddr_in
 Client.sockAddrTCPQueueServer  sockaddr_in
 
 Client.maxConn  dd 5
+
+
+include 'playerData/player.inc'

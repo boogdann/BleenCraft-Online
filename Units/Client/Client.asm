@@ -1,3 +1,18 @@
+Client.msg.SendWorld         equ  0   
+Client.msg.PlayerData        equ  1   
+Client.msg.BlockState        equ  2  
+Client.msg.HandBlock         equ  3 
+Client.msg.GetWorld          equ  4
+Client.msg.UserState         equ  5 
+Client.msg.Rotations         equ  6 
+Client.msg.TCPInit           equ  7
+Client.msg.UDPInit           equ  8 
+Client.msg.StartSendWorld    equ  9 
+Client.msg.EndSendWorld      equ  10 
+
+include 'playerData/player.ASM'
+
+
 proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
   stdcall ws_soket_init 
   
@@ -17,6 +32,22 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
   stdcall ws_socket_get_msg_udp, [Client.hUDPSock], Client.ReadBuffer, [Client.SizeBuffer]
 ;  cmp     eax, 0
 ;  jz      .Error
+
+  ;================================== Subscribe player's data =============================================
+  ;Function send data only if this data changed, so you shuld to subscribe player data:
+  ;1 - *player position
+  ;2 - *player turn
+  ;3 - *item in player hand
+  ;4 - *player state                                         ;HandItem, PlayerState !!!
+  stdcall client.Subscribe_PlayerData, PlayerPos, PlayerTurn, PlayerPos, PlayerTurn
+
+  ;Then you can start serving data:
+  ;last parametr (5-n) - time of ("invoke Sleep") in every loop iteration  |     [PlId],           [GrId]         (Sleep)
+  stdcall client.Serve_PlayerData, [Client.hUDPSock], [Client.sockAddrUDP], [Client.GroupID], [Client.Number],     300
+
+  ;To kill this flow you can use: (not implemented yet)
+  ;stdcall client.StopServe_PlayerData
+  ;========================================================================================================
   
   stdcall ws_new_socket, WS_TCP
   cmp     eax, -1
@@ -274,7 +305,7 @@ proc Client.GetNumberOfBytesTCP uses edx ecx edi esi ebx, hSock, msgAddr, sizeMs
      ret
 endp
 
-proc Client.GetMessage uses edx ecx edi, typeMsg, secretMsg, sizeSecretMsg, groupID, \
+proc Client.GetMessage uses edx ecx edi esi, typeMsg, secretMsg, sizeSecretMsg, groupID, \
                        userID, msg, sizeMsg, res
      locals
        hHead   dd ?
@@ -443,3 +474,6 @@ proc Client.UnmarshalWorld, buffer, sizeBuffer, pWorld, pSizeX, pSizeY, pSizeZ
 .Finish:
      ret
 endp
+
+
+

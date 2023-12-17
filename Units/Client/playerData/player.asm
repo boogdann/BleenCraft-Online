@@ -46,14 +46,18 @@ proc _client.StartServe_PlayerData uses esi, args
         
       .SkipSend:
       invoke Sleep, dword[esi + 16]
+      cmp [cl_isCanServingPlayerData], 0
+      jz .StopServing
   jmp .ServeCircle  
 
-
+  .StopServing:
+  mov [cl_isCanServingPlayerData], 1
   xor eax, eax
   ret
 endp
 
 proc client.Serve_PlayerData, udp_socket_handle, udp_soket_data_addr, playerId, groopId, sleepTime
+  mov [cl_isCanServingPlayerData], 1
 
   mov ecx, 0
   .writeArg:
@@ -65,5 +69,10 @@ proc client.Serve_PlayerData, udp_socket_handle, udp_soket_data_addr, playerId, 
   
   invoke CreateThread, 0, 0, _client.StartServe_PlayerData, cl_ServeFuncARGS, 0, 0
   
+  ret
+endp
+
+proc client.StopServe_PlayerData
+  mov [cl_isCanServingPlayerData], 0
   ret
 endp

@@ -14,4 +14,6 @@ cl_ServeFuncARGS    dd     ?, ?, ?, ?, ?
 cl_PlayerDataMsg       db   100   dup  (?)
 ;12 + 12 + 4 + 4  =      
 cl_playerData          dd   8     dup  (?)
-cl_playerData_len      dd   $ - cl_playerData            
+cl_playerData_len      dd   $ - cl_playerData  
+
+cl_isCanServingPlayerData dd   ?          
