@@ -72,17 +72,43 @@ proc ui_draw_drag uses esi edi, WindowRect
          mov dx, ax
          movzx eax, dx
          stdcall grafic.GetToolsTextureIndex, eax    ;eax - texture index
-         add eax, ToolsTxAddr ;!!!!!!!!!!!!!!!!!!
+         add eax, ToolsSlotAddr  ;!!!!!!!!!!!!!!!!!!
          push eax
           invoke glEnable, GL_TEXTURE_2D
          pop eax 
          invoke glBindTexture, GL_TEXTURE_2D, [eax]
-         stdcall ui_draw_rectangle_textured_obj, [size_xy], [size_xy + 4], [big_bag_slot_size_xy], [big_bag_slot_size_xy+4]
+         stdcall ui_draw_rectangle_textured_obj, [size_xy], [size_xy + 4], [big_bag_slot_size_xy], [big_bag_slot_size_xy+4], 1
          invoke glDisable, GL_TEXTURE_2D
          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
          ;other elements case
         jmp .readyRender
       .cubes:
+      
+      
+      
+;      mov dx, Tools.MinValueTool
+;      dec dx
+;      
+;      mov ax, word[ui_drag_item]
+;      cmp ax, 0
+;      jz .readyRender
+;      cmp ax, dx
+;      jl .cubes
+;         mov dx, ax
+;         movzx eax, dx
+;         stdcall grafic.GetToolsTextureIndex, eax    ;eax - texture index
+;         add eax, ToolsSlotAddr ;!!!!!!!!!!!!!!!!!!
+;         push eax
+;          invoke glEnable, GL_TEXTURE_2D
+;         pop eax 
+;         invoke glBindTexture, GL_TEXTURE_2D, [eax]
+;         stdcall ui_draw_rectangle_textured_obj, [size_xy], [size_xy + 4], [big_bag_slot_size_xy], [big_bag_slot_size_xy+4]
+;         invoke glDisable, GL_TEXTURE_2D
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;other elements case
+;        jmp .readyRender
+;      .cubes:
+
          ;cube element case:
          xor edx, edx
          push eax
@@ -178,12 +204,12 @@ proc ui_draw_slot uses esi edi ecx, x, y, s_x, s_y, elm_info
      mov dx, ax
      movzx eax, dx
      stdcall grafic.GetToolsTextureIndex, eax    ;eax - texture index
-     add eax, ToolsTxAddr  ;!!!!!!!!!!!!!!!!!!
+     add eax, ToolsSlotAddr  ;!!!!!!!!!!!!!!!!!!
      push eax
       invoke glEnable, GL_TEXTURE_2D
      pop eax 
      invoke glBindTexture, GL_TEXTURE_2D, [eax]
-     stdcall ui_draw_rectangle_textured_obj, [x], [y], [s_x], [s_y]
+     stdcall ui_draw_rectangle_textured_obj, [x], [y], [s_x], [s_y], 0
      invoke glDisable, GL_TEXTURE_2D
      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
      ;other elements case
@@ -229,7 +255,7 @@ proc ui_draw_slot uses esi edi ecx, x, y, s_x, s_y, elm_info
   fmul [n_3]
   fsubp
   fstp[y]
-  invoke glColor3f, 0.55, 0.55, 0.55
+  invoke glColor3f, 0.549019, 0.549019, 0.549019
   cmp [global_selected_slot_kostil], 0
   jz @F
      invoke glColor3f, 0.7, 0.7, 0.7
@@ -806,12 +832,15 @@ proc ui_draw_rectangle_textured_block, x, y, x_sz, y_sz
   ret
 endp
 
-proc ui_draw_rectangle_textured_obj, x, y, x_sz, y_sz
+proc ui_draw_rectangle_textured_obj, x, y, x_sz, y_sz, isLight
                ;f 12 13 5 14
-  invoke glEnable, GL_LIGHTING
-  invoke glEnable, GL_LIGHT0
+  cmp [isLight], 1
+  jnz @F
+    invoke glEnable, GL_LIGHTING
+    invoke glEnable, GL_LIGHT0
+  @@:
   invoke glBegin, GL_QUADS
-    invoke glTexCoord2f, 0.000, 0.000000; 
+    invoke glTexCoord2f, 0.100, 0.000000; 
     invoke glVertex2f, [x], [y]
     fld [x]
     fadd [x_sz]
@@ -827,7 +856,7 @@ proc ui_draw_rectangle_textured_obj, x, y, x_sz, y_sz
     fld [x]
     fsub [x_sz]
     fstp [x]    
-    invoke glTexCoord2f, 0.000, 1.00000
+    invoke glTexCoord2f, 0.100, 1.00000
     invoke glVertex2f, [x], [y]        
   invoke glEnd;  
   invoke glDisable, GL_LIGHTING

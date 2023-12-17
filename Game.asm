@@ -35,6 +35,11 @@ proc GameStart
   stdcall SetNumInInput, [RENDER_RADIUS], RenderRadius_input
   ;===========================================================
   
+  stdcall Inventory.SetCell, 1, 234, 1
+  stdcall Inventory.SetCell, 2, 1, 1
+  stdcall Inventory.SetCell, 3, 1, 1
+  stdcall Inventory.SetCell, 4, 1, 1
+  
   ;========== Controller params ==========
   stdcall ct_change_mouse, 0
   ;=======================================

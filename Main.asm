@@ -175,8 +175,6 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         jnz .SkipRMouseDown
         cmp [UI_MODE], UI_GAME
         jnz .SkipRMouseDown
-        cmp [flag], 1
-        jnz .SkipRMouseDown
         mov [global_building_time], 1000
         stdcall ct_build_block, prevCubePos
         
