@@ -31,7 +31,6 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     cmp     eax, -1
     jnz     .EndSetWorld
 
-
     invoke  GetProcessHeap
     mov    [Field.hHeap], eax
     

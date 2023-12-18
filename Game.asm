@@ -20,16 +20,15 @@ proc GameStart
     test_add  dd 20.0
   endl
   
-  stdcall Field.GetAllWorlds, FileNames
-  mov     dword[FileCount], ecx
+  ;stdcall Field.GetAllWorlds, FileNames
+  ;mov     dword[FileCount], ecx
       
+  ;stdcall InitWorld    
+  
   stdcall gf_cleanLightning
-  stdcall Blocks.GetDestroyTime, 21, 236
 
   mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
-  
-  ;stdcall InitWorld 
-      
+        
   stdcall initializeDestrBlocksHeap
   
   mov [UI_MODE], UI_GAME
