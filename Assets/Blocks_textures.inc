@@ -10,7 +10,7 @@ TextureNames:
         db      "DiamondOre_16.mbmw", 0 ;none  
         db      "Sand_16.mbmw", 0   
         db      "Sand_16.mbmw", 0 
-        db      "DiamondOre_16.mbmw", 0 ;none 
+        db      "lamp_16.mbmw", 0  
         db      "Gravel_16.mbmw", 0 
         db      "Cobblestone_16.mbmw", 0   
         db      "Stone_16.mbmw", 0 
