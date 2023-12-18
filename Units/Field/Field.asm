@@ -27,9 +27,9 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
     stdcall Random.Initialize
     
-    ;stdcall Field.ReadFromFiles, [filename]
-    ;cmp     eax, -1
-    ;jnz     .EndSetWorld
+    stdcall Field.ReadFromFiles, [filename]
+    cmp     eax, -1
+    jnz     .EndSetWorld
 
     invoke  GetProcessHeap
     mov    [Field.hHeap], eax
