@@ -254,7 +254,7 @@ proc gf_AddLightning uses esi edi, pos
 
   inc [CircleCount]
   cmp [CircleCount], 14
-  jl @F
+  jle @F
     mov [CircleCount], 0
   @@:
   ret
@@ -276,6 +276,7 @@ proc gf_DeleteLightning uses esi edi ecx edx, pos
         add edi, 12   ;edi - next pos
         mov edx, [LightsCount]
         sub edx, ecx
+        inc edx
         cmp ecx, edx
         jz .ReadyCircle
         mov ecx, 0
@@ -291,8 +292,15 @@ proc gf_DeleteLightning uses esi edi ecx edx, pos
         jnz .RewritingCircle
         .ReadyCircle:
         dec [LightsCount] 
-        dec [CircleCount]
+        cmp [LightsCount], 0
+        jg .SkipZeroCheck
+            mov [LightsCount], 0
+        .SkipZeroCheck:
         
+        dec [CircleCount]
+        cmp [CircleCount], 0
+        jg .Ready
+          mov [CircleCount], 0
         jmp .Ready
      @@:
      add esi, 12

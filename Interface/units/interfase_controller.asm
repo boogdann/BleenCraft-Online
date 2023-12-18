@@ -62,6 +62,10 @@ proc ui_slots_controller uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr,
 endp
 
 proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workbench_craft_arr
+  locals
+      FromElm       dd   0
+      InElm         dd   0
+  endl
   cmp [ui_is_drag], 1
   jnz .Return
   
@@ -77,16 +81,8 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
     @@:
     stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data, 36 
     cmp eax, 1
-    jnz .SkipBigBagCheck 
-       mov eax, [bigBag_arr]
-       cmp eax, [ui_drag_array_out]
-       jz .SkipMegaFix
-            cmp [ui_drag_array_out], 0
-            jnz .SkipMegaFix
-                ;cmp []
-       .SkipMegaFix:
-    
-       stdcall MoveElement, [bigBag_arr], ebx, 64 
+    jnz .SkipBigBagCheck     
+       stdcall MoveElement, [bigBag_arr], ebx, 64, 1 
        
        ;Big bag case: 
        mov eax, [bigBag_craft_arr]
@@ -134,7 +130,7 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
               cmp [ui_drag_index_out], 0
               jz @F
           .SkipDragSimpleCheckbigBag_craft: 
-          stdcall MoveElement, [bigBag_craft_arr], ebx, 1
+          stdcall MoveElement, [bigBag_craft_arr], ebx, 1, 0
           stdcall Crafting.Craft, [bigBag_craft_arr], SMALL_CRAFT_SIZE
         @@:
     .SkipBigBagCraft:
@@ -152,7 +148,7 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
               cmp [ui_drag_index_out], 0
               jz @F
           .SkipDragSimpleCheckworkbench_craft_arr:
-          stdcall MoveElement, [workbench_craft_arr], ebx, 1
+          stdcall MoveElement, [workbench_craft_arr], ebx, 1, 0
           stdcall Crafting.Craft, [workbench_craft_arr], BIG_CRAFT_SIZE
         @@:
     .SkipWorkBranchCraft:
@@ -171,8 +167,7 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
   ret
 endp
 
-
-proc MoveElement, arrayIn, findItemIndex, InsertCount
+proc MoveElement, arrayIn, findItemIndex, InsertCount, isMainBag
   locals 
     InElmAddr     dd   ?
     
@@ -184,6 +179,7 @@ proc MoveElement, arrayIn, findItemIndex, InsertCount
     
     ResCount      dd   0
   endl
+  
   
       mov esi, [ui_drag_array_out]
       mov edi, [ui_drag_index_out]
@@ -215,6 +211,7 @@ proc MoveElement, arrayIn, findItemIndex, InsertCount
       jz @F
         cmp [InElm], 0
         jnz .SkipCheck
+        ;jmp .SkipCheck
       @@:
       
       mov ecx, 0
