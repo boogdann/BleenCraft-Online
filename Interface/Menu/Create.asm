@@ -38,6 +38,7 @@ proc ui_MenuCreateController, WindowRect
   
   .Create:
     mov [App_Mode], GAME_MODE
+    
     stdcall GameStart 
   jmp .Return  
   .ReOpen:

@@ -6,7 +6,7 @@ proc animatetool uses esi edi, playerTurn, frequency
     
     a         dd   0.0
     b         dd   0.0
-    len         dd 0.07
+    len         dd 0.04
     PiDegree  dd   180.0
     
     tempVector  dd  0.02
@@ -15,6 +15,8 @@ proc animatetool uses esi edi, playerTurn, frequency
     
     multiplier    dd  100.0
     
+    
+    forward_mul   dd  -0.6
   endl
   
   mov esi, [playerTurn]
@@ -51,6 +53,30 @@ proc animatetool uses esi edi, playerTurn, frequency
   fstp [result_pos + 4]
   
   fld [result_pos + 8]
+  fld [prevToolKoeff] 
+  fcos
+  fmul [len]
+  fmul [forward_mul]
+  fld [b]
+  fsin
+  fmulp
+  fsubp
+  fstp [result_pos + 8]  
+  
+  fld [result_pos]
+  fld [prevToolKoeff] 
+  fcos
+  fmul [len]
+  fmul [forward_mul]
+  fld [b]
+  fcos
+  fmulp
+  fsubp
+  fstp [result_pos] 
+  
+  
+  
+  fld [result_pos + 8]
   fld [a]
   fcos
   fld[b]
@@ -64,7 +90,7 @@ proc animatetool uses esi edi, playerTurn, frequency
   fmul [multiplier]
   fistp [currentOffset]
   
-  cmp [currentOffset], 10
+  cmp [currentOffset], 4
   jg @F
      fld [animVectorOffset]
      fadd [tempVector]
@@ -103,8 +129,6 @@ proc anim_toolInHand_down uses esi edi, playerPos, playerTurn, obj, tx
   mov esi, [playerTurn]
   mov edi, [playerPos]
   
-  ;fld dword[esi]
-  ;fstp [Anim_Hand_Turn]
   fld dword[esi + 4]
   fstp [Anim_Hand_Turn + 4]
   
@@ -208,7 +232,7 @@ proc anim_toolInHand_down uses esi edi, playerPos, playerTurn, obj, tx
   
   cmp [animate_tool], 1
   jne @F
-    stdcall animatetool, esi, 0.6
+    stdcall animatetool, esi, 1.5
   @@:
   
   stdcall gf_renderObj3D, [obj], [tx], 0,\
@@ -252,6 +276,9 @@ proc anim_toolInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   
   fldz
   fstp [Anim_Hand_Turn]
+  
+  fld dword[esi]         ;;!!
+  fstp [Anim_Hand_Turn]  ;;!!
   
   fld dword[esi + 4]
   fstp [Anim_Hand_Turn + 4]
@@ -356,7 +383,7 @@ proc anim_toolInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   
   cmp [animate_tool], 1
   jne @F
-    stdcall animatetool, esi, 0.4
+    stdcall animatetool, esi, 1.5
   @@:
   
   stdcall gf_renderObj3D, [obj], [tx], 0,\
