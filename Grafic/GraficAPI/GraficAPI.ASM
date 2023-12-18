@@ -8,7 +8,6 @@ include "gf_main\gf_set_render.ASM"
 ;\gf_data_init
 include "gf_data_init\gf_obj_init.ASM"
 include "gf_data_init\gf_texture_init.ASM"
-include "gf_data_init\gf_Letters_init.ASM"
 include "gf_data_init\gf_assetsLoader.ASM"
 ;\gf_assets
 include "gf_assets\gf_macro.ASM"

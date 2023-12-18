@@ -16,7 +16,7 @@ ObjectsNames:
             obj.Pickaxe.Name          db      "Pickaxe.mobj", 0
             obj.Axe.Name              db      "Axe.mobj", 0
             obj.Showel.Name           db      "Pickaxe.mobj", 0 ;SHOWEL!!!!
-            obj.Sword.Name            db      "Sword.mobj", 0
+            obj.Sword.Name            db      "PLRHand.mobj", 0
             db      0
         
 ObjectsHandles:

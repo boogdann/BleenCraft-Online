@@ -48,6 +48,11 @@ proc gf_UploadObj3D uses esi, obj_name, obj_Handle
   mov eax, [gf_VertexCount]
   mov dword[esi + 4], eax
   
+  
+  invoke HeapFree, [gf_memHeap], 0, [gf_VertexArrayAdress]
+  invoke HeapFree, [gf_memHeap], 0, [gf_NormalArrayAdress]
+  invoke HeapFree, [gf_memHeap], 0, [gf_TextCordArrayAdress]
+  
   ret
 endp
 
@@ -240,6 +245,11 @@ proc gf_GetObj3D_data uses edi, obj_name
   
   ;Закрытие файла
   invoke  CloseHandle, [hFile]
+  
+  invoke HeapFree, [gf_memHeap], 0, [vertexes]
+  invoke HeapFree, [gf_memHeap], 0, [fragments]
+  invoke HeapFree, [gf_memHeap], 0, [textureCoords]
+  invoke HeapFree, [gf_memHeap], 0, [normals]
 
   ret
 endp 

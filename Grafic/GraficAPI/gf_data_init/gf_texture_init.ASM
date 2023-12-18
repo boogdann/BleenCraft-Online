@@ -11,6 +11,8 @@ proc gf_UploadTexture uses esi edi, tx_Name, Handle
     mov eax, [gf_tx_handle]
     mov esi, [Handle]
     mov [esi], eax
+    
+    invoke HeapFree, [gf_memHeap], 0, [gf_texture_adress]
 
     ret
 endp
@@ -186,6 +188,7 @@ proc gf_GetTextureData, tx_Name
     
   
     invoke CloseHandle, [hFile]
+    invoke HeapFree, [gf_memHeap], 0, [tmpRowAdress]
   
     mov eax, [gf_texture_adress]
     ;return:
