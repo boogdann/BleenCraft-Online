@@ -28,7 +28,7 @@ proc GameStart
 
   mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
   
-  stdcall InitWorld 
+  ;stdcall InitWorld 
       
   stdcall initializeDestrBlocksHeap
   
@@ -205,7 +205,7 @@ proc InitWorld
      cmp     dword[IS_ONLINE], TRUE
      jz      .SetOnline
      ; offline
-     stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], [ChosenFile]
+     stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], DEFAULT_WORLD
      stdcall Field.SetValues, Field.Blocks, WorldLength, WorldWidth, WorldHeight, SizeWorld  
     
      jmp     .Finish
@@ -242,7 +242,11 @@ proc InitWorld
      stdcall Field.GenerateClouds, ecx, filenameSky
      stdcall Field.SetCloudValues, SkyLand, SkyLength, SkyWidth 
      
-     stdcall Field.GenerateSpawnPoint, PlayerPos
+     ;Disable spawn point generation in menu game mode
+     ;cmp     [App_Mode], MENU_MODE 
+     ;jz      @F  
+             stdcall Field.GenerateSpawnPoint, PlayerPos
+     ;@@:
      
      stdcall Inventory.Initialize, Inventory, InventorySize
     

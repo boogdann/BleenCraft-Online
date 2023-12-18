@@ -19,10 +19,22 @@ include "..\Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 proc ui_InterfaceInit
   locals
       LightAdd  dd  1.0
+      MenuPlayerPos  dd   150.0, 103.0, 150.0
   endl 
   mov [CUR_MENU], UI_MAIN_MENU
   
-  stdcall GameStart
+;  mov [IS_ONLINE],    FALSE   
+;  mov [IS_HOST],      FALSE
+;  mov [ChosenFile], DEFAULT_WORLD
+;  stdcall InitWorld  
+;  stdcall GameStart
+;  mov eax, [MenuPlayerPos]
+;  mov [PlayerPos], eax
+;  mov eax, [MenuPlayerPos + 4]
+;  mov [PlayerPos + 4], eax
+;  mov eax, [MenuPlayerPos + 8]
+;  mov [PlayerPos + 8], eax
+  
   stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 30
   stdcall ct_change_mouse, 1
   stdcall gf_cleanLightning

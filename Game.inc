@@ -80,7 +80,7 @@ ServerPortTCP    dd       10000
 ;=======================================
 
 ;=============================================
-DEFAULT_WORLD    db       "Worlds\default.txt", 0 
+DEFAULT_WORLD    db       "default.txt", 0 
 filenameSky      db       "testSaveSky.txt", 0
 ;==============================================
 

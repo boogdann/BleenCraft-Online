@@ -42,12 +42,20 @@ Start:
   ;================================================  
   
   ;==== Start settings ======  
-  mov [App_Mode], GAME_MODE
-  stdcall GameStart 
+  ;mov [App_Mode], GAME_MODE
+  ;stdcall GameStart 
   
   
-  ;mov [App_Mode], MENU_MODE
-  ;stdcall ui_InterfaceInit
+  mov [App_Mode], MENU_MODE
+  
+  mov [IS_ONLINE],    FALSE   
+  mov [IS_HOST],      FALSE
+  mov [ChosenFile], DEFAULT_WORLD
+  stdcall InitWorld  
+  stdcall GameStart
+  
+  stdcall ui_InterfaceInit
+  
   
   ;========================== 
   
@@ -189,7 +197,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         jmp     .ReturnZero
   
   .Destroy:
-        stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], [ChosenFile]       
+        ;stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], DEFAULT_WORLD       
         invoke ExitProcess, 1
   .ReturnZero:                                                
         xor     eax, eax
