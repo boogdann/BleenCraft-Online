@@ -24,6 +24,8 @@ proc anim_RightHand, playerPos, playerTurn
     
     frequency     dd  0.85
     
+    VectorOffset  dd 0.1  
+    
   endl
   
 
@@ -41,6 +43,7 @@ proc anim_RightHand, playerPos, playerTurn
   fmul dword[esi + 4]
   fdiv [PiDegree]
   fstp [b]
+  
   
   ;cameraPos[1]
   fld dword[edi]
@@ -110,7 +113,7 @@ proc anim_RightHand, playerPos, playerTurn
   
 ;  fld [Anim_Hand_Position + 8]
 ;  fld [prevToolKoeff] 
-;  fsin
+;  fcos
 ;  fmul [len]
 ;  fmul [forward_mul]
 ;  fld [b]
@@ -133,6 +136,30 @@ proc anim_RightHand, playerPos, playerTurn
   
   cmp [animate_tool], 1
   jne @F
+  
+  fld [Anim_Hand_Position + 8]
+  fld [prevToolKoeff] 
+  fcos
+  fmul [len]
+  fmul [forward_mul]
+  fld [b]
+  fsin
+  fmulp
+  fsubp
+  fstp [Anim_Hand_Position + 8]  
+  
+  fld [Anim_Hand_Position]
+  fld [prevToolKoeff] 
+  fcos
+  fmul [len]
+  fmul [forward_mul]
+  fld [b]
+  fcos
+  fmulp
+  fsubp
+  fstp [Anim_Hand_Position]
+
+      
       fld [prevToolKoeff]
       fadd [frequency]
       fstp [prevToolKoeff] 

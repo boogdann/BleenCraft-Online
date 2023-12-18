@@ -1,3 +1,33 @@
+proc getObj uses ebx, index
+
+  mov edi, [index]
+  inc edi  
+  cmp edi, Tools.MinValueTool
+  jl @F
+      dec edi
+      stdcall grafic.GetToolsObjHandles, edi
+      mov [thrownBlockAddr], eax
+      lea eax, [thrownBlockAddr]
+      jmp .Render
+  @@:  
+  
+  dec edi
+  dec edi
+  imul edi, 4
+  add edi, TextureHandles 
+
+  mov eax, edi
+
+  mov ebx, obj.Cube.Handle
+
+  .Render:
+  
+  mov edi, eax 
+  mov edx, ebx
+
+  ret
+endp
+
 proc addBlockToArray, blockPos
 
   locals
@@ -24,17 +54,16 @@ proc addBlockToArray, blockPos
       fstp dword[esi + ebx + 8]
       
       mov dword[esi + ebx + 16], 1
-      
-      mov edi, [ct_block_index]
-      dec edi
-      imul edi, 4
-      add edi, TextureHandles
-
+        
+      stdcall getObj, [ct_block_index]
   
+      mov dword[esi + ebx + 40], edx
       mov dword[esi + ebx + 12], edi
       
       mov eax, [ct_block_index]
       mov dword[esi + ebx + 20], eax 
+      
+      mov dword[esi + ebx + 44], 0.2
       
       mov dword[esi + ebx + 24], 5
       
@@ -42,7 +71,7 @@ proc addBlockToArray, blockPos
       
     @@:
     
-    add ebx, 40
+    add ebx, 48
     inc ecx
     
   cmp ecx, 64
@@ -75,21 +104,21 @@ proc renderDestroyedBlocks
           
           push ebx 
           push esi
-          push ecx
+          push ecx edi
           
-          mov esi, dword[esi + ebx + 12]
+          mov edi, dword[esi + ebx + 12]
           
-          stdcall gf_renderObj3D, obj.Cube.Handle, dword[esi], 0,\
-                                destroyedBlocksVector, blocksTurn, 0.2, 0
+          stdcall gf_renderObj3D, dword[esi + ebx + 40], dword[edi], 0,\
+                                destroyedBlocksVector, blocksTurn, dword[esi + ebx + 44], 0
           
-          pop ecx
+          pop edi ecx
           pop esi
           pop ebx
 
           
         @@:
         
-        add ebx, 40
+        add ebx, 48
         inc ecx
         
     cmp ecx, 64
@@ -152,7 +181,7 @@ proc pickBlock
         
         .dont_pick:
         
-        add ebx, 40
+        add ebx, 48
         inc ecx
         
     cmp ecx, 64
@@ -234,7 +263,7 @@ proc blockCollisions
         
         .skip:
         
-        add ebx, 40
+        add ebx, 48
         inc ecx
         
     cmp ecx, 64
@@ -297,7 +326,7 @@ proc thrownBlocksPhysics
             
         .skip:
         
-        add ebx, 40
+        add ebx, 48
         inc ecx
         
     cmp ecx, 64
@@ -362,7 +391,7 @@ proc throwBlock
   
   mov ebx, 0
   mov ecx, 0
-  
+   
   .zaloop:
   
         cmp dword[esi + ebx + 16], 0
@@ -375,14 +404,21 @@ proc throwBlock
             fld [blockPos + 8]
             fstp dword[esi + ebx + 8]
             
-            mov edi, [chosenBlockFromInv]
-            dec edi
-            imul edi, 4
-            add edi, TextureHandles
-
-            mov dword[esi + ebx + 12], edi
+            mov dword[esi + ebx + 16], 1
             
-            mov dword[esi + ebx + 16], 1 
+            stdcall getObj, [chosenBlockFromInv]
+            
+            cmp [chosenBlockFromInv], 234
+            jl @F
+               mov dword[esi + ebx + 44], 0.1
+               jmp .skipResize
+            @@:
+               mov dword[esi + ebx + 44], 0.2
+            .skipResize:
+            
+            mov dword[esi + ebx + 12], edi
+              
+            mov dword[esi + ebx + 40], edx 
             
             mov eax, [chosenBlockFromInv]
             mov dword[esi + ebx + 20], eax 
@@ -397,7 +433,7 @@ proc throwBlock
             jmp .finish
         .skip:
         
-        add ebx, 40
+        add ebx, 48
         inc ecx
         
     cmp ecx, 64
@@ -440,7 +476,7 @@ proc initializeDestrBlocksHeap
 
   invoke  GetProcessHeap
   mov     [destrHeap], eax    
-  mov     ecx, 640         
+  mov     ecx, 768         
   mov     eax, ecx
   shl     eax, 2     
   invoke  GlobalAlloc, GPTR, eax 

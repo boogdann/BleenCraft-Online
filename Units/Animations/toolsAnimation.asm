@@ -73,8 +73,7 @@ proc animatetool uses esi edi, playerTurn, frequency
   fmulp
   fsubp
   fstp [result_pos] 
-  
-  
+   
   
   fld [result_pos + 8]
   fld [a]
