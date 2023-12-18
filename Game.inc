@@ -85,7 +85,7 @@ filenameSky      db       "testSaveSky.txt", 0
 ;==============================================
 
 ;== Controller Global varibales ===============
-PlayerPos        dd       50.0, 200.0, 50.0
+PlayerPos        dd       0.0, 0.0, 0.0
 PlayerTurn       dd       0.0, 0.0, 0.0
 ;Data for destroying blocks
 UnderWater       dd       0

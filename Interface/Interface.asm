@@ -19,7 +19,7 @@ include "..\Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 proc ui_InterfaceInit
   locals
       LightAdd  dd  1.0
-      MenuPlayerPos  dd   150.0, 80.0, 150.0
+      MenuPlayerPos  dd   900.0, 90.0, 200.0
   endl 
   mov [CUR_MENU], UI_MAIN_MENU
   

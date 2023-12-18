@@ -1,6 +1,5 @@
 proc Field.ReadFromFiles uses ebx edi esi ecx, filename
 
-     ; aiaaaeou gaciagu
      stdcall Field.ReadFromFile, Field.Length, Field.Width, Field.Height, [filename]
      cmp     eax, -1
      jz      .Error
@@ -148,10 +147,10 @@ proc Field.ReadFromFile uses ebx edi esi ecx, pSizeX, pSizeY, pSizeZ, filename
      invoke ReadFile, [hFile], Field.FileBuffer, [Field.SizeBuffer], Field.WrittenBytes, 0
      pop    ecx edi
      cmp    eax, 0
-     jle     .Error
+     jle     .Finish
      
      cmp    [Field.WrittenBytes], 0
-     jz     .Error 
+     jz     .Finish 
      
      mov    ecx, [Field.FileBuffer]
      mov    al, byte[Field.FileBuffer+4]

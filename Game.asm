@@ -15,15 +15,16 @@ UI_MAINBAG     equ  3   ;Only main (big) bag render
 UI_ESC_MENU    equ  4   ;Setting and other menu ui      
 ;mov [UI_MODE], CONST
 
-proc GameStart
-  locals 
-    test_add  dd 20.0
-  endl
-  
-  ;stdcall Field.GetAllWorlds, FileNames
-  ;mov     dword[FileCount], ecx
-      
-  ;stdcall InitWorld    
+proc GameStart  
+  stdcall Field.GetAllWorlds, FileNames
+  mov     dword[FileCount], ecx
+
+            
+;  stdcall InitWorld 
+;     
+;  mov [PlayerPos], 100.0
+;  mov [PlayerPos + 4], 75.0
+;  mov [PlayerPos + 8], 200.0
   
   stdcall gf_cleanLightning
 
@@ -50,7 +51,7 @@ proc GameStart
   stdcall Inventory.SetCell, 26, Tools.Stick, 64
   stdcall Inventory.SetCell, 27, Block.Planks, 64
   stdcall Inventory.SetCell, 28, 235, 64
-  ;stdcall Inventory.SetCell, 29, 236, 64
+
   stdcall Inventory.SetCell, 30, Tools.WoodAxe, 64
   stdcall Inventory.SetCell, 31, Tools.WoodShowel, 64
   stdcall Inventory.SetCell, 32, Tools.WoodSword, 64
@@ -244,7 +245,7 @@ proc InitWorld
      ;Disable spawn point generation in menu game mode
      ;cmp     [App_Mode], MENU_MODE 
      ;jz      @F  
-             stdcall Field.GenerateSpawnPoint, PlayerPos
+     ;        stdcall Field.GenerateSpawnPoint, PlayerPos
      ;@@:
      
      stdcall Inventory.Initialize, Inventory, InventorySize
