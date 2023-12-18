@@ -31,7 +31,7 @@ proc GameStart
   
   ;================ Grafic params ===========================
   ;Day/night params
-  mov [Dayly_Kof], 30000   ;0 - 65535
+  mov [Dayly_Kof], 10000   ;0 - 65535
   mov [DAYLY_SPEED], 2
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
@@ -42,14 +42,14 @@ proc GameStart
   stdcall SetNumInInput, [RENDER_RADIUS], RenderRadius_input
   ;===========================================================
   
-  stdcall Inventory.SetCell, 36, Tools.WoodPickaxe, 1
+  ;stdcall Inventory.SetCell, 36, Tools.WoodPickaxe, 1
   stdcall Inventory.SetCell, 26, Tools.Stick, 64
   stdcall Inventory.SetCell, 27, Block.Planks, 64
   stdcall Inventory.SetCell, 28, 235, 64
-  stdcall Inventory.SetCell, 29, 236, 64
-  stdcall Inventory.SetCell, 30, Block.Stone, 64
-  stdcall Inventory.SetCell, 31, Block.IronOre, 64
-  stdcall Inventory.SetCell, 32, Block.GoldOre, 64
+  ;stdcall Inventory.SetCell, 29, 236, 64
+  stdcall Inventory.SetCell, 30, Tools.WoodAxe, 64
+  stdcall Inventory.SetCell, 31, Tools.WoodShowel, 64
+  stdcall Inventory.SetCell, 32, Tools.WoodSword, 64
   stdcall Inventory.SetCell, 27, 10, 64
     
   ;========== Controller params ==========
