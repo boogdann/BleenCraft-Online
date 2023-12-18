@@ -18,7 +18,16 @@ proc anim_RightHand, playerPos, playerTurn
   
     tmp           dd 0.13
     
+    
+    len           dd  0.09
+    forward_mul   dd  -0.3
+    
+    frequency     dd  0.85
+    
   endl
+  
+
+  
 
   mov esi, [playerTurn]
   mov edi, [playerPos]
@@ -62,9 +71,9 @@ proc anim_RightHand, playerPos, playerTurn
   
   .skip:
     
-    fld dword[edi + 4]
-    fsub [tmp]
-    fstp [Anim_Hand_Position + 4] 
+  fld dword[edi + 4]
+  fsub [tmp]
+  fstp [Anim_Hand_Position + 4] 
     
   .next:
                                 
@@ -86,6 +95,52 @@ proc anim_RightHand, playerPos, playerTurn
   fstp [Anim_Hand_Turn + 4]
   fld dword[esi + 8]
   fstp [Anim_Hand_Turn + 8]
+  
+  
+  ;======================
+  fld [Anim_Hand_Position + 4]
+  fld [prevToolKoeff] 
+  fsin
+  fmul [len]
+  fld[a]
+  fcos
+  fmulp
+  fsubp
+  fstp [Anim_Hand_Position + 4]
+  
+;  fld [Anim_Hand_Position + 8]
+;  fld [prevToolKoeff] 
+;  fsin
+;  fmul [len]
+;  fmul [forward_mul]
+;  fld [b]
+;  fsin
+;  fmulp
+;  fsubp
+;  fstp [Anim_Hand_Position + 8]  
+;  
+;  fld [Anim_Hand_Position]
+;  fld [prevToolKoeff] 
+;  fcos
+;  fmul [len]
+;  fmul [forward_mul]
+;  fld [b]
+;  fcos
+;  fmulp
+;  fsubp
+;  fstp [Anim_Hand_Position]
+  ;========================
+  
+  cmp [animate_tool], 1
+  jne @F
+      fld [prevToolKoeff]
+      fadd [frequency]
+      fstp [prevToolKoeff] 
+      jmp .SkipDestroy
+  @@:
+      fldz
+      fstp [prevToolKoeff]
+  .SkipDestroy:
   
   stdcall gf_renderObj3D, obj.Player.LHand.Handle, [tx.Player.Handle], 0,\
                                 Anim_Hand_Position, Anim_Hand_Turn, 0.05, 0

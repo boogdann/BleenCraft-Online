@@ -4,11 +4,16 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=2
+  countAsm=7
   countInc=1
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
+  asm3="gf_set_render.ASM"
+  asm4="interfase_controller.asm"
+  asm5="playerAnimation.asm"
+  asm6="RightHandAnimation.asm"
+  asm7="toolsAnimation.asm"
 [inc]
   inc1="Game.inc"
 end if

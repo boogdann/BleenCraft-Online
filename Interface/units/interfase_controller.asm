@@ -78,6 +78,14 @@ proc ui_drag_end uses esi edi, WindowRect, bigBag_arr, bigBag_craft_arr, workben
     stdcall ui_check_slot_section, [WindowRect], big_bag_slot_size_xy, big_bag_data, 36 
     cmp eax, 1
     jnz .SkipBigBagCheck 
+       mov eax, [bigBag_arr]
+       cmp eax, [ui_drag_array_out]
+       jz .SkipMegaFix
+            cmp [ui_drag_array_out], 0
+            jnz .SkipMegaFix
+                ;cmp []
+       .SkipMegaFix:
+    
        stdcall MoveElement, [bigBag_arr], ebx, 64 
        
        ;Big bag case: 

@@ -276,7 +276,6 @@ proc gf_DeleteLightning uses esi edi ecx edx, pos
         add edi, 12   ;edi - next pos
         mov edx, [LightsCount]
         sub edx, ecx
-        dec edx  ;edx - loops count
         cmp ecx, edx
         jz .ReadyCircle
         mov ecx, 0
