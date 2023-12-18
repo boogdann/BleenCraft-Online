@@ -19,8 +19,8 @@ proc Crafting.Destroy uses ecx ebx eax
      invoke GetProcessHeap
      xchg   ebx, eax
      
-     invoke HeapFree, ebx, dword[Crafting.Small] 
-     invoke HeapFree, ebx, dword[Crafting.Big]
+     invoke HeapFree, ebx, 0, dword[Crafting.Small] 
+     invoke HeapFree, ebx, 0, dword[Crafting.Big]
 .Finish:
      ret
 endp
