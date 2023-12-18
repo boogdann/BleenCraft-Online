@@ -1,0 +1,33 @@
+;       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;       ОСТОРОЖНО ЧТОБЫ НЕ БЫЛО ПЕРЕСЕЧЕНИЙ КОНСТАНТ С КОНСТАНТАМИ БЛОКОВ
+
+;       Кирки
+
+Tools.Stick             =      234
+
+Tools.MinValueTool    =       235
+
+Tools.WoodPickaxe     =       235
+Tools.StonePickaxe    =       236
+Tools.IronPickaxe     =       237
+Tools.GoldPickaxe     =       238
+Tools.DiamondPickaxe  =       239
+
+Tools.WoodAxe         =       240
+Tools.StoneAxe        =       241
+Tools.IronAxe         =       242
+Tools.GoldAxe         =       243
+Tools.DiamondAxe      =       244
+
+Tools.WoodShowel         =    245
+Tools.StoneShowel        =    246
+Tools.IronShowel         =    247
+Tools.GoldShowel         =    248
+Tools.DiamondShowel      =    249
+
+Tools.WoodSword         =     250
+Tools.StoneSword        =     251
+Tools.IronSword         =     252
+Tools.GoldSword         =     253
+Tools.DiamondSword      =     254
+
