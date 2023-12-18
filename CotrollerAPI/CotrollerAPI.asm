@@ -6,6 +6,8 @@ include "CotrollerAPI\main\Swimming.asm"
 include "CotrollerAPI\main\BlocksHighlighting.asm"
 include "CotrollerAPI\main\InventoryHandler.asm"
 
+frameCount  dd  0
+
 proc ct_move_check, playerPos, playerTurn,\
                                Field, X, Y, Z
   

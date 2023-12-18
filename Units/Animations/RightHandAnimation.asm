@@ -52,7 +52,7 @@ proc anim_RightHand, playerPos, playerTurn
   
   ;cameraPos[2]
   fld dword[edi + 4]
-  fld [a]
+  fld [a]                    
   fmul [YVector]
   faddp
   fsub [MAX_DY]

@@ -98,6 +98,15 @@ Anim_Hand_Position dd     0.0, 0.0, 0.0
 Anim_Hand_Turn     dd     0.0, 0.0, 0.0
 XAxisMuliplier     dd     0.1
 animate            dd     1
+toolInHand         dd     0
+
+prevToolKoeff      dd     0.0
+
+result_pos         dd     0.0, 0.0, 0.0
+
+animVectorOffset   dd     0.0
+
+animate_tool       dd     0
 ;============================================== 
 
 ;== Global variables for destroyed blocks =====
@@ -118,7 +127,6 @@ UI_MODE            dd        UI_GAME
 
 ;========== Other ========================
 ZERO_VEC_3       dd        0.0, 0.0, 0.0
-frameCount       dd        0
 ;=========================================
 
 blocksTurn       dd        0.0, 0.0, 0.0

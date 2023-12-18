@@ -131,6 +131,8 @@ proc ct_check_moves, CameraPos, CameraTurn
   fdivp
   fstp dword[Speed]
 
+  mov [animate_tool], 0
+
   ;кебюъ ймнойю лшьх
   invoke GetAsyncKeyState, $01
   cmp eax, 0
@@ -140,6 +142,8 @@ proc ct_check_moves, CameraPos, CameraTurn
      
      cmp [flag], 1
      jne .skipDestroy
+        
+        mov [animate_tool], 1
         
         invoke GetTickCount
         mov edx, eax

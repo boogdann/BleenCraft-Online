@@ -20,6 +20,8 @@ proc anim_blockInHand uses esi edi, playerPos, playerTurn
   fldz
   fstp [Anim_Hand_Turn + 8]
   
+  mov [toolInHand], 0
+  
   
   mov edi, [chosenBlockFromInv]
   inc edi  
@@ -39,15 +41,31 @@ proc anim_blockInHand uses esi edi, playerPos, playerTurn
   .Render:  
   ;eax - tx | ebx - obj*
   
+  cmp [chosenBlockFromInv], 235
+  jl @F
+    mov [toolInHand], 1
+  @@:
+  
   mov esi, [playerTurn]
   cmp dword[esi], 0
   jle @F
-     stdcall anim_blockInHand_up, [playerPos], [playerTurn], ebx, eax
-     jmp .Return
+     cmp [toolInHand], 1
+     je .blockUp
+          stdcall anim_blockInHand_up, [playerPos], [playerTurn], ebx, eax
+          jmp .Return
+     .blockUp:
+          stdcall anim_toolInHand_up, [playerPos], [playerTurn], ebx, eax
+          jmp .Return 
   @@:
-  stdcall anim_blockInHand_down, [playerPos], [playerTurn], ebx, eax
-
+      cmp [toolInHand], 1
+      je .blockDown
+          stdcall anim_blockInHand_down, [playerPos], [playerTurn], ebx, eax
+          jmp .Return
+      .blockDown:
+          stdcall anim_toolInHand_down, [playerPos], [playerTurn], ebx, eax
+          jmp .Return
   .Return:
+  
   ret
 endp  
 
@@ -67,7 +85,7 @@ proc anim_blockInHand_down uses esi edi, playerPos, playerTurn, obj, tx
     tmp_x_turn  dd ?
     
     addTurn_A   dd 35.0 
-    addTurn_A_tmp dd  22.0  ;radian
+    addTurn_A_tmp dd  22.0  ;radian  
   endl
   
   cmp [animate], 1
@@ -191,7 +209,6 @@ proc anim_blockInHand_down uses esi edi, playerPos, playerTurn, obj, tx
 endp 
 
 
-
 proc anim_blockInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   
   locals
@@ -208,7 +225,7 @@ proc anim_blockInHand_up uses esi edi, playerPos, playerTurn, obj, tx
     tmp_x_turn  dd ?
     
     addTurn_A   dd 35.0 
-    addTurn_A_tmp dd  22.0  ;radian
+    addTurn_A_tmp dd  22.0  ;radian  
   endl
   
   cmp [animate], 1
@@ -239,7 +256,7 @@ proc anim_blockInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   fmulp
   faddp
   fsub [pos_sub_base]
-  fstp dword[edi + 4]
+  fstp dword[edi + 4] 
   
   fld [addTurn_A]
   fld [a]   ;no
@@ -256,7 +273,7 @@ proc anim_blockInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   fmul [addTurn_A] 
   fdiv [PiDegree]
   faddp
-  fstp [b]
+  fstp [b] 
   
   fld dword[edi + 0]
   fld [b] 

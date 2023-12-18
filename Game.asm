@@ -3,6 +3,7 @@ include "Units\Asm_Includes\Code.asm"
 include "Units\Animations\RightHandAnimation.asm"
 include "Units\Animations\playerAnimation.asm"
 include "Units\Animations\blocksAnimation.asm"
+include "Units\Animations\toolsAnimation.asm"
 include "Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 include "CotrollerAPI\main\BlocksDrop.asm"
 
