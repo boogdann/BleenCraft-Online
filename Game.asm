@@ -19,6 +19,10 @@ proc GameStart
   locals 
     test_add  dd 20.0
   endl
+  
+  stdcall Field.GetAllWorlds, FileNames
+  mov     dword[FileCount], ecx
+      
   stdcall gf_cleanLightning
   stdcall Blocks.GetDestroyTime, 21, 236
 
@@ -192,8 +196,11 @@ proc ResetGameData
 endp
 
 proc InitWorld
-;     cmp     dword[IS_GENERATED], TRUE
-;     jz      .EndSet
+     cmp     dword[IS_GENERATED], TRUE
+     jnz     @F     
+     stdcall DestroyWorld
+     mov     dword[IS_GENERATED], FALSE
+@@:
      
      cmp     dword[IS_ONLINE], TRUE
      jz      .SetOnline
@@ -226,7 +233,6 @@ proc InitWorld
      
      jmp     .Finish
 .Error:
-     invoke  ExitProcess, 1
      mov     eax, -1   
      jmp     .EndSet
        
@@ -246,19 +252,20 @@ proc InitWorld
      ret    
 endp
 
-;proc DestroyWorld
-;     cmp     dword[IS_GENERATED], FALSE
-;     jz      .Finish
-;     
-;     stdcall Field.DestroyWorld
-;     stdcall Field.DestroyClouds
-;     
-;     cmp     dword[IS_ONLINE], FALSE
-;     jz      .Finish
-;     stdcall Client.Destroy
-;     stdcall client.StopServe_PlayerData 
-;     
-;.Finish:
-;     mov     dword[IS_GENERATED], FALSE
-;     ret
-;endp
+proc DestroyWorld
+     cmp     dword[IS_GENERATED], FALSE
+     jz      .Finish
+     
+     stdcall Field.DestroyWorld
+     stdcall Field.DestroyClouds
+     stdcall Crafting.Destroy
+     
+     cmp     dword[IS_ONLINE], FALSE
+     jz      .Finish
+     stdcall Client.Destroy
+     stdcall client.StopServe_PlayerData 
+     
+.Finish:
+     mov     dword[IS_GENERATED], FALSE
+     ret
+endp
