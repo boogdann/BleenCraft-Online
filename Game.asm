@@ -15,6 +15,10 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;mov [UI_MODE], CONST
 
 proc GameStart
+  locals 
+    test_add  dd 20.0
+  endl
+  stdcall gf_cleanLightning
   stdcall Blocks.GetDestroyTime, 21, 236
 
   mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
@@ -27,7 +31,7 @@ proc GameStart
   
   ;================ Grafic params ===========================
   ;Day/night params
-  mov [Dayly_Kof], 10000   ;0 - 65535
+  mov [Dayly_Kof], 30000   ;0 - 65535
   mov [DAYLY_SPEED], 2
   stdcall gf_subscribeDayly, Dayly_Kof, 1  ;1 - auto changing
   
@@ -46,11 +50,12 @@ proc GameStart
   stdcall Inventory.SetCell, 30, Block.Stone, 64
   stdcall Inventory.SetCell, 31, Block.IronOre, 64
   stdcall Inventory.SetCell, 32, Block.GoldOre, 64
-  stdcall Inventory.SetCell, 33, Block.DiamondOre, 64
+  stdcall Inventory.SetCell, 27, 10, 64
     
   ;========== Controller params ==========
   stdcall ct_change_mouse, 0
   ;=======================================
+
   ret
 endp
 
@@ -60,7 +65,7 @@ proc RenderScene
     stdcall gf_RenderBegin, PlayerPos, PlayerTurn
   
     ;The lighting mode is changed by the third parameter (if underwater => TRUE)
-    stdcall gf_CreateLightning, LightsCount, LightsPositions, [UnderWater]
+    stdcall gf_CreateLightning, [LightsCount], LightsPositions, [UnderWater]
     
     ;Selection
     cmp [flag], 0

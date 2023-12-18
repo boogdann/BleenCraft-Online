@@ -4,9 +4,23 @@ IS_GENERATED dd FALSE
 
 ;========= Grafic params =============== 
 Dayly_Kof        dw     0  
-LightsCount      db     1 ;Byte [0-15] 
+CircleCount      dd     0
+LightsCount      dd     0 ;[0-14] 
 LightsPositions:
-                 dd     10.0, 3.0, 7.0
+                 dd     ?, ?, ? ;1
+                 dd     ?, ?, ? ;2
+                 dd     ?, ?, ? ;3
+                 dd     ?, ?, ? ;4
+                 dd     ?, ?, ? ;5
+                 dd     ?, ?, ? ;6
+                 dd     ?, ?, ? ;7
+                 dd     ?, ?, ? ;8
+                 dd     ?, ?, ? ;9
+                 dd     ?, ?, ? ;10
+                 dd     ?, ?, ? ;11
+                 dd     ?, ?, ? ;12
+                 dd     ?, ?, ? ;13
+                 dd     ?, ?, ? ;14  ;MAX
 ;=======================================
 
 ;==== Worls params ===========
@@ -104,6 +118,7 @@ UI_MODE            dd        UI_GAME
 
 ;========== Other ========================
 ZERO_VEC_3       dd        0.0, 0.0, 0.0
+frameCount       dd        0
 ;=========================================
 
 blocksTurn       dd        0.0, 0.0, 0.0

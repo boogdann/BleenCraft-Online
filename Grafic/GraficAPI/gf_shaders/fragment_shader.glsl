@@ -77,9 +77,7 @@ void main() {
     //ads( i, lights[i].Position, lights[i].Intensity,
     //         eyePosition, eyeNorm, Ka, Kd, Ks, ambDiff, spec);
 
-    for( i = 0; i < LightsCount; i++ ) {
-        //if (i > LightsCount) { break; }
-    
+    for( i = 0; i < LightsCount; i++ ) {    
         ads( i, lights[i].Position, lights[i].Intensity,
             eyePosition, eyeNorm, Ka, Kd, Ks, ambDiff, spec);
     }

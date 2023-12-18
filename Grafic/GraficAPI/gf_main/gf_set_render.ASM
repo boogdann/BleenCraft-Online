@@ -5,8 +5,7 @@ proc gf_CreateLightning, LightsCount_u, LightsPositions, isWater
        fog_dist     dd   ?
     endl
     
-    mov esi, [LightsCount_u]
-    movzx eax, byte[esi]
+    mov eax, [LightsCount_u]
     mov [LightsCount], eax
 
     ;Загрузка освещения
@@ -34,7 +33,7 @@ proc gf_CreateLightning, LightsCount_u, LightsPositions, isWater
     cmp ecx, [LightsCount]
     jz @F
         stdcall setLightning, esi, ecx
-        add esi, 3
+        add esi, 12
     inc ecx
     jmp .WriteLightningLoop
     @@:
@@ -219,6 +218,90 @@ proc gf_changeDaylyCof
      mov ax, word[DAYLY_SPEED]
      add word[esi], ax   ;Debug
    @@:
+  ret
+endp
+
+
+proc gf_cleanLightning
+  mov [CircleCount], 0
+  mov [LightsCount], 0
+  
+  ret
+endp
+
+proc gf_AddLightning uses esi edi, pos
+  ;LightsCount
+  ;LightsPositions
+  inc [LightsCount]
+  cmp [LightsCount], 14
+  jl @F
+    mov [LightsCount], 14
+  @@: 
+  
+  mov eax, [CircleCount]
+  imul eax, 12
+  add eax, LightsPositions
+  mov esi, eax
+  
+  mov edi, [pos]
+  mov eax, dword[edi]
+  mov dword[esi], eax 
+  mov eax, dword[edi + 4]
+  mov dword[esi + 4], eax 
+  mov eax, dword[edi + 8]
+  mov dword[esi + 8], eax 
+  
+
+  inc [CircleCount]
+  cmp [CircleCount], 14
+  jl @F
+    mov [CircleCount], 0
+  @@:
+  ret
+endp
+
+proc gf_DeleteLightning uses esi edi ecx edx, pos
+  cmp [LightsCount], 0
+  jz .Ready
+     
+  mov esi, LightsPositions
+  mov ecx, 0
+  .SeachLightningCircle:
+     push ecx
+        stdcall _client.Vec3cmp, [pos], esi
+     pop ecx
+     cmp eax, 0
+     jnz @F
+        mov edi, esi  ;esi - cur pos
+        add edi, 12   ;edi - next pos
+        mov edx, [LightsCount]
+        sub edx, ecx
+        dec edx  ;edx - loops count
+        cmp ecx, edx
+        jz .ReadyCircle
+        mov ecx, 0
+        .RewritingCircle:
+            mov eax, dword[edi]
+            mov dword[esi], eax 
+            mov eax, dword[edi + 4]
+            mov dword[esi + 4], eax 
+            mov eax, dword[edi + 8]
+            mov dword[esi + 8], eax 
+        inc ecx
+        cmp ecx, edx
+        jnz .RewritingCircle
+        .ReadyCircle:
+        dec [LightsCount] 
+        dec [CircleCount]
+        
+        jmp .Ready
+     @@:
+     add esi, 12
+  inc ecx
+  cmp ecx, [LightsCount]
+  jnz .SeachLightningCircle
+  
+  .Ready:
   ret
 endp
 

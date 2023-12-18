@@ -17,12 +17,22 @@ include "..\Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 
 
 proc ui_InterfaceInit
+  locals
+      LightAdd  dd  1.0
+  endl 
   mov [CUR_MENU], UI_MAIN_MENU
   
   stdcall GameStart
   stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 30
   stdcall ct_change_mouse, 1
-  mov [Dayly_Kof], 5000 
+  stdcall gf_cleanLightning
+  fld [PlayerPos]
+  fadd [LightAdd]
+  fstp [PlayerPos]
+  stdcall gf_AddLightning, PlayerPos
+  fld [PlayerPos]
+  fsub [LightAdd]
+  fstp [PlayerPos]
   
   mov [CuruiTurn], 30.0
   mov [PlayerTurn + 4], 30.0 
