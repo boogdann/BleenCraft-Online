@@ -54,9 +54,15 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     mov    edi, [Height]
     mov    [Field.Height], edi
     mul    edi
-    
-    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
+
+    mov    ebx, eax
+.GetMem:
+    push   ebx
+    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, ebx
+    pop    ebx
     mov   [Field.Blocks], eax
+    cmp   eax, 0
+    jz    .GetMem 
         
     xor    edx, edx
     mov    eax, [Size_]

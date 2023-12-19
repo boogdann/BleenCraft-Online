@@ -173,7 +173,7 @@ RENDER_RADIUS   dd  20
 
 global_building_time  dd  1000
 
-_IS_SERVER_DEBUD  dd   TRUE
+_IS_SERVER_DEBUD  dd   FALSE
 
 
 
