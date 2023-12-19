@@ -4,6 +4,7 @@ proc anim_RightHand, playerPos, playerTurn
   jne .finish
 
   locals
+    
     YVector       dd 0.11  ;0.65
     MAX_DY        dd 0.1
     
@@ -19,18 +20,16 @@ proc anim_RightHand, playerPos, playerTurn
     tmp           dd 0.13
     
     
-    len           dd  0.09
+    len           dd  0.03
     forward_mul   dd  -0.3
     
-    frequency     dd  0.85
+    frequency     dd  0.5
     
-    VectorOffset  dd 0.1  
+    VectorOffset  dd 0.1 
+    addVector     dd 0.01 
     
   endl
   
-
-  
-
   mov esi, [playerTurn]
   mov edi, [playerPos]
   
@@ -43,7 +42,6 @@ proc anim_RightHand, playerPos, playerTurn
   fmul dword[esi + 4]
   fdiv [PiDegree]
   fstp [b]
-  
   
   ;cameraPos[1]
   fld dword[edi]

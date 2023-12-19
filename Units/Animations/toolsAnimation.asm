@@ -231,7 +231,7 @@ proc anim_toolInHand_down uses esi edi, playerPos, playerTurn, obj, tx
   
   cmp [animate_tool], 1
   jne @F
-    stdcall animatetool, esi, 1.5
+    stdcall animatetool, esi, 1.0
   @@:
   
   stdcall gf_renderObj3D, [obj], [tx], 0,\
@@ -263,7 +263,8 @@ proc anim_toolInHand_up uses esi edi, playerPos, playerTurn, obj, tx
     
     addTurn_A   dd 35.0 
     addTurn_A_tmp dd  22.0  ;radian 
-    angleY        dd  70.0 
+    angleY        dd  70.0
+    addAngleY     dd  35.0 
   endl
   
   cmp [animate], 1
@@ -276,8 +277,8 @@ proc anim_toolInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   fldz
   fstp [Anim_Hand_Turn]
   
-  fld dword[esi]         ;;!!
-  fstp [Anim_Hand_Turn]  ;;!!
+  ;fld dword[esi]         ;;!!
+  ;fstp [Anim_Hand_Turn]  ;;!!
   
   fld dword[esi + 4]
   fstp [Anim_Hand_Turn + 4]
@@ -292,6 +293,10 @@ proc anim_toolInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   
   fld [Anim_Hand_Turn + 4]
   fadd [angleY]
+  fld [a]
+  fsin
+  fmul [addAngleY]
+  faddp
   fstp [Anim_Hand_Turn + 4]
   
   fld dword[edi + 4]
@@ -341,14 +346,14 @@ proc anim_toolInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   faddp
   fstp [Anim_Hand_Position + 8]
   
-  fldpi
-  fmul dword[esi + 4]
-  fdiv [PiDegree]
-  fldpi
-  fmul [addTurn_A]
-  fdiv [PiDegree]
-  fsubp
-  fstp [b]
+;  fldpi
+;  fmul dword[esi + 4]
+;  fdiv [PiDegree]
+;  fldpi
+;  fmul [addTurn_A]
+;  fdiv [PiDegree]
+;  fsubp
+;  fstp [b]
   
   ;len_2
   fld [a]  ;no
@@ -382,7 +387,7 @@ proc anim_toolInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   
   cmp [animate_tool], 1
   jne @F
-    stdcall animatetool, esi, 1.5
+    stdcall animatetool, esi, 0.7
   @@:
   
   stdcall gf_renderObj3D, [obj], [tx], 0,\

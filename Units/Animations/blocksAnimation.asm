@@ -1,16 +1,3 @@
-proc anim_buildBlock uses esi edi, playerPos, playerTurn
-
-  locals
-    addAngle  dd 0.5
-    
-  endl 
-  
-  ;’”≈“¿ ≈¡À»¬¿ﬂ
-
-  ret
-endp
-
-
 proc anim_blockInHand uses esi edi, playerPos, playerTurn
   
   fldz
@@ -79,8 +66,6 @@ proc anim_blockInHand_down uses esi edi, playerPos, playerTurn, obj, tx
     n_05        dd 1.3
     pos_sub      dd 0.05
     pos_sub_base dd 0.06
-    
-    result_pos  dd ?, ?, ?
     
     tmp_x_turn  dd ?
     
@@ -194,6 +179,10 @@ proc anim_blockInHand_down uses esi edi, playerPos, playerTurn, obj, tx
   faddp
   fstp [result_pos + 8]
   
+  cmp [animate_tool], 1
+  jne @F
+     stdcall animatetool, esi, 0.8 
+  @@:
 
   lea esi, [result_pos]
   stdcall gf_renderObj3D, [obj], [tx], 0,\
@@ -219,8 +208,6 @@ proc anim_blockInHand_up uses esi edi, playerPos, playerTurn, obj, tx
     n_05        dd -0.005
     pos_sub      dd 0.035
     pos_sub_base dd 0.06
-    
-    result_pos  dd ?, ?, ?
     
     tmp_x_turn  dd ?
     
@@ -335,9 +322,13 @@ proc anim_blockInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   faddp
   fstp [result_pos + 8]
   
-  lea esi, [result_pos]
+  cmp [animate_tool], 1
+  jne @F
+     stdcall animatetool, esi, 0.6 
+  @@:
+  
   stdcall gf_renderObj3D, [obj], [tx], 0,\
-                                esi, Anim_Hand_Turn, 0.04, 0
+                                result_pos, Anim_Hand_Turn, 0.04, 0
                                 
   pop edi
   pop dword[edi + 4]
