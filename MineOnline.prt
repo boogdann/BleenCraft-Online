@@ -4,23 +4,16 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=13
+  countAsm=6
   countInc=2
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
   asm3="Create.asm"
-  asm4="Main_menu.asm"
-  asm5="gf_render.ASM"
-  asm6="interfase_menu_items.asm"
-  asm7="Connect.asm"
-  asm8="Field.asm"
-  asm9="Settings.asm"
-  asm10="Interface.asm"
-  asm11="gf_set_render.ASM"
-  asm12="gf_init_render_data.ASM"
-  asm13="gf_api_init.ASM"
+  asm4="Settings.asm"
+  asm5="gf_texture_init.ASM"
+  asm6="gf_obj_init.ASM"
 [inc]
   inc1="Game.inc"
-  inc2="Interface.inc"
+  inc2="Textures.inc"
 end if

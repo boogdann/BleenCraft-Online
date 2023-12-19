@@ -148,8 +148,10 @@ proc ui_MenuCreateController uses esi, WindowRect
     cmp esi, 4
     jl .ErrorString
     
+    stdcall copy_in_world_path, GameName_input + 1 
+    
     mov [App_Mode], GAME_MODE
-    mov [ChosenFile], GameName_input + 1 
+    mov [ChosenFile], world_path
     stdcall InitWorld
     stdcall GameStart 
     

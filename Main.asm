@@ -189,7 +189,10 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         jmp     .ReturnZero
   
   .Destroy:
-        stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], [ChosenFile]       
+        cmp [App_Mode], MENU_MODE
+        jz .SkipSave
+            stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], DEFAULT_WORLD       
+        .SkipSave:
         invoke ExitProcess, 0
   .ReturnZero:                                                
         xor     eax, eax

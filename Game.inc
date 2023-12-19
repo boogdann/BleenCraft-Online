@@ -74,13 +74,13 @@ BIG_CRAFT_SIZE      =     10
     ; ======= =======
 
 ;=======================================
-ServerIp         db       "192.168.0.101", 0
+ServerIp         db       "192.168.43.41", 0
 ServerPortUDP    dd       9999
 ServerPortTCP    dd       10000
 ;=======================================
 
 ;=============================================
-DEFAULT_WORLD    db       "Worlds\default2.txt", 0 
+DEFAULT_WORLD    db       "menu_map.txt", 0 
 filenameSky      db       "testSaveSky.txt", 0
 ;==============================================
 
