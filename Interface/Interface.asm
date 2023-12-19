@@ -18,13 +18,14 @@ include "..\Grafic\GraficAPI\gf_assets\gf_macro.ASM"
 
 proc ui_InterfaceInit
   locals
-      MenuPlayerPos  dd 900.0, 90.0, 200.0
+      MenuPlayerPos  dd 400.0, 90.0, 200.0
       LightAdd  dd  1.0
   endl 
   mov [CUR_MENU], UI_MAIN_MENU
   
   mov [IS_ONLINE],    FALSE   
   mov [IS_HOST],      FALSE
+  mov [IS_READ_FROM_FILE], TRUE
   mov [ChosenFile], DEFAULT_WORLD
   stdcall InitWorld  
   stdcall GameStart
@@ -40,8 +41,6 @@ proc ui_InterfaceInit
    mov eax, [MenuPlayerPos + 8]
    mov [PlayerPos + 8], eax
 
-  
-  
   fld [PlayerPos]
   fadd [LightAdd]
   fstp [PlayerPos]

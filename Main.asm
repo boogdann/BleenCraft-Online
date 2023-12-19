@@ -25,7 +25,8 @@ include "Assets\Objects.inc"
 
 section '.text' code readable executable     
 
-Start:   
+Start: 
+  ; stdcall Generating.Init  
   ;=============== Grafic Init ===================      
   stdcall gf_grafic_init
   
@@ -38,6 +39,8 @@ Start:
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
   stdcall gf_LoadObjs
   stdcall gf_LoadAddictionalTextures
+  
+  
   
   ;================================================  
   
@@ -191,7 +194,7 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
   .Destroy:
         cmp [App_Mode], MENU_MODE
         jz .SkipSave
-            stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], DEFAULT_WORLD       
+            ;stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], DEFAULT_WORLD       
         .SkipSave:
         invoke ExitProcess, 0
   .ReturnZero:                                                

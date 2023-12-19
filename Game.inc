@@ -2,6 +2,8 @@ IS_ONLINE    dd FALSE
 IS_HOST      dd FALSE
 IS_GENERATED dd FALSE
 
+IS_READ_FROM_FILE dd TRUE
+
 ;========= Grafic params =============== 
 Dayly_Kof        dw     0  
 CircleCount      dd     0
@@ -171,9 +173,7 @@ RENDER_RADIUS   dd  20
 
 global_building_time  dd  1000
 
-_IS_SERVER_DEBUD  dd   FALSE
-
-hgasfdhjsaf dd ?
+_IS_SERVER_DEBUD  dd   TRUE
 
 
 

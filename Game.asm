@@ -20,7 +20,7 @@ proc GameStart
   mov     dword[FileCount], ecx
 
             
-;  stdcall InitWorld 
+ ; stdcall InitWorld 
 ;     
 ;  mov [PlayerPos], 100.0
 ;  mov [PlayerPos + 4], 75.0
@@ -201,11 +201,11 @@ proc InitWorld
       MenuPlayerPos  dd   900.0, 90.0, 200.0
   endl 
   
-;     cmp     dword[IS_GENERATED], TRUE
-;     jnz     @F     
-;     stdcall DestroyWorld
-;     mov     dword[IS_GENERATED], FALSE
-;@@:
+     cmp     dword[IS_GENERATED], TRUE
+     jnz     @F     
+     stdcall DestroyWorld
+     mov     dword[IS_GENERATED], FALSE
+@@:
      
      cmp     dword[IS_ONLINE], TRUE
      jz      .SetOnline

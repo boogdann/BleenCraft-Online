@@ -30,6 +30,8 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
     stdcall Random.Initialize
     
+    
+    
     stdcall Field.ReadFromFiles, [filename]
     cmp     eax, -1
     jnz     .EndSetWorld
@@ -55,18 +57,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
     mov   [Field.Blocks], eax
-    
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    mov    [hgasfdhjsaf], eax
-    
+        
     xor    edx, edx
     mov    eax, [Size_]
     mul    eax
@@ -336,7 +327,7 @@ endp
 
 proc Field.DestroyWorld uses ecx edx eax
      cmp     dword[Field.IsGenerated], TRUE
-     jz      .SkipDestroyWorld
+     jnz      .SkipDestroyWorld
      invoke  HeapFree, [Field.hHeap], 0, [Field.Blocks]
      mov     dword[Field.IsGenerated], FALSE
 .SkipDestroyWorld:
@@ -1592,5 +1583,19 @@ proc Field.GetAllWorlds uses edx edi esi, pRes
      mov    [edi], eax
      invoke FindClose, [Field.hFind]
      mov    ecx, [fileCount]
+     ret
+endp
+
+proc Generating.Init
+    invoke GetProcessHeap
+    xchg   eax, ebx
+    
+    invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, 1025*1025*150
+    mov   [Field.Blocks], eax
+    
+    invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, 1025*1025*4
+    mov    [Field.Matrix], eax
+    
+.Finish:
      ret
 endp
