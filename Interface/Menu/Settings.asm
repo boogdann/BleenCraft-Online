@@ -91,6 +91,7 @@ proc ui_MenuSettingsController, WindowRect
     mov [App_Mode], MENU_MODE
     stdcall ui_InterfaceInit
     stdcall ResetGameData
+    stdcall DestroyWorld
     jmp .Return 
   .Host:
     ;Start Host
@@ -150,7 +151,7 @@ proc ui_EscMenuInputController, wParam
      stdcall AddLetterToInput, ConnectionTcpPort_input, [wParam], 0, 1
      mov [MAX_LEN_INPUT], 15
   jmp .Return 
-  .RadiusFocus:
+  .RadiusFocus:    
      mov [MAX_LEN_INPUT], 2
      stdcall AddLetterToInput, RenderRadius_input, [wParam], 0, 1
      stdcall GetNumFromInput, RenderRadius_input

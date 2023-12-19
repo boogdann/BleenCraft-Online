@@ -209,7 +209,7 @@ proc InitWorld
      cmp     dword[IS_ONLINE], TRUE
      jz      .SetOnline
      ; offline
-     stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], DEFAULT_WORLD
+     stdcall Field.Initialize, [WorldPower], [WorldHeight], [WaterLvl], [ChosenFile]
      stdcall Field.SetValues, Field.Blocks, WorldLength, WorldWidth, WorldHeight, SizeWorld  
     
      jmp     .Finish
