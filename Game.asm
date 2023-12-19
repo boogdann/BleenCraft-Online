@@ -190,7 +190,7 @@ proc ResetGameData
     mov [IsPlayerDied], 0
                   
     stdcall Field.GenerateSpawnPoint, PlayerPos
-    stdcall ct_change_mouse, 0
+    stdcall ct_change_mouse, 1
 
   ret
 endp

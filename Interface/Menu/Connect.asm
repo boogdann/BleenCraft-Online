@@ -14,6 +14,9 @@ proc ui_renderMenuConnect, WindowRect
   endl
 
   stdcall gf_2D_Render_Start 
+    invoke glColor3f, 1.0, 1.0, 1.0
+    stdcall ui_draw_text, [WindowRect], connect_text, [connect_text_len], -0.3, 0.4, 0.006
+  
   ;############################################################################
     stdcall ui_render_input, [WindowRect], -0.4, 0.2, 0.8, 0.15,     10, \
                              tcp_port_text, [tcp_port_text_len], ConnectionTcpPort_input
@@ -65,7 +68,7 @@ proc ui_renderMenuConnect, WindowRect
 endp
 
 
-proc ui_MenuConnectController, WindowRect
+proc ui_MenuConnectController uses esi edi, WindowRect
   mov [CurFocus], 0
  
   switch  [Selected_ButtonId]
@@ -78,9 +81,21 @@ proc ui_MenuConnectController, WindowRect
   
   .Connect:
     ;Connect
-    mov [connect_error], not_implemented_text
-    mov eax, [not_implemented_text_len]
-    mov [connect_error_len], eax
+    stdcall gf_2D_Render_Start 
+    stdcall ui_renderBackground, [WindowRect], 0.0
+    stdcall gf_2D_Render_End
+    invoke SwapBuffers, [hdc]
+    invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
+    mov [IS_ONLINE],    TRUE   
+    mov [IS_HOST],      FALSE
+  
+    stdcall CopyConnectionData
+    
+    mov [App_Mode], GAME_MODE
+    stdcall InitWorld
+    stdcall GameStart
+    
+    ;error handler
   jmp .Return   
   .Exit:
     mov [CUR_MENU], UI_MAIN_MENU
@@ -122,5 +137,41 @@ proc ui_ConnectInputController, wParam
   jmp .Return 
   
   .Return:
+  ret
+endp
+
+
+proc CopyConnectionData uses esi edi  
+    mov edi, ServerIp
+    mov esi, ConnectionIP_input
+    movzx edx, byte[esi]
+    inc esi
+    mov ecx, 0
+    
+    cmp edx, 0
+    jz .Skip
+    .CopyIpLoop:
+        mov al, byte[esi]
+        mov byte[edi], al
+        inc esi
+        inc edi
+    inc ecx
+    cmp ecx, edx 
+    jnz .CopyIpLoop
+    mov byte[edi], 0
+    .Skip:
+    
+    stdcall GetNumFromInput, ConnectionUdpPort_input
+    mov [ServerPortUDP], eax
+    stdcall GetNumFromInput, ConnectionTcpPort_input
+    mov [ServerPortTCP], eax
+    
+    mov esi, ConnectionIP_input 
+    mov byte[esi], 0
+    mov esi, ConnectionTcpPort_input 
+    mov byte[esi], 0
+    mov esi, ConnectionUdpPort_input 
+    mov byte[esi], 0
+     
   ret
 endp

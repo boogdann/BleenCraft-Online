@@ -158,6 +158,10 @@ connect_error_len dd   0 ;<-- len of text
 
 not_implemented_text  db 'not implemented yet..'
 not_implemented_text_len  dd  $ - not_implemented_text
+
+
+connection_error  db 'connection error..'
+connection_error_len  dd  $ - not_implemented_text
 ;===========================================
 
 RENDER_RADIUS   dd  20

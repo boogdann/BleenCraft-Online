@@ -8,7 +8,19 @@ proc ui_renderMenu_Main, WindowRect
     y     dd  0.0
     x_sz  dd  0.8
     y_sz  dd  0.8
+    
+    MenuPlayerPos  dd   900.0, 90.0, 200.0
   endl 
+  
+  mov eax, [MenuPlayerPos]
+  mov [PlayerPos], eax
+  mov eax, [MenuPlayerPos + 4]
+  mov [PlayerPos + 4], eax
+  mov eax, [MenuPlayerPos + 8]
+  mov [PlayerPos + 8], eax
+  
+  mov [IS_ONLINE],    FALSE   
+  mov [IS_HOST],      FALSE
  
   stdcall RenderScene
   stdcall gf_2D_Render_Start

@@ -222,6 +222,7 @@ proc SetNumInInput uses esi edi eax, num, input
   ret
 endp
 
+;eax - result num
 proc GetNumFromInput uses esi edi ecx edx, input 
   mov esi, [input]
   movzx ecx, byte[esi] 

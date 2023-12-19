@@ -88,16 +88,27 @@ proc ui_MenuSettingsController, WindowRect
     stdcall ct_change_mouse, 0
   jmp .Return   
   .Exit:
-    mov [UI_MODE], UI_GAME
     mov [App_Mode], MENU_MODE
-    mov [UnderWater], 0
-    ;RENDER_RADIUS <-- set
     stdcall ui_InterfaceInit
+    stdcall ResetGameData
     jmp .Return 
   .Host:
     ;Start Host
-    mov [host_error], not_implemented_text
-    mov eax, [not_implemented_text_len]
+    mov [IS_ONLINE],    TRUE   
+    mov [IS_HOST],      TRUE
+  
+    stdcall CopyConnectionData
+    
+    stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
+    cmp     eax, -1
+    jz      .Error
+    
+    stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
+    jmp .Return 
+    
+    .Error:
+    mov [host_error], connection_error
+    mov eax, [connection_error_len]
     mov [host_error_len], eax
     jmp .Return 
   .IpFocus:
