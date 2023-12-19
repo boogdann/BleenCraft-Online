@@ -18,8 +18,11 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
         _div      dd ?
         tmpBase   dd 0
     endl 
+    
+    mov   dword[Field.Blocks], 0
+    
     mov   eax, [baseLvl]   
-    mov   dword[base], eax
+    mov   dword[base], 65
     mov   dword[tmpBase], eax
     sub   dword[tmpBase], 5
     
@@ -52,6 +55,17 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     
     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
     mov   [Field.Blocks], eax
+    
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
+    mov    [hgasfdhjsaf], eax
     
     xor    edx, edx
     mov    eax, [Size_]
@@ -426,8 +440,8 @@ proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
          z dd 100
      endl
      
-     cmp    dword[Field.IsSpawnPointGenerated], TRUE
-     jz     .Finish
+     ;cmp    dword[Field.IsSpawnPointGenerated], TRUE
+     ;jz     .Finish
      
      stdcall Random.Initialize
      
@@ -453,12 +467,12 @@ proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
      jz     ._Break  
 
 .Continue:
-     push   eax
+     ;push   eax
      mov    eax, [Field.Height]
-     sub    eax, 20
+     ;sub    eax, 20
      inc    dword[z]
      cmp    [z], eax
-     pop    eax
+     ;pop    eax
 
      jl     .Iterate_Z
          

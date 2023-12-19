@@ -154,7 +154,9 @@ proc ui_MenuCreateController uses esi, WindowRect
     stdcall GameStart 
     
     mov [create_error], 0
-    mov [create_error_len], 0   
+    mov [create_error_len], 0 
+    
+    jmp .Return  
     
     .ErrorString:
     mov [create_error], name_len_err 

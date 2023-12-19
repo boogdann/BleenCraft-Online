@@ -114,6 +114,7 @@ proc RenderScene
     cmp [App_Mode], GAME_MODE
     jnz .SkipUI
     stdcall gf_2D_Render_Start
+        
     
         ;Died screen
         cmp [currentNumOfHearts], 0
@@ -200,11 +201,11 @@ proc InitWorld
       MenuPlayerPos  dd   900.0, 90.0, 200.0
   endl 
   
-     cmp     dword[IS_GENERATED], TRUE
-     jnz     @F     
-     stdcall DestroyWorld
-     mov     dword[IS_GENERATED], FALSE
-@@:
+;     cmp     dword[IS_GENERATED], TRUE
+;     jnz     @F     
+;     stdcall DestroyWorld
+;     mov     dword[IS_GENERATED], FALSE
+;@@:
      
      cmp     dword[IS_ONLINE], TRUE
      jz      .SetOnline
@@ -214,6 +215,7 @@ proc InitWorld
     
      jmp     .Finish
 .SetOnline:
+
      stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
      cmp     eax, -1
      jz      .Error
@@ -253,12 +255,12 @@ proc InitWorld
      @@:
      
      ;====== DELETE ===========  
-      mov eax, [MenuPlayerPos]
-      mov [PlayerPos], eax
-      mov eax, [MenuPlayerPos + 4]
-      mov [PlayerPos + 4], eax
-      mov eax, [MenuPlayerPos + 8]
-      mov [PlayerPos + 8], eax
+     ; mov eax, [MenuPlayerPos]
+     ; mov [PlayerPos], eax
+     ; mov eax, [MenuPlayerPos + 4]
+     ; mov [PlayerPos + 4], eax
+     ; mov eax, [MenuPlayerPos + 8]
+     ; mov [PlayerPos + 8], eax
       ;===========================
      
      stdcall Inventory.Initialize, Inventory, InventorySize
