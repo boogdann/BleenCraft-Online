@@ -48,6 +48,9 @@ proc ui_Menu_MainController, WindowRect
   jmp     .Return
   
   .Create:
+    stdcall Field.GetAllWorlds, FileNames
+    mov    dword[FileCount], ecx
+    mov [CurOpenPage], 0
     mov [CUR_MENU], UI_CREATE_MENU
   jmp .Return  
   .Connect:

@@ -43,12 +43,19 @@ proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
      mov [Selected_ButtonId], eax
   @@:
   
+  cmp [id], -1
+  jnz @F
+      invoke glColor4f, 0.4, 0.7, 0.4, 1.0 
+      jmp .SkipDrawBackground
+  @@:
   invoke glColor4f, 0.44, 0.44, 0.44, 1.0
   cmp [isIn], 1
   jnz @F
     invoke glColor4f, 0.37, 0.37, 0.37, 1.0
   @@:
+  .SkipDrawBackground:
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y]
+  
   
   mov  esi, [WindowRect]
   fld  [add_xy]
@@ -68,9 +75,11 @@ proc ui_drawButton uses esi edi, WindowRect, x, y, s_x, s_y, id, text, textLen
   fadd [add_xy + 4]
   fstp [s_y]
   
+  cmp [id], -1
+  jz .SkipDrawBackground1
   invoke glColor4f, 0.66, 0.66, 0.66, 1.0
-  
   stdcall ui_draw_rectangle, [x], [y], [s_x], [s_y] 
+  .SkipDrawBackground1:
   
   fld [x]
   fadd [add_xy]

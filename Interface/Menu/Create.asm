@@ -11,17 +11,25 @@ proc ui_renderMenuCreate, WindowRect
       textWidth          dd   ?
       textHeight         dd   ?
       textX              dd   ?
+      
+      btnCurY            dd   ?
+      btnStartY          dd   -0.25
+      btnOffsetY         dd   -0.2
   endl
 
   stdcall gf_2D_Render_Start 
     invoke glColor3f, 1.0, 1.0, 1.0
-    stdcall ui_draw_text, [WindowRect], create_game_text, [create_game_text_len], -0.5, 0.8, 0.006
+    stdcall ui_draw_text, [WindowRect], create_game_text, [create_game_text_len], -0.4, 0.8, 0.006
     
     stdcall ui_render_input, [WindowRect], -0.4, 0.60, 0.8, 0.15,     101, \
                              map_name_text, [map_name_text_len], GameName_input    
   
     stdcall ui_drawButton, [WindowRect], -0.3, 0.3, 0.6, 0.2,      1, Create_text, 6
     
+    stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,    3, BACK_text, 4
+    
+    stdcall ui_drawButton, [WindowRect], -0.55, -0.5, 0.05, 0.15,    5, Space_text, 1
+    stdcall ui_drawButton, [WindowRect], 0.5, -0.5, 0.05, 0.15,    6, Space_text, 1
     
     cmp [create_error], 0 
     jz .SkipErrorText   
@@ -38,13 +46,56 @@ proc ui_renderMenuCreate, WindowRect
         fstp [textX]
         
        invoke glColor3f, 1.0, 0.3, 0.3
-       stdcall ui_draw_text, [WindowRect], [create_error], [create_error_len], [textX], 0.15, 0.005
+       stdcall ui_draw_text, [WindowRect], [create_error], [create_error_len], [textX], 0.1, 0.005
     .SkipErrorText:
     
     ;======================================================================================
-    ;stdcall ui_drawButton, [WindowRect], -0.3, -0.30, 0.6, 0.2,    2, Open_text, 4
-    stdcall ui_drawButton, [WindowRect], -0.9, -0.9, 0.4, 0.15,    3, BACK_text, 4
+    invoke glColor3f, 1.0, 1.0, 1.0
+    stdcall ui_draw_text, [WindowRect], open_game_text, [open_game_text_len], -0.25, -0.05, 0.005
     
+    
+    
+      ;==================================================      
+      ;CurOpenPage  FileCount
+      mov eax, [btnStartY]
+      mov [btnCurY], eax
+      mov ecx, 0
+      .RenderOpenBtnsCircle:
+          push ecx
+          mov eax, [CurOpenPage]
+          imul eax, 3
+          add eax, ecx
+          cmp eax, [FileCount]
+          jge .SkipRenderBtn
+          
+          ;stdcall calculate_c_string
+          mov esi, dword[FileNames]
+          mov eax, [CurOpenPage]
+          imul eax, [maps_on_page]
+          add eax, ecx
+          imul eax, 4
+          add esi, eax
+          
+          push ecx
+          stdcall ui_get_string_info, [esi]   ;eax - length
+          
+          pop ecx
+          add ecx, 35
+          stdcall ui_drawButton, [WindowRect], -0.4, [btnCurY], 0.8, 0.15,  ecx, [esi], eax
+          jmp .SkipNewSlot
+          .SkipRenderBtn:
+              stdcall ui_drawButton, [WindowRect], -0.4, [btnCurY], 0.8, 0.15,  -1, new_map_slot_text, [new_map_slot_text_len]
+          .SkipNewSlot:
+          fld [btnCurY]
+          fadd [btnOffsetY]
+          fstp [btnCurY]
+          pop ecx
+      inc ecx
+      cmp ecx, 3
+      jnz .RenderOpenBtnsCircle
+
+      
+      ;==================================================
     
     ;======================================================================================
     
@@ -74,6 +125,11 @@ proc ui_MenuCreateController uses esi, WindowRect
   case    .Create,        1
   case    .ReOpen,        2
   case    .Exit,          3
+  case    .LBtnPage,      5
+  case    .RBtnPage,      6
+  case    .Btn1,          35
+  case    .Btn2,          36
+  case    .Btn3,          37
   case    .GameInput,     101
   mov [CurFocus], 0
   jmp     .Return
@@ -128,7 +184,100 @@ proc ui_MenuCreateController uses esi, WindowRect
   jmp .Return  
   .Exit:
     mov [CUR_MENU], UI_MAIN_MENU
-  jmp .Return    
+  jmp .Return  
+  .LBtnPage:
+      dec [CurOpenPage]
+      cmp [CurOpenPage], 0
+      jge @F
+          mov [CurOpenPage], 0
+      @@: 
+  jmp .Return 
+  .RBtnPage:
+      inc [CurOpenPage]
+      xor edx, edx
+      mov eax, [FileCount]
+      div [maps_on_page]
+      ;dec eax
+      cmp [CurOpenPage], eax
+      jle @F
+         dec [CurOpenPage]
+      @@:
+  jmp .Return
+  .Btn1:
+      mov eax, [CurOpenPage]
+      imul eax, 3
+      add eax, 0
+      stdcall ui_open_map, eax
+  jmp .Return
+  .Btn2:
+      mov eax, [CurOpenPage]
+      imul eax, 3
+      add eax, 1
+      stdcall ui_open_map, eax
+  jmp .Return
+  .Btn3:
+      mov eax, [CurOpenPage]
+      imul eax, 3
+      add eax, 2
+      stdcall ui_open_map, eax
+  jmp .Return
+  .Return:
+  ret
+endp
+
+
+proc ui_open_map, map_index
+  locals
+      MenuPlayerPos  dd   900.0, 90.0, 200.0
+  endl 
+ ;=====================================================
+  stdcall gf_2D_Render_Start 
+  stdcall ui_renderBackground, WindowRect, 0.0
+  stdcall gf_2D_Render_End
+  invoke SwapBuffers, [hdc]
+  invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
+  mov [IS_ONLINE],    FALSE   
+  mov [IS_HOST],      FALSE
+  ;========================================================
+    
+  mov eax, [map_index]
+  imul eax, 4
+  add eax, dword[FileNames]
+  mov esi, eax  
+    
+  ;generate + /worlds  
+  mov [App_Mode], GAME_MODE
+  mov eax, [esi]
+  mov [ChosenFile], eax
+  ;mov [ChosenFile], DEFAULT_WORLD
+  stdcall InitWorld
+  stdcall GameStart 
+    
+  ;====== DELETE ===========  
+  mov eax, [MenuPlayerPos]
+  mov [PlayerPos], eax
+  mov eax, [MenuPlayerPos + 4]
+  mov [PlayerPos + 4], eax
+  mov eax, [MenuPlayerPos + 8]
+  mov [PlayerPos + 8], eax
+  ;===========================
+  
+  
+  ret
+endp
+
+
+proc ui_get_string_info uses esi, string
+  mov eax, 0
+  mov esi, [string]
+  
+  cmp byte[esi], 0
+  jz .Return
+  .len_loop:
+     inc eax
+     inc esi
+  cmp byte[esi], 0
+  jnz .len_loop
   
   .Return:
   ret

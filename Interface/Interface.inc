@@ -55,6 +55,9 @@ create_game_text_len dd  $ - create_game_text
 connect_text        db   'Connection data'
 connect_text_len    dd   $ - connect_text
 
+open_game_text      db    'Open saved game'
+open_game_text_len  dd    $ - open_game_text
+
 MAX_LEN_INPUT      dd  15
 MIN_LEN_INPUT      dd  0
 
@@ -66,6 +69,17 @@ name_len_err_len   dd  $ - name_len_err
 
 
 GameName_input     db   0, 20   dup  (?)
+
+Space_text         db ' '
+Space_text_len     dd  1
+
+
+CurOpenPage        dd   0
+
+maps_on_page       dd   3
+
+new_map_slot_text  db   'new map slot..'
+new_map_slot_text_len  dd  $ - new_map_slot_text
 
 
 

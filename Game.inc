@@ -162,6 +162,8 @@ not_implemented_text_len  dd  $ - not_implemented_text
 
 connection_error  db 'connection error..'
 connection_error_len  dd  $ - not_implemented_text
+
+
 ;===========================================
 
 RENDER_RADIUS   dd  20
