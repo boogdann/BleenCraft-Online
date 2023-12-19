@@ -320,7 +320,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
    
 .Finish:
     stdcall Random.Initialize
-    stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 3
+    stdcall Field.GenerateSmallMines, [x], [y], [z], 600, 3
     
     invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     
@@ -745,6 +745,8 @@ proc Field.GenerateMines uses eax ebx edx esi edi, sizeChanc, numChanc, power
         _mod          dd ?
     endl
     
+    stdcall Random.Initialize
+    
     mov     ecx, 0
 .IterateChancs:
     push   ecx
@@ -772,8 +774,8 @@ proc Field.GenerateMines uses eax ebx edx esi edi, sizeChanc, numChanc, power
     mov    [y], eax 
     
     mov     eax, [Field.Height]
-    shr     eax, 1
-    stdcall Random.GetInt, 0, eax 
+    sub     eax, 30
+    stdcall Random.GetInt, 30, eax 
     mov     [z], eax 
     
     xor    edx, edx
@@ -794,7 +796,7 @@ proc Field.GenerateMines uses eax ebx edx esi edi, sizeChanc, numChanc, power
     add    eax, [y]
     mov    [y], eax  
     
-    stdcall Field.GenerateSmallMines, [x], [y], [z], 400, 1  
+    stdcall Field.GenerateSmallMines, [x], [y], [z], 600, 1  
             
 .Continue:
     pop    ecx
@@ -1007,11 +1009,11 @@ proc Field.GenerateSphere uses eax ebx edx ecx esi, x, y, z, len
      xchg    esi, eax
      pop     ecx edx ebx eax
      
-     cmp     esi, Block.Air
-     jz     .SkipSetBlock
-     
-     cmp     esi, Block.Water
-     jz     .SkipSetBlock 
+;     cmp     esi, Block.Air
+;     jz     .SkipSetBlock
+;     
+;     cmp     esi, Block.Water
+;     jz     .SkipSetBlock 
                
      stdcall Field.SetBlockIndex, eax, ebx, edx, Block.Air
      
@@ -1485,24 +1487,21 @@ proc Field.Ore uses eax ebx ecx edx, x, y, maxPosZ, typeOre
      mov     ecx, 200
 .GenZ:
      stdcall Random.GetInt, 0, [maxPosZ]
-     inc     eax
      mov     dword[z], eax
      
      stdcall Field.GetBlockIndex, [x], [y], [z]
-     cmp     eax, Block.Air
-     jnz      .Skip
-.Skip:
-     cmp     eax, Block.Water
+     cmp     eax, Block.Stone
      jz      .Continue
      jmp     .SetOre
 
+
 .Continue:
      loop     .GenZ
-    
+
 .SetOre:
      stdcall Field.GetBlockIndex, [x], [y], [z]
      cmp     eax, Block.Air
-     jnz      .Skip1
+     jz      .Skip1
 .Skip1:
      cmp     eax, Block.Water
      jz      .Finish

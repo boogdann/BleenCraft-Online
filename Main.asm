@@ -26,6 +26,8 @@ include "Assets\Objects.inc"
 section '.text' code readable executable     
 
 Start: 
+  ;stdcall Blocks.GetDestroyTime, Block.Stone, Tools.WoodPickaxe
+
   stdcall Generating.Init  
   ;=============== Grafic Init ===================      
   stdcall gf_grafic_init

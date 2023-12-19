@@ -49,9 +49,10 @@ proc GameStart
   
   ;stdcall Inventory.SetCell, 36, Tools.WoodPickaxe, 1
   stdcall Inventory.SetCell, 26, Tools.Stick, 64
-  stdcall Inventory.SetCell, 27, Block.Planks, 64
+  stdcall Inventory.SetCell, 25, Block.IronOre, 64
+  stdcall Inventory.SetCell, 25, Block.Stone, 64
   stdcall Inventory.SetCell, 28, 235, 64
-
+  stdcall Inventory.SetCell, 28, 236, 64
   stdcall Inventory.SetCell, 30, Tools.WoodAxe, 64
   stdcall Inventory.SetCell, 31, Tools.WoodShowel, 64
   stdcall Inventory.SetCell, 32, Tools.WoodSword, 64
