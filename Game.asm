@@ -275,8 +275,8 @@ proc DestroyWorld
      cmp     dword[IS_GENERATED], FALSE
      jz      .Finish
      
-     stdcall Field.DestroyWorld
-     stdcall Field.DestroyClouds
+     ;stdcall Field.DestroyWorld
+     ;stdcall Field.DestroyClouds
      stdcall Crafting.Destroy
      
      cmp     dword[IS_ONLINE], FALSE

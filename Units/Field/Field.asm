@@ -18,9 +18,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
         _div      dd ?
         tmpBase   dd 0
     endl 
-    
-    mov   dword[Field.Blocks], 0
-    
+        
     mov   eax, [baseLvl]   
     mov   dword[base], 65
     mov   dword[tmpBase], eax
@@ -55,14 +53,14 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     mov    [Field.Height], edi
     mul    edi
 
-    mov    ebx, eax
-.GetMem:
-    push   ebx
-    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, ebx
-    pop    ebx
-    mov   [Field.Blocks], eax
-    cmp   eax, 0
-    jz    .GetMem 
+;    mov    ebx, eax
+;.GetMem:
+;    push   ebx
+;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, ebx
+;    pop    ebx
+;    mov   [Field.Blocks], eax
+;    cmp   eax, 0
+;    jz    .GetMem 
         
     xor    edx, edx
     mov    eax, [Size_]
@@ -70,8 +68,8 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     mov    ebx, 4
     mul    ebx
 ;   alloc memory for Field.Matrix  
-    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
-    mov    [Field.Matrix], eax
+;    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
+;    mov    [Field.Matrix], eax
     
     stdcall DiamondSquare.Initialize, [power], 0f, 1f, FALSE, 100f 
     stdcall DiamondSquare.Generate, [Field.Matrix]
@@ -1177,9 +1175,9 @@ proc Field.GenerateClouds uses ebx edi esi edx, power, filename
      mov    eax, [sizeX]
      mul    dword[sizeY]
      
-     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
-     mov    [resAddr], eax
-     mov    [Field.Sky], eax
+     ;invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
+     ;mov    [resAddr], eax
+     ;mov    [Field.Sky], eax
      
      xor   edx, edx     
      mov   eax, [power]
@@ -1601,6 +1599,9 @@ proc Generating.Init
     
     invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, 1025*1025*4
     mov    [Field.Matrix], eax
+    
+    invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, 513*513
+    mov    [Field.Sky], eax    
     
 .Finish:
      ret

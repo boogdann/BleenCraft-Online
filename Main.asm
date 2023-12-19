@@ -26,7 +26,7 @@ include "Assets\Objects.inc"
 section '.text' code readable executable     
 
 Start: 
-  ; stdcall Generating.Init  
+  stdcall Generating.Init  
   ;=============== Grafic Init ===================      
   stdcall gf_grafic_init
   
