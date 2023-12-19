@@ -4,7 +4,7 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=6
+  countAsm=7
   countInc=2
 [asm]
   asm1="Main.asm"
@@ -13,6 +13,7 @@ if 2 * 2 = 5
   asm4="Main_menu.asm"
   asm5="gf_render.ASM"
   asm6="interfase_menu_items.asm"
+  asm7="Connect.asm"
 [inc]
   inc1="Game.inc"
   inc2="Interface.inc"

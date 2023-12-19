@@ -1,0 +1,185 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <time.h>
+#include <signal.h>
+#include <sys/wait.h>
+
+#define NUM_PROC 9
+
+
+int static sinnals_count;
+static int i = 1;
+static int USR1 = 0;
+static bool flag = false;
+pid_t arrPid[NUM_PROC] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+void printInfo(int signum) {
+    printf("%d process, pid: %d, ppid: %d, got a signal %s, time %ld\n\n", i, getpid(), 
+        getppid(), "SIGUSR1", clock());
+}
+
+void send(int idx, int signal, int sigcount) {
+    for (int j = 1; j <= sigcount; j++) {
+        kill(arrPid[idx], signal);
+        printf(">> %d process, pid: %d, ppid: %d, send signal %s to process %d, time %ld\n\n", 
+            i, getpid(), getppid(),"SIGUSR1", idx, clock());
+        usleep(200000);
+    }
+    kill(arrPid[idx], SIGTERM);
+}
+
+void sendSignalToGroup(int signal, int sigcount) {
+    setpgid(arrPid[4], arrPid[7]);
+    setpgid(arrPid[5], arrPid[7]);
+    setpgid(arrPid[6], arrPid[7]);
+
+    pid_t group = getpgid(arrPid[7]);
+
+    for (int h = 1; h <= sigcount; h++)
+    {
+        killpg(group, signal);
+        printf(">> %d process, pid: %d, ppid: %d, send signal %s to group %d, time %ld\n\n", 
+            i, getpid(), getppid(), "SIGUSR1", group, clock());
+        usleep(100000);
+    }
+    killpg(group, SIGTERM);
+}
+
+void waitForChildProcesses()
+{
+    wait(NULL);
+    printf("============================================================== %d process, pid: %d, ppid: %d, ended work after #%d signal SIGUSR1\n\n", 
+        i, getpid(), getppid(), sinnals_count);
+}
+
+void handleSignal(int signum) {
+    //usleep(clock());
+    if (signum == SIGUSR1 || signum == SIGUSR2) {
+        printInfo(signum);
+        USR1++;
+    } else {
+        flag = true;
+    }
+}
+
+void createProcesses(FILE *filepid, int signum) {
+    pid_t pid = fork();
+
+    if (pid == 0) {
+
+        arrPid[i] = getpid();
+        pid = fork();
+        if (pid == 0) {
+            i = 2;
+        }
+
+        if (pid > 0) {
+            arrPid[2] = pid;
+        }
+        
+        if (i == 2) {
+            arrPid[i] = getpid();
+            for (int j = 3; j <= 5; j++) {
+                pid = fork();
+                if (pid == 0) {
+                    i = j;
+                    break;
+                }
+
+                if (pid > 0) {
+                    arrPid[j] = pid;
+                }       
+            }
+        }
+
+        if (i == 4) {
+            arrPid[i] = getpid();
+            pid = fork();
+            if (pid == 0) {
+                i = 6;
+            }
+
+            if (pid > 0) {
+                arrPid[6] = pid;
+            }
+        }
+
+        if (i == 3) {
+            arrPid[i] = getpid();
+            pid = fork();
+            if (pid == 0) {
+                i = 7;
+            }
+
+            if (pid > 0) {
+                arrPid[7] = pid;
+            }
+        }
+
+        if (i == 5) {
+            arrPid[i] = getpid();
+            pid = fork();
+            if (pid == 0) {
+                i = 8;
+            }
+
+            if (pid > 0) {
+                arrPid[8] = pid;
+            }
+        }
+
+
+        printf("pid of %d is %d, parent %d\n\n", i, getpid(), getppid());
+
+        signal(SIGUSR1, handleSignal);
+        signal(SIGUSR2, handleSignal);
+        signal(SIGTERM, handleSignal);
+        USR1 = 0;
+
+        usleep(1000000 * (8 - i));
+
+        switch(i) {
+            case 1:
+                usleep(1000000);
+                send(8, SIGUSR1, signum);
+                break;
+            case 8:
+                usleep(100000);
+                send(7, SIGUSR1, signum);
+                break;
+            case 7:
+                sendSignalToGroup(SIGUSR2, signum);
+                break;
+            case 4:
+                send(2, SIGUSR1, signum);
+                break;
+            case 2:
+                send(3, SIGUSR1, signum);
+                break;
+            case 3:
+                send(1, SIGUSR2, signum);
+                break;
+        }
+
+        while(true) {
+            if (flag) break;
+        }
+
+        waitForChildProcesses();
+
+    } else {
+        printf("pid of 0 process is %d, parent %d\n\n", getpid(), getppid());
+        wait(NULL);
+    }
+}
+
+int main(int argc, char *agrv[]) {
+    FILE *filepid;
+
+    sinnals_count = 5;
+    createProcesses(filepid, sinnals_count);
+
+    return 0;
+}

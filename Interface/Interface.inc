@@ -83,3 +83,7 @@ new_map_slot_text_len  dd  $ - new_map_slot_text
 
 
 
+world_path          db     "Worlds\", 20 dup (?)
+world_path_offset   dd     7
+
+

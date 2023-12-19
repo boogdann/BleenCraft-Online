@@ -118,9 +118,7 @@ endp
 ;stdcall ui_MenuCreateController, [WindowRect]
 
 proc ui_MenuCreateController uses esi, WindowRect 
-  locals
-      MenuPlayerPos  dd   900.0, 90.0, 200.0
-  endl 
+
   switch  [Selected_ButtonId]
   case    .Create,        1
   case    .ReOpen,        2
@@ -154,15 +152,6 @@ proc ui_MenuCreateController uses esi, WindowRect
     mov [ChosenFile], GameName_input + 1 
     stdcall InitWorld
     stdcall GameStart 
-    
-    ;====== DELETE ===========  
-    mov eax, [MenuPlayerPos]
-    mov [PlayerPos], eax
-    mov eax, [MenuPlayerPos + 4]
-    mov [PlayerPos + 4], eax
-    mov eax, [MenuPlayerPos + 8]
-    mov [PlayerPos + 8], eax
-    ;===========================
     
     mov [create_error], 0
     mov [create_error_len], 0   
@@ -245,24 +234,31 @@ proc ui_open_map, map_index
   add eax, dword[FileNames]
   mov esi, eax  
     
-  ;generate + /worlds  
   mov [App_Mode], GAME_MODE
   mov eax, [esi]
-  mov [ChosenFile], eax
-  ;mov [ChosenFile], DEFAULT_WORLD
+  stdcall copy_in_world_path, eax 
+  mov [ChosenFile], world_path
   stdcall InitWorld
   stdcall GameStart 
     
-  ;====== DELETE ===========  
-  mov eax, [MenuPlayerPos]
-  mov [PlayerPos], eax
-  mov eax, [MenuPlayerPos + 4]
-  mov [PlayerPos + 4], eax
-  mov eax, [MenuPlayerPos + 8]
-  mov [PlayerPos + 8], eax
-  ;===========================
+  ret
+endp
+
+
+proc copy_in_world_path uses esi edi, path
+  mov esi, world_path
+  add esi, [world_path_offset]
+  mov edi, [path]
   
+  .WriteLoop:
+    mov al, byte[edi]
+    mov byte[esi], al
   
+    inc edi
+    inc esi
+  cmp byte[edi], 0
+  jnz .WriteLoop
+
   ret
 endp
 

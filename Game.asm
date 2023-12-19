@@ -196,6 +196,10 @@ proc ResetGameData
 endp
 
 proc InitWorld
+  locals
+      MenuPlayerPos  dd   900.0, 90.0, 200.0
+  endl 
+  
      cmp     dword[IS_GENERATED], TRUE
      jnz     @F     
      stdcall DestroyWorld
@@ -243,10 +247,19 @@ proc InitWorld
      stdcall Field.SetCloudValues, SkyLand, SkyLength, SkyWidth 
      
      ;Disable spawn point generation in menu game mode
-     ;cmp     [App_Mode], MENU_MODE 
-     ;jz      @F  
-     ;        stdcall Field.GenerateSpawnPoint, PlayerPos
-     ;@@:
+     cmp     [App_Mode], MENU_MODE 
+     jz      @F  
+             stdcall Field.GenerateSpawnPoint, PlayerPos
+     @@:
+     
+     ;====== DELETE ===========  
+      mov eax, [MenuPlayerPos]
+      mov [PlayerPos], eax
+      mov eax, [MenuPlayerPos + 4]
+      mov [PlayerPos + 4], eax
+      mov eax, [MenuPlayerPos + 8]
+      mov [PlayerPos + 8], eax
+      ;===========================
      
      stdcall Inventory.Initialize, Inventory, InventorySize
     
