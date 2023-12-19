@@ -185,27 +185,17 @@ proc ct_check_moves, CameraPos, CameraTurn
   
   .lmb_pressed:
   
+  mov [build_by_click], 0
+  
   ;œ–¿¬¿ﬂ  ÕŒœ ¿ Ã€ÿ»
   invoke GetAsyncKeyState, $02
   cmp eax, 0
   jz @F
-    
-     ;cmp [workBench_opened], 1
-;     je .Skip
-     
-     ;cmp [ct_block_index], Block.CraftingTable
-;     jne  .build_common_block 
-;          mov [animate], 0
-;          mov [UI_MODE], UI_WORKBENCH
-;          mov [workBench_opened], 1
-;          stdcall ct_change_mouse, 1
-;          jmp .rbm_pressed
-;     .build_common_block: 
      
      cmp [flag], 1
      jne .skipBuilding
         
-        mov [build_by_click], 0
+        mov [ready_to_build], 0
         
         invoke GetTickCount
         mov edx, eax
@@ -236,7 +226,7 @@ proc ct_check_moves, CameraPos, CameraTurn
      
   @@: 
     
-    mov [build_by_click], 1 
+    ;mov [build_by_click], 1 
     
   .rbm_pressed:
   

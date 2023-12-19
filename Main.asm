@@ -180,17 +180,18 @@ proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
         jnz .SkipRMouseDown
         cmp [flag], 1
         jne .SkipRMouseDown
+        cmp [block_builded], 0
+        jne .SkipRMouseDown
         mov [global_building_time], 1000
-        stdcall ct_build_block, prevCubePos
+        
+        mov [ready_to_build], 0
+        ;stdcall ct_build_block, prevCubePos
         
         .SkipRMouseDown:
         jmp     .ReturnZero
   .WheelScroll:
-        
         stdcall mouseScroll, [wParam]
-        
         jmp     .ReturnZero
-  
   .Destroy:
         cmp [App_Mode], MENU_MODE
         jz .SkipSave

@@ -76,7 +76,12 @@ proc RenderScene
     cmp [flag], 0
     jz @F
       stdcall gf_RenderSelectObj3D, selectCubeData, 1.0
-    @@:      
+    @@: 
+    
+    cmp [ready_to_build], 0
+    jne @F
+        stdcall animate_building_block    
+    @@:
     
     cmp [UI_MODE], UI_ESC_MENU
     jz .SkipRenderGameItems

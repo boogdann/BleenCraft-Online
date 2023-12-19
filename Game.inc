@@ -112,6 +112,13 @@ result_pos         dd     0.0, 0.0, 0.0
 animVectorOffset   dd     0.0
 
 animate_tool       dd     0
+
+animate_building   dd     0
+
+prev_build_anim_time  dd  0
+build_anim_time    dd     0
+ready_to_build     dd     1
+block_builded      dd     0
 ;============================================== 
 
 ;== Global variables for destroyed blocks =====

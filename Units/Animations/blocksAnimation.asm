@@ -1,3 +1,40 @@
+proc animate_building_block
+
+  invoke GetTickCount
+  mov edx, eax
+  sub eax, [prev_build_anim_time]
+  
+  mov [prev_build_anim_time], edx
+
+  cmp eax, 100
+  jg .finish
+      
+      add [build_anim_time], eax
+      
+      mov [ready_to_build], 0
+      
+      cmp [block_builded], 0
+      jne @F
+          stdcall ct_build_block, prevCubePos
+          mov [block_builded], 1 
+      @@:
+      
+      cmp [build_anim_time], 300
+      jl @F
+         mov [block_builded], 0
+         mov [build_anim_time], 0
+         mov [animate_building], 0
+         mov [ready_to_build], 1 
+         jmp .finish   
+      @@:
+      
+      stdcall anim_blockInHand, PlayerPos, PlayerTurn     
+      
+  .finish:
+
+  ret
+endp
+
 proc anim_blockInHand uses esi edi, playerPos, playerTurn
   
   fldz
@@ -181,7 +218,14 @@ proc anim_blockInHand_down uses esi edi, playerPos, playerTurn, obj, tx
   
   cmp [animate_tool], 1
   jne @F
-     stdcall animatetool, esi, 0.8 
+     stdcall animatetool, esi, 0.8, 0.025, 3 
+  @@:
+  
+  mov ecx, 0
+  
+  cmp [animate_building], 1
+  jne @F
+    stdcall animatetool, esi, 0.4, 0.025, 3
   @@:
 
   lea esi, [result_pos]
@@ -324,7 +368,12 @@ proc anim_blockInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   
   cmp [animate_tool], 1
   jne @F
-     stdcall animatetool, esi, 0.6 
+     stdcall animatetool, esi, 0.6, 0.025, 3 
+  @@:
+  
+  cmp [animate_building], 1
+  jne @F
+    stdcall animatetool, esi, 0.4, 0.025, 3
   @@:
   
   stdcall gf_renderObj3D, [obj], [tx], 0,\

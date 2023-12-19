@@ -344,6 +344,7 @@ proc ct_build_block, prevCubePos
     playerCurPos dd 0, 0, 0
   endl
   
+  
   cmp [workBench_opened], 1
   je .finish
   
@@ -390,12 +391,14 @@ proc ct_build_block, prevCubePos
 
   cmp [build_is_prohibited], 1
   je @F
-  
+     
+     mov [animate_building], 1
+     
      cmp [chosenBlockFromInv], 0
-     je .finish
+     je .dont_build
      
      cmp [chosenBlockFromInv], 234
-     jge .finish
+     jge .dont_build
        
      stdcall Field.SetBlockIndex, [tempPos], [tempPos + 8], [tempPos + 4], [chosenBlockFromInv]
   
@@ -405,8 +408,13 @@ proc ct_build_block, prevCubePos
   
      stdcall removeBlock
   
+     jmp .finish
+      
+      .dont_build:
+      ;mov [ready_to_build], 1
+  
   @@:
-
+      
   .finish:
 
   ret

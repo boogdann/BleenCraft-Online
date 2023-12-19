@@ -1,4 +1,4 @@
-proc animatetool uses esi edi, playerTurn, frequency
+proc animatetool uses esi edi, playerTurn, frequency, len, offsetX
   
   locals
     
@@ -6,7 +6,7 @@ proc animatetool uses esi edi, playerTurn, frequency
     
     a         dd   0.0
     b         dd   0.0
-    len         dd 0.04
+    ;len         dd 0.04
     PiDegree  dd   180.0
     
     tempVector  dd  0.02
@@ -89,7 +89,8 @@ proc animatetool uses esi edi, playerTurn, frequency
   fmul [multiplier]
   fistp [currentOffset]
   
-  cmp [currentOffset], 4
+  mov edi, [offsetX] 
+  cmp [currentOffset], edi
   jg @F
      fld [animVectorOffset]
      fadd [tempVector]
@@ -231,7 +232,7 @@ proc anim_toolInHand_down uses esi edi, playerPos, playerTurn, obj, tx
   
   cmp [animate_tool], 1
   jne @F
-    stdcall animatetool, esi, 1.0
+    stdcall animatetool, esi, 1.0, 0.04, 4
   @@:
   
   stdcall gf_renderObj3D, [obj], [tx], 0,\
@@ -387,7 +388,7 @@ proc anim_toolInHand_up uses esi edi, playerPos, playerTurn, obj, tx
   
   cmp [animate_tool], 1
   jne @F
-    stdcall animatetool, esi, 0.7
+    stdcall animatetool, esi, 0.7, 0.04, 4
   @@:
   
   stdcall gf_renderObj3D, [obj], [tx], 0,\
