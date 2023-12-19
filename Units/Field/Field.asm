@@ -1175,8 +1175,7 @@ proc Field.GenerateClouds uses ebx edi esi edx, power, filename
      mov    eax, [sizeX]
      mul    dword[sizeY]
      
-     ;invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
-     mov    eax, [Field.Sky]
+     invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
      mov    [resAddr], eax
      mov    [Field.Sky], eax
      
@@ -1600,9 +1599,6 @@ proc Generating.Init
     
     invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, 1025*1025*4
     mov    [Field.Matrix], eax
-    
-    invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, 1000*1000
-    mov    [Field.Sky], eax    
     
 .Finish:
      ret
