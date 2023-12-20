@@ -349,7 +349,7 @@ endp
 
 proc Field.DestroyClouds uses ecx edx eax 
      cmp     dword[Field.IsCloudsGenerated], TRUE
-     jz      .SkipDestroyClouds
+     jnz      .SkipDestroyClouds
      invoke  HeapFree, [Field.hHeap], 0, [Field.Sky]
      cmp     dword[Field.IsCloudsGenerated], FALSE
 .SkipDestroyClouds:
@@ -436,17 +436,18 @@ endp
 
 proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
      locals
-         x dd 100
-         y dd 100
-         z dd 100
+         x   dd 100
+         y   dd 100
+         z   dd 100
+         tmp dd 122
      endl
+     
+     stdcall Random.Initialize
      
      ;cmp    dword[Field.IsSpawnPointGenerated], TRUE
      ;jz     .Finish
      
-     stdcall Random.Initialize
-     
-     mov    ecx, 10000    
+     mov    ecx, 100000    
 ._SetSpawnPoint:
      push   ecx
     
@@ -456,9 +457,17 @@ proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
      mov    dword[x], eax
     
      stdcall Random.GetInt, 1, ebx
-     mov    dword[y], eax
+     mov     dword[y], eax
+     
+     push    edx
+     mov     eax, [y]
+     mul     dword[z]
+     add     eax, [tmp]
+     pop     edx
+          
+     stdcall Random.InitializeWith, eax
     
-     mov    dword[z], 40
+     mov    dword[z], 0
 .Iterate_Z:
      stdcall Field.GetBlockIndex, [x], [y], [z]
      cmp     eax, Block.Water
@@ -467,7 +476,6 @@ proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
      cmp    eax, Block.Air
      jz     ._Break  
 
-.Continue:
      ;push   eax
      mov    eax, [Field.Height]
      ;sub    eax, 20
@@ -476,7 +484,8 @@ proc Field.GenerateSpawnPoint uses edi ecx eax ebx, resAddr
      ;pop    eax
 
      jl     .Iterate_Z
-         
+     
+.Continue:         
      pop    ecx
      loop   ._SetSpawnPoint
 

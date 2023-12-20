@@ -162,11 +162,56 @@ proc HandleMessage uses eax edi esi ebx, msg, size
 endp
 
 proc Client.SetBlockIndex uses edi eax esi ecx ebx ecx, X, Y, Z, BlockIndex
+     locals
+         Pos   dd   ?, ?, ?
+     endl
+     
      xor    eax, eax
      
      stdcall Field.TestBounds, [X], [Y], [Z]
      cmp     eax, ERROR_OUT_OF_BOUND
      jz      .Finish
+     
+     cmp     dword[BlockIndex], Block.Air
+     jz      @F
+     cmp     dword[BlockIndex], Block.Water
+     jnz     .SkipDeleteTorch
+@@:
+     
+     
+     fild    dword[X]
+     fstp    dword[Pos]
+     
+     fild    dword[Y]
+     fstp    dword[Pos+8]
+     
+     fild    dword[Z]
+     fld1
+     faddp
+     fstp    dword[Pos+4] 
+     
+     lea     esi, [Pos]
+     stdcall gf_DeleteLightning, esi     
+     
+.SkipDeleteTorch:
+     
+     cmp     dword[BlockIndex], Block.Torch
+     jnz     .SkipAddTorch
+     
+     fild    dword[X]
+     fstp    dword[Pos]
+     
+     fild    dword[Y]
+     fstp    dword[Pos+8]
+     
+     fild    dword[Z]
+     fld1
+     faddp
+     fstp    dword[Pos+4] 
+     
+     lea     esi, [Pos]
+     stdcall gf_AddLightning, esi      
+.SkipAddTorch:
      
      mov    eax, dword[Y]  
      
@@ -194,7 +239,6 @@ proc Client.SetBlockIndex uses edi eax esi ecx ebx ecx, X, Y, Z, BlockIndex
      movzx  eax, byte[BlockIndex]
      mov    byte[edi], al
 
-     jmp    .Finish
 .Finish:
      ret
 endp
