@@ -65,10 +65,10 @@ proc ui_renderMenuConnect, WindowRect
 
 
   ret
-endp
+endp 
 
 
-proc ui_MenuConnectController uses esi edi, WindowRect
+proc ui_MenuConnectController uses esi edi, WindowRect  
   mov [CurFocus], 0
  
   switch  [Selected_ButtonId]
@@ -92,10 +92,10 @@ proc ui_MenuConnectController uses esi edi, WindowRect
     stdcall CopyConnectionData
     
     mov [App_Mode], GAME_MODE
-    stdcall InitWorld
-    stdcall GameStart
-    
-    ;error handler
+    stdcall InitWorld  
+    stdcall GameStart 
+            
+    ;error handler  
   jmp .Return   
   .Exit:
     mov [CUR_MENU], UI_MAIN_MENU
@@ -158,7 +158,7 @@ proc CopyConnectionData uses esi edi
     inc ecx
     cmp ecx, edx 
     jnz .CopyIpLoop
-    mov byte[edi], 0
+    mov byte[edi], 0   
     .Skip:
     
     stdcall GetNumFromInput, ConnectionUdpPort_input

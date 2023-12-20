@@ -185,5 +185,7 @@ global_building_time  dd  1000
 
 _IS_SERVER_DEBUD  dd   FALSE
 
+Is_connected  dd  ?
+
 
 

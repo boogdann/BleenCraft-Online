@@ -69,7 +69,22 @@ proc ui_renderMenuSettings, WindowRect
   ret
 endp
 
+proc ConnectEvent 
+
+    stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
+    cmp     eax, -1
+    jz      .Error
+    
+    mov [Is_connected], 1 
+    
+    .Error:
+  ret
+endp
+
 proc ui_MenuSettingsController, WindowRect 
+  locals 
+    threadH  dd  ?
+  endl
   mov [CurFocus], 0
 
   switch  [Selected_ButtonId]
@@ -100,11 +115,20 @@ proc ui_MenuSettingsController, WindowRect
   
     stdcall CopyConnectionData
     
-    stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
-    cmp     eax, -1
-    jz      .Error
+    ;================================
+    mov [Is_connected], 0
+    invoke CreateThread, 0, 0, ConnectEvent, 0, 0, 0
+    mov [threadH], eax
+         
+    invoke Sleep, 10000
+    invoke CloseHandle, [threadH]
+    
+    cmp [Is_connected], 1
+    jnz .Error
     
     stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
+    ;=================================
+  
     jmp .Return 
     
     .Error:
