@@ -260,15 +260,6 @@ proc InitWorld
              stdcall Field.GenerateSpawnPoint, PlayerPos
      @@:
      
-     ;====== DELETE ===========  
-     ; mov eax, [MenuPlayerPos]
-     ; mov [PlayerPos], eax
-     ; mov eax, [MenuPlayerPos + 4]
-     ; mov [PlayerPos + 4], eax
-     ; mov eax, [MenuPlayerPos + 8]
-     ; mov [PlayerPos + 8], eax
-      ;===========================
-     
      stdcall Inventory.Initialize, Inventory, InventorySize
     
      stdcall Crafting.Initialize, SmallCraft, BigCraft

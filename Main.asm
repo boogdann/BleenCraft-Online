@@ -26,6 +26,7 @@ include "Assets\Objects.inc"
 section '.text' code readable executable     
 
 Start: 
+  mov [IS_MAP_READY], FALSE
   ;stdcall Blocks.GetDestroyTime, Block.Stone, Tools.WoodPickaxe
 
   stdcall Generating.Init  
@@ -72,7 +73,6 @@ Start:
         
             
 proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
-
         ;The physical module only works in game mode (kastil)
         cmp [IS_MAP_READY], TRUE
         jnz @F

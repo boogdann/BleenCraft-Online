@@ -5,7 +5,7 @@ IS_GENERATED dd FALSE
 IS_READ_FROM_FILE dd TRUE
 
 
-
+IS_CLIENT_GAME   dd   FALSE
 ;========= Grafic params =============== 
 Dayly_Kof        dw     0  
 CircleCount      dd     0
@@ -172,8 +172,11 @@ not_implemented_text  db 'not implemented yet..'
 not_implemented_text_len  dd  $ - not_implemented_text
 
 
-connection_error  db 'connection error..'
-connection_error_len  dd  $ - not_implemented_text
+connection_error  db 'connection failed..'
+connection_error_len  dd  $ - connection_error
+
+client_error  db 'client cannot become host..'
+client_error_len  dd  $ - connection_error
 
 
 ;===========================================

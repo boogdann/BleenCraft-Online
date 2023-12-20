@@ -89,6 +89,6 @@ endp
 ;error helper
 proc ws_socket_error, err
   ;mov   eax, -1
-  invoke MessageBoxA, 0, [err], ws_error_caption, 0
+  ;invoke MessageBoxA, 0, [err], ws_error_caption, 0
   ret
 endp                     

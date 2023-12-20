@@ -45,6 +45,8 @@ map_name_text_len      dd   $ - map_name_text
 
 HOST_text db 'Host'
 
+connection_success  db    'successful connection'
+connection_success_len dd  $ - connection_success
 
 start_host_text     db   'Starting multiplayer game'
 start_host_text_len dd   $ - start_host_text
@@ -80,6 +82,9 @@ maps_on_page       dd   3
 
 new_map_slot_text  db   'new map slot..'
 new_map_slot_text_len  dd  $ - new_map_slot_text
+
+connection_try    db    'trying to connect..'
+connection_try_len dd   $ - connection_try
 
 
 

@@ -43,7 +43,16 @@ proc ui_renderMenuConnect, WindowRect
         fdiv [n_TEXT]
         fstp [textX]
         
-       invoke glColor3f, 1.0, 0.3, 0.3
+        invoke glColor3f, 1.0, 0.3, 0.3
+       mov eax, [connect_error]
+       cmp eax, connection_try
+       jnz .Skip1
+           invoke glColor3f, 1.0, 0.73, 0.0
+       .Skip1:
+       cmp eax, connection_success
+       jnz .Skip2
+           invoke glColor4f, 0.4, 0.7, 0.4, 1.0 
+       .Skip2:
        stdcall ui_draw_text, [WindowRect], [connect_error], [connect_error_len], [textX], -0.6, 0.005
     .SkipErrorText:
     ;=========================================
@@ -68,6 +77,66 @@ proc ui_renderMenuConnect, WindowRect
 endp 
 
 
+proc Client.Init_event_connect
+   
+   
+    stdcall InitWorld  
+    stdcall GameStart
+    mov [App_Mode], GAME_MODE  
+    
+    mov [IS_CLIENT_GAME], FALSE
+    mov [IS_MAP_READY], TRUE
+    mov [UI_MODE], UI_GAME 
+   ; stdcall ct_change_mouse, 0
+    
+  ret
+endp
+
+
+proc ConnectEvent_connect 
+  locals
+    threadH  dd  ?
+  endl
+  
+    mov [connect_error], connection_try
+    mov eax, [connection_try_len]
+    mov [connect_error_len], eax
+
+    mov [IS_ONLINE],    TRUE   
+    mov [IS_HOST],      FALSE
+    
+    stdcall CopyConnectionData
+    
+    invoke CreateThread, 0, 0, Client.Init_event_connect, 0, 0, 0
+    mov [threadH], eax
+    
+    invoke WaitForSingleObject, [threadH], 20000
+    cmp eax, WAIT_TIMEOUT
+    jnz .SkipErrThered
+        invoke TerminateThread, [threadH]
+        jmp .ErrorThread 
+    .SkipErrThered:
+    jmp .Succsess
+    
+    .ErrorThread:
+    mov [connect_error], connection_error
+    mov eax, [connection_error_len]
+    mov [connect_error_len], eax
+    mov [IS_ONLINE],    FALSE   
+    mov [IS_HOST],      FALSE
+    jmp .Result
+    
+    .Succsess:
+    ;====================================
+    mov [connect_error], connection_success
+    mov eax, [connection_success_len]
+    mov [connect_error_len], eax
+    
+    .Result:
+  ret
+endp
+
+
 proc ui_MenuConnectController uses esi edi, WindowRect  
   mov [CurFocus], 0
  
@@ -80,24 +149,19 @@ proc ui_MenuConnectController uses esi edi, WindowRect
   jmp     .Return
   
   .Connect:
-    ;Connect
-    stdcall gf_2D_Render_Start 
-    stdcall ui_renderBackground, [WindowRect], 0.0
-    stdcall gf_2D_Render_End
-    invoke SwapBuffers, [hdc]
-    invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
-    mov [IS_ONLINE],    TRUE   
-    mov [IS_HOST],      FALSE
-  
-    stdcall CopyConnectionData
+      mov eax, [connect_error]
+      cmp eax, connection_try
+      jz .Return
+    invoke CreateThread, 0, 0, ConnectEvent_connect, 0, 0, 0 
+    jmp .Return 
     
-    mov [App_Mode], GAME_MODE
-    stdcall InitWorld  
-    stdcall GameStart 
-            
-    ;error handler  
   jmp .Return   
   .Exit:
+    mov eax, [connect_error]
+    cmp eax, connection_try
+    jz .Return
+    mov [IS_ONLINE],    FALSE   
+    mov [IS_HOST],      FALSE
     mov [CUR_MENU], UI_MAIN_MENU
   jmp .Return 
   .IpFocus:

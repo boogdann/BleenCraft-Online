@@ -47,6 +47,16 @@ proc ui_renderMenuSettings, WindowRect
         fstp [textX]
         
        invoke glColor3f, 1.0, 0.3, 0.3
+       mov eax, [host_error]
+       cmp eax, connection_try
+       jnz .Skip1
+           invoke glColor3f, 1.0, 0.73, 0.0
+       .Skip1:
+       cmp eax, connection_success
+       jnz .Skip2
+           invoke glColor4f, 0.4, 0.7, 0.4, 1.0 
+       .Skip2:
+       
        stdcall ui_draw_text, [WindowRect], [host_error], [host_error_len], [textX], -0.3, 0.005
     .SkipErrorText:
     ;=========================================
@@ -69,15 +79,52 @@ proc ui_renderMenuSettings, WindowRect
   ret
 endp
 
-proc ConnectEvent 
+proc Client.Init_event
+  stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
+  stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
+  ret
+endp
 
-    stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
-    cmp     eax, -1
-    jz      .Error
+
+proc ConnectEvent_host 
+  locals
+    threadH  dd  ?
+  endl
+  
+    mov [host_error], connection_try
+    mov eax, [connection_try_len]
+    mov [host_error_len], eax
+
+    mov [IS_ONLINE],    TRUE   
+    mov [IS_HOST],      TRUE
     
-    mov [Is_connected], 1 
+    stdcall CopyConnectionData
+    
+    invoke CreateThread, 0, 0, Client.Init_event, 0, 0, 0
+    mov [threadH], eax
+    
+    invoke WaitForSingleObject, [threadH], 20000
+    cmp eax, WAIT_TIMEOUT
+    jnz .SkipErrThered
+        invoke TerminateThread, [threadH]
+        jmp .Error 
+    .SkipErrThered:
+    jmp .Succsess
     
     .Error:
+    mov [host_error], connection_error
+    mov eax, [connection_error_len]
+    mov [host_error_len], eax
+    mov [IS_ONLINE],    FALSE   
+    mov [IS_HOST],      FALSE
+    jmp .Result
+    
+    .Succsess:
+    mov [host_error], connection_success
+    mov eax, [connection_success_len]
+    mov [host_error_len], eax
+    
+    .Result:
   ret
 endp
 
@@ -99,48 +146,45 @@ proc ui_MenuSettingsController, WindowRect
   
   .Continue:
     mov [UI_MODE], UI_GAME
-    ;RENDER_RADIUS <-- set
     stdcall ct_change_mouse, 0
+    mov [IS_MAP_READY], TRUE
+    ;SEt last pos
   jmp .Return   
   .Exit:
+    mov [IS_ONLINE],    FALSE   
+    mov [IS_HOST],      FALSE
+    mov [IS_MAP_READY], FALSE
+    
     stdcall gf_2D_Render_Start 
     stdcall ui_renderBackground, [WindowRect], 0.0
     stdcall gf_2D_Render_End
     invoke SwapBuffers, [hdc]
     invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
-    stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], [ChosenFile] 
+    cmp [IS_CLIENT_GAME], FALSE
+    jnz .SkipSave
+      stdcall Field.SaveInFileWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight], [SizeWorld], [ChosenFile]
+       
+    .SkipSave:
     stdcall DestroyWorld
     mov [App_Mode], MENU_MODE
     stdcall ui_InterfaceInit
     stdcall ResetGameData
-    jmp .Return 
+    mov [IS_CLIENT_GAME], FALSE
+  jmp .Return 
   .Host:
+      mov eax, [host_error]
+      cmp eax, connection_try
+      jz .Return
+      cmp [IS_CLIENT_GAME], FALSE
+      jnz .GetErrorClient
     ;Start Host
-    mov [IS_ONLINE],    TRUE   
-    mov [IS_HOST],      TRUE
-  
-    stdcall CopyConnectionData
-    
-    ;================================
-    mov [Is_connected], 0
-    invoke CreateThread, 0, 0, ConnectEvent, 0, 0, 0
-    mov [threadH], eax
-         
-    invoke Sleep, 10000
-    invoke CloseHandle, [threadH]
-    
-    cmp [Is_connected], 1
-    jnz .Error
-    
-    stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
-    ;=================================
-  
+    invoke CreateThread, 0, 0, ConnectEvent_host, 0, 0, 0 
     jmp .Return 
-    
-    .Error:
-    mov [host_error], connection_error
-    mov eax, [connection_error_len]
-    mov [host_error_len], eax
+
+    .GetErrorClient:
+        mov [host_error], client_error
+        mov eax, [client_error_len]
+        mov [host_error_len], eax
     jmp .Return 
   .IpFocus:
      mov [CurFocus], 12
