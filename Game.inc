@@ -4,6 +4,8 @@ IS_GENERATED dd FALSE
 
 IS_READ_FROM_FILE dd TRUE
 
+
+
 ;========= Grafic params =============== 
 Dayly_Kof        dw     0  
 CircleCount      dd     0
@@ -135,6 +137,7 @@ currentNumOfHearts    dd 10
 
 ;=========== UI data ========================
 UI_MODE            dd        UI_GAME
+IS_MAP_READY       dd        FALSE
 ;==============================================
 
 ;========== Other ========================

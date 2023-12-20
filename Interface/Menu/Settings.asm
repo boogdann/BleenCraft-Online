@@ -88,10 +88,10 @@ proc ui_MenuSettingsController, WindowRect
     stdcall ct_change_mouse, 0
   jmp .Return   
   .Exit:
+    stdcall DestroyWorld
     mov [App_Mode], MENU_MODE
     stdcall ui_InterfaceInit
     stdcall ResetGameData
-    stdcall DestroyWorld
     jmp .Return 
   .Host:
     ;Start Host

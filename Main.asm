@@ -74,6 +74,8 @@ Start:
 proc WindowProc uses ebx, hWnd, uMsg, wParam, lParam
 
         ;The physical module only works in game mode (kastil)
+        cmp [IS_MAP_READY], TRUE
+        jnz @F
         cmp [App_Mode], GAME_MODE
         jnz @F
         cmp [UI_MODE], UI_ESC_MENU

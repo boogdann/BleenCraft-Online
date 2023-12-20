@@ -29,11 +29,13 @@ proc DiamondSquare.Generate uses ecx edi edx ebx, resAddr
         x          dd    ?
         y          dd    ?
         toPushFloat dd ?
+
+        mul_num    dd   1025
     endl
     
     xor    edx, edx
-    mov    eax, [size]
-    mul    dword[size]
+    mov    eax, 1025
+    mul    [mul_num]
     mov    ebx, 4
     xchg   ecx, eax
     mov    eax, BASE_VALUE

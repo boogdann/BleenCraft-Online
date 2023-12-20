@@ -141,6 +141,7 @@ proc ui_MenuCreateController uses esi, WindowRect
     invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
     mov [IS_ONLINE],    FALSE   
     mov [IS_HOST],      FALSE
+    mov [IS_MAP_READY], FALSE
     ;========================================================
     
     movzx esi, byte[GameName_input]
@@ -154,6 +155,7 @@ proc ui_MenuCreateController uses esi, WindowRect
     mov [ChosenFile], world_path
     stdcall InitWorld
     stdcall GameStart 
+    mov [IS_MAP_READY], TRUE
     
     mov [create_error], 0
     mov [create_error_len], 0 
@@ -231,6 +233,7 @@ proc ui_open_map, map_index
   invoke glClear, GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
   mov [IS_ONLINE],    FALSE   
   mov [IS_HOST],      FALSE
+  mov [IS_MAP_READY], FALSE
   ;========================================================
     
   mov eax, [map_index]
@@ -244,6 +247,7 @@ proc ui_open_map, map_index
   mov [ChosenFile], world_path
   stdcall InitWorld
   stdcall GameStart 
+  mov [IS_MAP_READY], TRUE
     
   ret
 endp

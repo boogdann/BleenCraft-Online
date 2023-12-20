@@ -96,6 +96,9 @@ proc ct_isBlock uses esi edx, Field, X_SIZE, Y_SIZE, X, Y, Z
   endl
 
   mov esi, [Field.Blocks]
+  cmp esi, 0
+  jz .finish
+
   mov eax, [X_SIZE]
   imul [Y_SIZE]
   imul [Z]
