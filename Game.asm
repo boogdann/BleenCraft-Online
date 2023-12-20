@@ -195,8 +195,8 @@ endp
 proc ResetGameData
     mov [currentNumOfHearts], 10
     mov [IsPlayerDied], 0
+    mov [UnderWater], 0
                   
-    stdcall Field.GenerateSpawnPoint, PlayerPos
     stdcall ct_change_mouse, 1
 
   ret

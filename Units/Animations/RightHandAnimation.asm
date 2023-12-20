@@ -33,7 +33,7 @@ proc anim_Hand_down uses esi edi, playerPos, playerTurn, obj, tx
     b dd 0.0
     PiDegree    dd 180.0
     len         dd 0.11
-    n_05        dd 1.3
+    n_05        dd 1.4
     pos_sub      dd 0.05
     pos_sub_base dd 0.06
     
