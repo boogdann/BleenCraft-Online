@@ -59,12 +59,12 @@ proc Blocks.IndexDestr uses edi edx ecx, IndexBlock, IndexTool
          NUM_5           dd 5
      endl
      
- ;    mov    eax, Blocks.IS_DESTRUCTIBLE
- ;    mov    edi, Blocks.IndexDestruction
- ;    add    edi, [IndexBlock]
- ;    movzx  ebx, byte[edi] 
- ;    cmp    ebx, 0
- ;    jz     .Finish
+    ; mov    eax, Blocks.IS_DESTRUCTIBLE
+    ; mov    edi, Blocks.IndexDestruction
+    ; add    edi, [IndexBlock]
+    ; movzx  ebx, byte[edi] 
+    ; cmp    ebx, 0
+    ; jz     .Finish
           
      cmp    [IndexTool], Tools.MinValueTool
      jl     .SetZeroMaterial
@@ -96,7 +96,7 @@ proc Blocks.IndexDestr uses edi edx ecx, IndexBlock, IndexTool
 .Finish:
      mov    eax, Blocks.IS_NOT_DESTRUCTIBLE
      cmp    ebx, dword[idxMaterialTool]
-;     jl     @F
+ ;    jl     @F
      ja     @F
      mov    eax, Blocks.IS_DESTRUCTIBLE 
 @@:           

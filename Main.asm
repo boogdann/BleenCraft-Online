@@ -29,6 +29,7 @@ Start:
   mov [IS_MAP_READY], FALSE
   ;stdcall Blocks.GetDestroyTime, Block.Stone, Tools.WoodPickaxe
 
+  stdcall Files.Init
   stdcall Generating.Init  
   ;=============== Grafic Init ===================      
   stdcall gf_grafic_init
