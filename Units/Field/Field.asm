@@ -322,7 +322,7 @@ proc Field.Initialize uses eax edi ecx ebx, power, Height, baseLvl, filename
     stdcall Random.Initialize
     stdcall Field.GenerateSmallMines, [x], [y], [z], 600, 3
     
-    invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
+    ; invoke HeapFree, [Field.hHeap], 0, [Field.Matrix]
     
     stdcall Field.GenerateMines, [sizeChanc], 5, [power]
     stdcall Field.GenerateOre, [sizeChanc], [numChanc], [power]
@@ -1184,6 +1184,7 @@ proc Field.GenerateClouds uses ebx edi esi edx, power, filename
      mul    dword[sizeY]
      
      invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
+     ;mov    eax, [Field.Sky]
      mov    [resAddr], eax
      mov    [Field.Sky], eax
      
@@ -1604,7 +1605,9 @@ proc Generating.Init
     
     invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, 1025*1025*4
     mov    [Field.Matrix], eax
-    
+
+;    invoke HeapAlloc, ebx, HEAP_ZERO_MEMORY, 1025*1025
+;    mov    [Field.Sky], eax    
 .Finish:
      ret
 endp

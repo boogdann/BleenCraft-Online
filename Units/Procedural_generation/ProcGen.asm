@@ -513,7 +513,7 @@ proc DiamondSquare.PostProcess uses eax ebx esi edi ecx, resAddr
     mul    dword[size]
     mov    ebx, 4
     mul    eax
-    invoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
+    ivoke HeapAlloc, [Field.hHeap], HEAP_ZERO_MEMORY, eax
     mov   [NewResAddr], eax
     
     mov    dword[x], 0
