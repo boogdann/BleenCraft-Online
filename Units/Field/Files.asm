@@ -1,3 +1,14 @@
+proc Files.Init uses eax, ebx, ecx
+     invoke GetProcessHeap
+     invoke HeapAlloc, eax, HEAP_ZERO_MEMORY, [Files.MaxSize]
+     mov    [Files.BigBuffer], eax
+.Finish:
+     ret
+endp
+
+
+
+
 proc Field.ReadFromFiles uses ebx edi esi ecx, filename
 
      stdcall Field.ReadFromFile, Field.Length, Field.Width, Field.Height, [filename]
@@ -13,8 +24,8 @@ endp
 
 proc Field.SaveInFileWorld uses ebx edi esi ecx eax edx, addres, sizeX, sizeY, sizeZ, size, filename
      locals
-         hFile dd ?
-         left  dd ?
+         hFile     dd ?
+         left      dd ?
      endl     
      invoke CreateFile, [filename], GENERIC_WRITE, FILE_SHARE_READ, 0,\
             CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
@@ -109,10 +120,12 @@ endp
 
 proc Field.ReadFromFile uses ebx edi esi ecx, pSizeX, pSizeY, pSizeZ, filename
      locals
-         hFile   dd ?
-         hHeap   dd ?
-         left    dd ?
-         address dd ?
+         hFile     dd ?
+         hHeap     dd ?
+         left      dd ?
+         address   dd ?
+         maxToRead dd 65000
+         toRead    dd ?
      endl
      invoke CreateFile, [filename], GENERIC_READ, FILE_SHARE_READ, 0,\
             OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
@@ -137,14 +150,15 @@ proc Field.ReadFromFile uses ebx edi esi ecx, pSizeX, pSizeY, pSizeZ, filename
           
      mov    eax, [Field.FileBuffer+12]
           
-     invoke HeapAlloc, [hHeap], HEAP_ZERO_MEMORY, eax
+     ;invoke HeapAlloc, [hHeap], HEAP_ZERO_MEMORY, eax
+     mov    eax, [Field.Blocks]
      mov    [address], eax
      
      mov    ebx, 0
      mov    edi, eax
 .ReadLoop:
      push   edi ecx
-     invoke ReadFile, [hFile], Field.FileBuffer, [Field.SizeBuffer], Field.WrittenBytes, 0
+     invoke ReadFile, [hFile], [Files.BigBuffer], [Files.MaxSize], Field.WrittenBytes, 0
      pop    ecx edi
      cmp    eax, 0
      jle     .Finish
@@ -152,12 +166,19 @@ proc Field.ReadFromFile uses ebx edi esi ecx, pSizeX, pSizeY, pSizeZ, filename
      cmp    [Field.WrittenBytes], 0
      jz     .Finish 
      
-     mov    ecx, [Field.FileBuffer]
-     mov    al, byte[Field.FileBuffer+4]
+     mov    ebx, [Files.BigBuffer]
+.ReadData:
+     mov    ecx, [ebx]
+     mov    al, byte[ebx+4]
      ;
-     add    ebx, ecx
+     ;add    ebx, ecx
      ;
      rep    stosb
+
+     add    ebx, 5
+     sub    dword[Field.WrittenBytes], 5
+     cmp    dword[Field.WrittenBytes], 0
+     ja    .ReadData
      
      jmp    .ReadLoop
      xor    eax, eax

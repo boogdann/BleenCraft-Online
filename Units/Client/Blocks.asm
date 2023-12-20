@@ -178,7 +178,6 @@ proc Client.SetBlockIndex uses edi eax esi ecx ebx ecx, X, Y, Z, BlockIndex
      jnz     .SkipDeleteTorch
 @@:
      
-     
      fild    dword[X]
      fstp    dword[Pos]
      

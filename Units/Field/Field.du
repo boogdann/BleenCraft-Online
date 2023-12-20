@@ -1,5 +1,8 @@
 FIONBIO = 0x8004667E
 
+Files.MaxSize    dd 11000000
+Files.BigBuffer  dd ?
+
 ERROR_OUT_OF_BOUND = -1
       one            dd 1
 
