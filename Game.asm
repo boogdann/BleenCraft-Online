@@ -79,10 +79,13 @@ proc RenderScene
       stdcall gf_RenderSelectObj3D, selectCubeData, 1.0
     @@: 
     
-    cmp [ready_to_build], 0
-    jne @F
-        stdcall animate_building_block    
-    @@:
+      cmp [ready_to_build], 0    
+      jne @F
+        cmp [chosenBlockFromInv], 0        
+        je .skip_build
+            stdcall animate_building_block        
+            @@:
+        .skip_build:
     
     cmp [UI_MODE], UI_ESC_MENU
     jz .SkipRenderGameItems
@@ -188,6 +191,7 @@ proc RenderScene
     @@:
     
     stdcall gf_RenderEnd
+    
   ret
 endp
 
@@ -196,6 +200,11 @@ proc ResetGameData
     mov [currentNumOfHearts], 10
     mov [IsPlayerDied], 0
     mov [UnderWater], 0
+    
+    mov [ct_water_around], 0
+    mov [isWatter], 0
+    mov [ct_inWater], 0
+    mov [ct_damageFallSpeed], 0
                   
     stdcall ct_change_mouse, 1
 

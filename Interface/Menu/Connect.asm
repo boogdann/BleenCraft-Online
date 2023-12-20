@@ -87,8 +87,7 @@ proc Client.Init_event_connect
     mov [IS_CLIENT_GAME], FALSE
     mov [IS_MAP_READY], TRUE
     mov [UI_MODE], UI_GAME 
-   ; stdcall ct_change_mouse, 0
-    
+   
   ret
 endp
 
@@ -116,6 +115,7 @@ proc ConnectEvent_connect
         invoke TerminateThread, [threadH]
         jmp .ErrorThread 
     .SkipErrThered:
+    stdcall ct_change_mouse, 0
     jmp .Succsess
     
     .ErrorThread:
