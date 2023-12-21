@@ -114,6 +114,19 @@ proc _client.StartHandler_UdpData uses esi edi, args
              stdcall _cl_users_dataUpdate, eax, edi 
              jmp .SkipMessge
           @@:
+          cmp dword[cl_UdpMsgBuffer], 11  ;Disconnect
+          jnz @F 
+              mov [IS_ONLINE],    FALSE   
+              mov [IS_HOST],      FALSE
+              mov [IS_MAP_READY], FALSE
+                  
+              stdcall DestroyWorld
+              mov [App_Mode], MENU_MODE
+              stdcall ui_InterfaceInit
+              stdcall ResetGameData
+              mov [IS_CLIENT_GAME], FALSE
+              stdcall client.StopServe_PlayerData
+          @@:
           ;cmp dword[cl_UdpMsgBuffer], Client.msg.Chat
           ;jnz @F
           ;   ...
