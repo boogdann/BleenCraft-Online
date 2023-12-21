@@ -191,4 +191,7 @@ _IS_SERVER_DEBUD  dd   FALSE
 Is_connected  dd  ?
 
 
+ChatBuffer   db   15 * 5 dup (?)
+ChatMessagesCount  dd   0
+
 

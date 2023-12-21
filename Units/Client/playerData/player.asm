@@ -126,12 +126,13 @@ proc _client.StartHandler_UdpData uses esi edi, args
               stdcall ResetGameData
               mov [IS_CLIENT_GAME], FALSE
               stdcall client.StopServe_PlayerData
+              jmp .SkipMessge
           @@:
-          ;cmp dword[cl_UdpMsgBuffer], Client.msg.Chat
-          ;jnz @F
-          ;   ...
-          ;   jmp .SkipMessge
-          ;@@:
+          cmp dword[cl_UdpMsgBuffer], 77
+          jnz @F
+             ;Add message
+             jmp .SkipMessge
+          @@:
           jmp .SkipMessge
      .SkipMessge:
      cmp [cl_isCanHandleUdp], 0
@@ -140,6 +141,13 @@ proc _client.StartHandler_UdpData uses esi edi, args
   
   .StopServing:
   xor eax, eax  
+  ret
+endp
+
+
+proc client.SendToChat
+  
+
   ret
 endp
 
