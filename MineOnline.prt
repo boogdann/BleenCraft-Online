@@ -5,11 +5,13 @@ include "Main.asm"
 if 2 * 2 = 5
 [options]
   countAsm=3
-  countInc=1
+  countInc=3
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
   asm3="player.asm"
 [inc]
   inc1="Game.inc"
+  inc2="Blocks_textures.inc"
+  inc3="Textures.inc"
 end if

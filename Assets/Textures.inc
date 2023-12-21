@@ -8,25 +8,25 @@ AddictionalTextureNames:
               ;=====================================
               
               ;========== SLOT TEXTURES ==================
-              db      "LowQuality\Stick_Slot_2.mbmw", 0   ;!!!!!
+              db      "HighQuality\Stick_Slot_2.mbmw", 0   ;!!!!!
               
-              db      "LowQuality\Pickaxe\PicsageWood_slot_2.mbmw", 0      
-              db      "LowQuality\Pickaxe\PicsageStone_slot_2.mbmw", 0     
-              db      "LowQuality\Pickaxe\PicsageIron_slot_2.mbmw", 0      
-              db      "LowQuality\Pickaxe\PicsageGold_slot_2.mbmw", 0      
-              db      "LowQuality\Pickaxe\PicsageDiamond_slot_2.mbmw", 0   
+              db      "HighQuality\Pickaxe\PicsageWood_slot_2.mbmw", 0      
+              db      "HighQuality\Pickaxe\PicsageStone_slot_2.mbmw", 0     
+              db      "HighQuality\Pickaxe\PicsageIron_slot_2.mbmw", 0      
+              db      "HighQuality\Pickaxe\PicsageGold_slot_2.mbmw", 0      
+              db      "HighQuality\Pickaxe\PicsageDiamond_slot_2.mbmw", 0   
               
-              db      "LowQuality\Axe\AxeWood_Slot_2.mbmw", 0     
-              db      "LowQuality\Axe\AxeStone_Slot_2.mbmw", 0
-              db      "LowQuality\Axe\AxeIron_Slot_2.mbmw", 0
-              db      "LowQuality\Axe\AxeGold_Slot_2.mbmw", 0
-              db      "LowQuality\Axe\AxeDiamond_Slot_2.mbmw", 0
+              db      "HighQuality\Axe\AxeWood_Slot_2.mbmw", 0     
+              db      "HighQuality\Axe\AxeStone_Slot_2.mbmw", 0
+              db      "HighQuality\Axe\AxeIron_Slot_2.mbmw", 0
+              db      "HighQuality\Axe\AxeGold_Slot_2.mbmw", 0
+              db      "HighQuality\Axe\AxeDiamond_Slot_2.mbmw", 0
               
-              db      "LowQuality\Showel\ShovelWood_Slot_2.mbmw", 0    
-              db      "LowQuality\Showel\ShovelStone_Slot_2.mbmw", 0    
-              db      "LowQuality\Showel\ShovelIron_Slot_2.mbmw", 0    
-              db      "LowQuality\Showel\ShovelGold_Slot_2.mbmw", 0     
-              db      "LowQuality\Showel\ShovelDiamond_Slot_2.mbmw", 0 
+              db      "HighQuality\Showel\ShovelWood_Slot_2.mbmw", 0    
+              db      "HighQuality\Showel\ShovelStone_Slot_2.mbmw", 0    
+              db      "HighQuality\Showel\ShovelIron_Slot_2.mbmw", 0    
+              db      "HighQuality\Showel\ShovelGold_Slot_2.mbmw", 0     
+              db      "HighQuality\Showel\ShovelDiamond_Slot_2.mbmw", 0 
               
               db      "HighQuality\Sword\SwordWood_slot_2.mbmw",0
               db      "HighQuality\Sword\SwordStone_slot_2.mbmw",0
@@ -37,25 +37,25 @@ AddictionalTextureNames:
               
               
               
-              db      "LowQuality\stick_1.mbmw", 0
+              db      "HighQuality\stick_1.mbmw", 0
               
-              db      "LowQuality\Pickaxe\Wood_32.mbmw", 0
-              db      "LowQuality\Pickaxe\Stone_32.mbmw", 0
-              db      "LowQuality\Pickaxe\Iron_32.mbmw", 0
-              db      "LowQuality\Pickaxe\Gold_32.mbmw", 0
-              db      "LowQuality\Pickaxe\Diamond_32.mbmw", 0
+              db      "HighQuality\Pickaxe\Wood_32.mbmw", 0
+              db      "HighQuality\Pickaxe\Stone_32.mbmw", 0
+              db      "HighQuality\Pickaxe\Iron_32.mbmw", 0
+              db      "HighQuality\Pickaxe\Gold_32.mbmw", 0
+              db      "HighQuality\Pickaxe\Diamond_32.mbmw", 0
               
-              db      "LowQuality\Axe\AxeWood.mbmw", 0     
-              db      "LowQuality\Axe\AxeStone.mbmw", 0
-              db      "LowQuality\Axe\AxeIron.mbmw", 0
-              db      "LowQuality\Axe\AxeGold.mbmw", 0
-              db      "LowQuality\Axe\Axe_Diamond.mbmw", 0
+              db      "HighQuality\Axe\AxeWood.mbmw", 0     
+              db      "HighQuality\Axe\AxeStone.mbmw", 0
+              db      "HighQuality\Axe\AxeIron.mbmw", 0
+              db      "HighQuality\Axe\AxeGold.mbmw", 0
+              db      "HighQuality\Axe\Axe_Diamond.mbmw", 0
               
-              db      "LowQuality\Pickaxe\Wood_32.mbmw", 0    ;SHOWEL!!!!
-              db      "LowQuality\Pickaxe\Stone_32.mbmw", 0    ;SHOWEL!!!!
-              db      "LowQuality\Pickaxe\Iron_32.mbmw", 0     ;SHOWEL!!!!
-              db      "LowQuality\Pickaxe\Gold_32.mbmw", 0     ;SHOWEL!!!!
-              db      "LowQuality\Pickaxe\Diamond_32.mbmw", 0   ;SHOWEL!!!!
+              db      "HighQuality\Pickaxe\Wood_32.mbmw", 0    ;SHOWEL!!!!
+              db      "HighQuality\Pickaxe\Stone_32.mbmw", 0    ;SHOWEL!!!!
+              db      "HighQuality\Pickaxe\Iron_32.mbmw", 0     ;SHOWEL!!!!
+              db      "HighQuality\Pickaxe\Gold_32.mbmw", 0     ;SHOWEL!!!!
+              db      "HighQuality\Pickaxe\Diamond_32.mbmw", 0   ;SHOWEL!!!!
               
               db      "HighQuality\Sword\SwordWood.mbmw",0
               db      "HighQuality\Sword\SwordStone.mbmw",0
