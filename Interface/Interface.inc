@@ -89,6 +89,8 @@ connection_try_len dd   $ - connection_try
 
 
 world_path          db     "Worlds\", 20 dup (?)
-world_path_offset   dd     7
+world_path_offset   dd     7  
+
+zero                db   0
 
 

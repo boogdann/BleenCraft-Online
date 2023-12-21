@@ -16,6 +16,7 @@ UI_ESC_MENU    equ  4   ;Setting and other menu ui
 ;mov [UI_MODE], CONST
 
 proc GameStart  
+  stdcall ResetGameData
   stdcall Field.GetAllWorlds, FileNames
   mov     dword[FileCount], ecx
 
@@ -192,6 +193,36 @@ proc RenderScene
     
     stdcall gf_RenderEnd
     
+    cmp [App_Mode], MENU_MODE
+    jz .Skip
+    cmp [UI_MODE], UI_GAME
+    jnz .Skip
+    @@:
+    invoke ShowCursor, 0
+    cmp eax, -1
+    jle .Skip
+        jmp @B
+    .Skip:
+    
+
+    cmp [UI_MODE], UI_GAME
+    jz .Skip2
+    @@:
+    invoke ShowCursor, 1
+    cmp eax, 1
+    jge .Skip2
+        jmp @B
+    .Skip2:
+    
+    cmp [App_Mode], MENU_MODE
+    jnz .Skip3
+    @@:
+    invoke ShowCursor, 1
+    cmp eax, 1
+    jge .Skip3
+        jmp @B
+    .Skip3:
+    
   ret
 endp
 
@@ -205,6 +236,8 @@ proc ResetGameData
     mov [isWatter], 0
     mov [ct_inWater], 0
     mov [ct_damageFallSpeed], 0
+    mov [ct_start_jump_speed], -0.004
+    mov [ct_velocity], 0.0005
                   
     stdcall ct_change_mouse, 1
 

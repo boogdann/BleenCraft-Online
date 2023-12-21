@@ -29,6 +29,7 @@ proc ui_InterfaceInit
   mov [ChosenFile], DEFAULT_WORLD
   stdcall InitWorld  
   stdcall GameStart
+  mov [ChosenFile], zero
   
   stdcall Set_GF_RENDER_BLOCKS_RADIUS,  30, 30, 30
   stdcall ct_change_mouse, 1

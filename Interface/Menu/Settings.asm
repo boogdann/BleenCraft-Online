@@ -117,6 +117,7 @@ proc ConnectEvent_host
     mov [host_error_len], eax
     mov [IS_ONLINE],    FALSE   
     mov [IS_HOST],      FALSE
+    stdcall client.StopServe_PlayerData 
     jmp .Result
     
     .Succsess:
@@ -151,6 +152,7 @@ proc ui_MenuSettingsController, WindowRect
     ;SEt last pos
   jmp .Return   
   .Exit:
+    stdcall client.StopServe_PlayerData 
     mov [IS_ONLINE],    FALSE   
     mov [IS_HOST],      FALSE
     mov [IS_MAP_READY], FALSE

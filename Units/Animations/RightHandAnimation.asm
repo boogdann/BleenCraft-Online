@@ -8,7 +8,7 @@ proc anim_RightHand, playerPos, playerTurn
   fstp [Anim_Hand_Turn + 8]
   
   
-  mov ebx, obj.Sword.Handle
+  mov ebx, rhand.Handle 
   mov eax, tx.Player.Handle
   
   ;eax - tx | ebx - obj*
