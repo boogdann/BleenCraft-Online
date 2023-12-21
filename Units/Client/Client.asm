@@ -14,6 +14,10 @@ include 'playerData/player.ASM'
 
 
 proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
+  locals
+      pos_add   dd   1.5
+  endl
+
   stdcall ws_soket_init 
   
   stdcall ws_new_socket, WS_UDP
@@ -31,6 +35,25 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
 
   stdcall ws_socket_get_msg_udp, [Client.hUDPSock], Client.ReadBuffer, [Client.SizeBuffer]
   stdcall client.InitUdpPlayerConnection, Client.ReadBuffer, eax
+     
+  ;==============================                
+  cmp [IS_HOST], TRUE
+  jz .SkipRespawn
+    push esi                      ;
+    mov esi, Client.ReadBuffer    ;
+    add esi, 17                   ;
+    
+    fld dword[esi]  
+    fadd [pos_add]               ;
+    fstp [PlayerPos]                 ;
+    fld dword[esi + 4]            ;
+    fstp [PlayerPos + 4]             ;
+    fld dword[esi + 8]            ;
+    fstp [PlayerPos + 8]             ;
+    pop esi                       ;
+  .SkipRespawn:
+  ;===============================
+  
 ;  cmp     eax, 0
 ;  jz      .Error
 
