@@ -132,6 +132,7 @@ proc ConnectEvent_connect
     mov [connect_error], connection_success
     mov eax, [connection_success_len]
     mov [connect_error_len], eax
+    mov [IS_CLIENT_GAME], TRUE
     
     .Result:
   ret

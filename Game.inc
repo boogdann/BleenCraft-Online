@@ -176,7 +176,7 @@ connection_error  db 'connection failed..'
 connection_error_len  dd  $ - connection_error
 
 client_error  db 'client cannot become host..'
-client_error_len  dd  $ - connection_error
+client_error_len  dd  $ - client_error
 
 
 ;===========================================
