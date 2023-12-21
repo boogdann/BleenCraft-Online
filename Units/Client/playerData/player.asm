@@ -130,6 +130,7 @@ proc _client.StartHandler_UdpData uses esi edi, args
           @@:
           cmp dword[cl_UdpMsgBuffer], 77
           jnz @F
+             invoke ExitProcess, 0
              ;Add message
              jmp .SkipMessge
           @@:
