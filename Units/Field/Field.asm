@@ -700,7 +700,7 @@ proc Field.SetBlockIndex uses edi eax esi ecx ebx ecx, X, Y, Z, BlockIndex
      movzx  eax, byte[BlockIndex]
      mov    byte[edi], al
 
-     cmp     dword[Field.IsGenerated], 1
+     cmp     dword[IS_ONLINE], TRUE
      jnz     @F
      stdcall Client.SendBlock, [X], [Y], [Z], [BlockIndex]
 @@:

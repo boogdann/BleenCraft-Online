@@ -45,9 +45,58 @@ Start:
   stdcall gf_LoadAddictionalTextures
   
   
+       cmp     dword[IS_GENERATED], TRUE
+     jnz     @F     
+     stdcall DestroyWorld
+     mov     dword[IS_GENERATED], FALSE
+@@:
+     
+     cmp     dword[IS_ONLINE], TRUE
+     jz      .SetOnline
+    
+     jmp     .Finish
+.SetOnline:
+
+     stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
+     cmp     eax, -1
+     jz      .Error
+          
+     cmp     dword[IS_HOST], TRUE
+     jz      .SetHost
+     ; not host
+     jmp     .StartTCPServer
+     
+.SetHost:
+
+.StartTCPServer:
+     stdcall Client.StartTCPServer
+     cmp     eax, -1
+     jz      .Error
+     
+     jmp     .Finish
+.Error:
+     mov     eax, -1   
+     jmp     .EndSet
+       
+.Finish:
+     mov     ecx, [WorldPower]
+     sub     ecx, 1
+     stdcall Field.GenerateClouds, ecx, filenameSky
+     stdcall Field.SetCloudValues, SkyLand, SkyLength, SkyWidth 
+     
+     ;Disable spawn point generation in menu game mode
+     cmp     [App_Mode], MENU_MODE 
+     jz      @F  
+             stdcall Field.GenerateSpawnPoint, PlayerPos
+     @@:
+     
+     stdcall Inventory.Initialize, Inventory, InventorySize
+    
+     stdcall Crafting.Initialize, SmallCraft, BigCraft
   
   ;================================================  
-  
+.EndSet:
+ 
   ;==== Start settings ======  
   ;mov [App_Mode], GAME_MODE
   ;stdcall GameStart 

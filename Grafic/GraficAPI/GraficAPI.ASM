@@ -18,7 +18,7 @@ include "gf_shaders\gf_shader_init.ASM"
 include "api\opengl.inc"
 include "api\gdi32.inc"
 
-proc gf_grafic_init uses esi edi
+proc g uses esi edi
     invoke  GetProcessHeap
     mov    [gf_memHeap], eax            
 

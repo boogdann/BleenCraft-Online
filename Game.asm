@@ -29,7 +29,7 @@ proc GameStart
   
   stdcall gf_cleanLightning
 
-  mov [GLOBAL_OBJ_RADIUS_RENDER], -2.0
+  mov [GLOBAL_OBJ_RADIUS_RENDER], 2.0
         
   stdcall initializeDestrBlocksHeap
   
@@ -68,6 +68,7 @@ endp
 
 
 proc RenderScene  
+    mov [GLOBAL_OBJ_RADIUS_RENDER], 1.0    ;!!!!!!!!!!!!!!!!!!!!!!!!!!
     mov [Selected_ButtonId], 0  
     stdcall gf_RenderBegin, PlayerPos, PlayerTurn
   
@@ -264,9 +265,9 @@ proc InitWorld
      jmp     .Finish
 .SetOnline:
 
-     stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
-     cmp     eax, -1
-     jz      .Error
+     ;stdcall Client.Init, ServerIp, [ServerPortUDP], [ServerPortTCP]
+     ;cmp     eax, -1
+     ;jz      .Error
           
      cmp     dword[IS_HOST], TRUE
      jz      .SetHost
@@ -281,9 +282,9 @@ proc InitWorld
      stdcall Client.SendWorld, [Field.Blocks], [WorldLength], [WorldWidth], [WorldHeight]
 
 .StartTCPServer:
-     stdcall Client.StartTCPServer
-     cmp     eax, -1
-     jz      .Error
+     ;stdcall Client.StartTCPServer
+     ;cmp     eax, -1
+     ;jz      .Error
      
      jmp     .Finish
 .Error:
@@ -320,7 +321,7 @@ proc DestroyWorld
      
      cmp     dword[IS_ONLINE], FALSE
      jz      .Finish
-     stdcall Client.Destroy
+     ;stdcall Client.Destroy
      stdcall client.StopServe_PlayerData 
      
 .Finish:

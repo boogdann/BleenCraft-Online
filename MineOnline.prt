@@ -4,14 +4,22 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=3
-  countInc=3
+  countAsm=13
+  countInc=1
 [asm]
   asm1="Main.asm"
   asm2="Game.asm"
-  asm3="player.asm"
+  asm3="gf_math.ASM"
+  asm4="GraficAPI.ASM"
+  asm5="gf_shader_init.ASM"
+  asm6="gf_set_render.ASM"
+  asm7="gf_render.ASM"
+  asm8="gf_land_render.ASM"
+  asm9="gf_obj_init.ASM"
+  asm10="player.asm"
+  asm11="player_services.asm"
+  asm12="socket_main.asm"
+  asm13="socket_funcs.asm"
 [inc]
   inc1="Game.inc"
-  inc2="Blocks_textures.inc"
-  inc3="Textures.inc"
 end if

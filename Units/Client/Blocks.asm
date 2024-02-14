@@ -193,7 +193,7 @@ proc Client.SetBlockIndex uses edi eax esi ecx ebx ecx, X, Y, Z, BlockIndex
      stdcall gf_DeleteLightning, esi     
      
 .SkipDeleteTorch:
-     
+;     
      cmp     dword[BlockIndex], Block.Torch
      jnz     .SkipAddTorch
      
