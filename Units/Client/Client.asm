@@ -33,7 +33,7 @@ proc Client.Init uses edx ecx ebx, serverIp, serverPortUDP, serverPortTCP
 ;  cmp     eax, 0
 ;  jz      .Error   
 
-  stdcall ws_socket_get_msg_udp, [Client.hUDPSock], Client.ReadBuffer, [Client.SizeBuffer]
+; stdcall ws_socket_get_msg_udp, [Client.hUDPSock], Client.ReadBuffer, [Client.SizeBuffer]
   stdcall client.InitUdpPlayerConnection, Client.ReadBuffer, eax
      
   ;==============================                

@@ -21,7 +21,7 @@ proc GameStart
   mov     dword[FileCount], ecx
 
             
- ; stdcall InitWorld 
+;  stdcall InitWorld 
 ;     
 ;  mov [PlayerPos], 100.0
 ;  mov [PlayerPos + 4], 75.0
